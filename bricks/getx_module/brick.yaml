@@ -1,0 +1,11 @@
+name: getx_module
+description: A brick to generate a GetX module with views, controllers, and bindings.
+version: 0.1.0+1
+environment:
+  mason: ">=0.1.0-dev <0.2.0"
+vars:
+  name:
+    type: string
+    description: The name of the module (e.g. auth, home, device_details).
+    default: my_module
+    prompt: What is the name of the module?
