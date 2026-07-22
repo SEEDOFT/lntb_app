@@ -11,27 +11,14 @@ class ProfileController extends GetxController {
     try {
       isLoading.value = true;
       // Hit the logout API (ignore errors if it fails, we still want to log out locally)
-      await apiClient.post(ApiEndpoints.logout).catchError((_) => null);
+      try {
+        await apiClient.post(ApiEndpoints.logout);
+      } catch (_) {}
     } finally {
       isLoading.value = false;
       // Clear token and navigate to login
       await apiClient.storage.delete(key: 'auth_token');
       Get.offAllNamed(Routes.LOGIN);
     }
-  }
-
-  @override
-  void onInit() {
-    super.onInit();
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
   }
 }

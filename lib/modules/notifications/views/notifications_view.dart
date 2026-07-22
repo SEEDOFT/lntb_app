@@ -81,8 +81,8 @@ class NotificationsView extends GetView<NotificationController> {
                     ),
                     leading: CircleAvatar(
                       backgroundColor: isUnread
-                          ? AppColors.primary.withOpacity(0.1)
-                          : Colors.grey.withOpacity(0.1),
+                          ? AppColors.primary.withValues(alpha: 0.1)
+                          : Colors.grey.withValues(alpha: 0.1),
                       child: Icon(
                         _getIconForType(notification['type']['code']),
                         color: isUnread ? AppColors.primary : Colors.grey,
@@ -167,7 +167,7 @@ class NotificationsView extends GetView<NotificationController> {
               Row(
                 children: [
                   CircleAvatar(
-                    backgroundColor: AppColors.primary.withOpacity(0.1),
+                    backgroundColor: AppColors.primary.withValues(alpha: 0.1),
                     child: Icon(
                       _getIconForType(notification['type']['code']),
                       color: AppColors.primary,
