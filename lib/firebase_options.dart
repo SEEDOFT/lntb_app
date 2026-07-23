@@ -3,6 +3,7 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -49,20 +50,20 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDGfKYlaLdo7owMALT1nKLh1OULMN-M2Uk',
-    appId: '1:641895235107:android:6a3e2e558c0e8bf3cffb96',
-    messagingSenderId: '641895235107',
-    projectId: 'lntb-app-c37d0',
-    storageBucket: 'lntb-app-c37d0.firebasestorage.app',
-  );
+  static FirebaseOptions get android => FirebaseOptions(
+        apiKey: dotenv.get('FIREBASE_ANDROID_API_KEY'),
+        appId: dotenv.get('FIREBASE_ANDROID_APP_ID'),
+        messagingSenderId: dotenv.get('FIREBASE_MESSAGING_SENDER_ID'),
+        projectId: dotenv.get('FIREBASE_PROJECT_ID'),
+        storageBucket: dotenv.get('FIREBASE_STORAGE_BUCKET'),
+      );
 
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyA7CQqPRK0WvnN2E4ud8meAVEc6MKAza6g',
-    appId: '1:641895235107:ios:9ea92e286f2b4ac6cffb96',
-    messagingSenderId: '641895235107',
-    projectId: 'lntb-app-c37d0',
-    storageBucket: 'lntb-app-c37d0.firebasestorage.app',
-    iosBundleId: 'com.example.lntbApp',
-  );
+  static FirebaseOptions get ios => FirebaseOptions(
+        apiKey: dotenv.get('FIREBASE_IOS_API_KEY'),
+        appId: dotenv.get('FIREBASE_IOS_APP_ID'),
+        messagingSenderId: dotenv.get('FIREBASE_MESSAGING_SENDER_ID'),
+        projectId: dotenv.get('FIREBASE_PROJECT_ID'),
+        storageBucket: dotenv.get('FIREBASE_STORAGE_BUCKET'),
+        iosBundleId: dotenv.get('FIREBASE_IOS_BUNDLE_ID'),
+      );
 }

@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import '../controllers/shared_users_controller.dart';
+import 'package:lntb_app/modules/shared_users/controllers/shared_users_controller.dart';
 
 class SharedUsersBinding extends Bindings {
   @override

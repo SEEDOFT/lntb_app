@@ -11,153 +11,215 @@ class ClaimView extends GetView<ClaimController> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.surface,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
-          onPressed: () => Get.back(),
-        ),
-        title: const Text(
-          'Claim a Device',
-          style: TextStyle(
+        title: Text(
+          'claim_device'.tr,
+          style: const TextStyle(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.bold,
           ),
         ),
-        centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+      body: Form(
+        key: controller.formKey,
+        child: ListView(
+          padding: const EdgeInsets.all(24),
           children: [
-            const SizedBox(height: 20),
+            // Top Wifi Device Graphic (Step 4 Mockup)
             Center(
               child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: const BoxDecoration(
-                  color: AppColors.inputFill,
+                width: 90,
+                height: 90,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryLight,
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
-                  Icons.router,
+                  Icons.router_rounded,
                   size: 48,
                   color: AppColors.primary,
                 ),
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Claim a Device',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
-              ),
+            Text(
+              'claim_device'.tr,
               textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 32),
-            const Text(
-              'MAC Address',
-              style: TextStyle(
+              style: const TextStyle(
+                fontSize: 22,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
               ),
             ),
-            const SizedBox(height: 8),
-            TextField(
-              decoration: InputDecoration(
-                hintText: 'AA:BB:CC:DD:EE:FF',
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.qr_code_scanner),
-                  onPressed: controller.scanBarcode,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColors.inputBorder),
-                ),
-                filled: true,
-                fillColor: AppColors.inputFill,
-              ),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Generated Code',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              decoration: InputDecoration(
-                hintText: 'e.g. DFGH-1234',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColors.inputBorder),
-                ),
-                filled: true,
-                fillColor: AppColors.inputFill,
-              ),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Device Name (Optional)',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              decoration: InputDecoration(
-                hintText: 'e.g. My Greenhouse',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColors.inputBorder),
-                ),
-                filled: true,
-                fillColor: AppColors.inputFill,
+            const SizedBox(height: 6),
+            Text(
+              'បញ្ចូលព័ត៌មានឧបករណ៍ដើម្បីភ្ជាប់',
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 14,
+                color: AppColors.textSecondary,
               ),
             ),
             const SizedBox(height: 32),
+
+            // Form Fields Card
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.cardBorder),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x0A000000),
+                    blurRadius: 16,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // MAC Address
+                  const Text(
+                    'MAC Address',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: controller.macController,
+                    textCapitalization: TextCapitalization.characters,
+                    validator: (v) =>
+                        RegExp(r'^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$')
+                                .hasMatch(v?.trim() ?? '')
+                            ? null
+                            : 'invalid_mac'.tr,
+                    decoration: InputDecoration(
+                      hintText: 'AA:BB:CC:DD:EE:FF',
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.qr_code_scanner, color: AppColors.primary),
+                        onPressed: controller.scanBarcode,
+                      ),
+                      filled: true,
+                      fillColor: AppColors.inputFill,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: AppColors.inputBorder),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: AppColors.inputBorder),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Claim Code
+                  Text(
+                    'claim_code'.tr,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: controller.codeController,
+                    textCapitalization: TextCapitalization.characters,
+                    validator: (v) =>
+                        (v?.trim().isEmpty ?? true) ? 'field_required'.tr : null,
+                    decoration: InputDecoration(
+                      hintText: 'e.g. ABCD-EFGH-1234',
+                      filled: true,
+                      fillColor: AppColors.inputFill,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: AppColors.inputBorder),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: AppColors.inputBorder),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Device Name (Optional)
+                  Text(
+                    '${'device_name'.tr} (Optional)',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: controller.nameController,
+                    decoration: InputDecoration(
+                      hintText: 'e.g. Smart Farm #1',
+                      filled: true,
+                      fillColor: AppColors.inputFill,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: AppColors.inputBorder),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: AppColors.inputBorder),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 28),
+
+            // Submit Button
             Obx(
               () => ElevatedButton(
                 onPressed: controller.isLoading.value
                     ? null
-                    : () => controller.claimDevice('MAC', 'CODE', 'NAME'),
+                    : controller.claimDevice,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
+                  elevation: 0,
                 ),
                 child: controller.isLoading.value
                     ? const SizedBox(
                         height: 20,
                         width: 20,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
-                        ),
+                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                       )
-                    : const Text(
-                        'Claim Device',
-                        style: TextStyle(
+                    : Text(
+                        'claim_device'.tr,
+                        style: const TextStyle(
                           fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                       ),
               ),
             ),
             const SizedBox(height: 24),
+
+            // Tip Card at Bottom (Matching Step 4 Mockup)
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.1),
+                color: AppColors.primaryLight,
                 borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.primary.withOpacity(0.2)),
               ),
               child: Row(
                 children: [
@@ -165,10 +227,11 @@ class ClaimView extends GetView<ClaimController> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'Tip: MAC Address & Code can be found on the label on your device.',
+                      'Tip: MAC Address & Claim Code can be found on the physical sticker label on your device.',
                       style: TextStyle(
-                        color: AppColors.primary.withValues(alpha: 0.8),
-                        fontSize: 13,
+                        fontSize: 12,
+                        color: AppColors.primaryDark,
+                        height: 1.4,
                       ),
                     ),
                   ),

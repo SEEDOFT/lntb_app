@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lntb_app/core/constants/app_assets.dart';
 import 'package:lntb_app/core/network/api_client.dart';
 import 'package:lntb_app/routes/app_routes.dart';
 
@@ -12,22 +13,22 @@ class OnboardingController extends GetxController {
     {
       'title': 'ស្វាគមន៍មកកាន់ LNTB IoT',
       'subtitle': 'កម្មវិធីសម្រាប់កសិកម្មឆ្លាតវៃ',
-      'image': 'assets/svgs/onboarding_step_1_farmer.svg',
+      'image': AppAssets.onboardingStep1Farmer,
     },
     {
       'title': 'ភ្ជាប់ឧបករណ៍ងាយស្រួល',
       'subtitle': 'ភ្ជាប់ឧបករណ៍ និងគ្រប់គ្រងបានគ្រប់ពេល',
-      'image': 'assets/svgs/onboarding_step_2_devices.svg',
+      'image': AppAssets.onboardingStep2Devices,
     },
     {
       'title': 'គ្រប់គ្រងពីចម្ងាយ',
       'subtitle': 'តាមដានស្ថានភាព និងបញ្ជាឧបករណ៍ពីចម្ងាយ',
-      'image': 'assets/svgs/onboarding_step_3_mobile.svg',
+      'image': AppAssets.onboardingStep3Mobile,
     },
     {
       'title': 'ជួយឲ្យដំណាំលូតលាស់',
       'subtitle': 'បង្កើនទិន្នផល និងសន្សំសំចៃ',
-      'image': 'assets/svgs/onboarding_step_4_growth.svg',
+      'image': AppAssets.onboardingStep4Growth,
     },
   ];
 

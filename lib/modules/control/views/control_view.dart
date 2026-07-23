@@ -1,315 +1,221 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lntb_app/core/models/phase_one_models.dart';
 import 'package:lntb_app/core/theme/app_colors.dart';
 import 'package:lntb_app/modules/control/controllers/control_controller.dart';
 
 class ControlView extends GetView<ControlController> {
   const ControlView({super.key});
-
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.inputFill,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
-          onPressed: () => Get.back(),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildDeviceHeader(),
-            const SizedBox(height: 24),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Quick Actions',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(
+          title: Text(controller.device.name),
+          actions: controller.device.isOwner
+              ? [
+                  IconButton(
+                    onPressed: controller.manageUsers,
+                    icon: const Icon(Icons.manage_accounts_outlined),
                   ),
-                  const SizedBox(height: 16),
-                  _buildQuickActionsGrid(),
-                  const SizedBox(height: 32),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Recent Activity',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                      const Text(
-                        'See all',
-                        style: TextStyle(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  _buildRecentActivityList(),
-                  const SizedBox(height: 32),
-                ],
-              ),
-            ),
-          ],
+                ]
+              : null,
         ),
-      ),
-    );
-  }
-
-  Widget _buildDeviceHeader() {
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 70,
-            height: 70,
-            decoration: BoxDecoration(
-              color: AppColors.inputFill,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(
-              Icons.energy_savings_leaf,
-              color: AppColors.primary,
-              size: 40,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Obx(
-              () => Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    controller.deviceName.value,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    controller.deviceMac.value,
-                    style: const TextStyle(color: AppColors.textSecondary),
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: controller.isOnline.value
-                          ? AppColors.success.withValues(alpha: 0.1)
-                          : Colors.grey.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: controller.isOnline.value
-                            ? AppColors.success
-                            : Colors.grey,
-                      ),
-                    ),
-                    child: Text(
-                      controller.isOnline.value ? 'Online' : 'Offline',
-                      style: TextStyle(
-                        color: controller.isOnline.value
-                            ? AppColors.success
-                            : Colors.grey,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          IconButton(
-            icon: const Icon(
-              Icons.settings_outlined,
-              color: AppColors.textSecondary,
-            ),
-            onPressed: () {},
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildQuickActionsGrid() {
-    return GridView.count(
-      crossAxisCount: 2,
-      crossAxisSpacing: 16,
-      mainAxisSpacing: 16,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      childAspectRatio: 1.2,
-      children: [
-        _buildActionButton(
-          title: 'Start Irrigation',
-          icon: Icons.water_drop,
-          color: AppColors.success,
-          onTap: () => controller.sendCommand('irrigation.start'),
-        ),
-        _buildActionButton(
-          title: 'Stop Irrigation',
-          icon: Icons.water_drop,
-          color: AppColors.error,
-          onTap: () => controller.sendCommand('irrigation.stop'),
-        ),
-        _buildActionButton(
-          title: 'Fan On',
-          icon: Icons.air,
-          color: Colors.blue,
-          onTap: () => controller.sendCommand('fan.start'),
-        ),
-        _buildActionButton(
-          title: 'Fan Off',
-          icon: Icons.air,
-          color: Colors.black54,
-          onTap: () => controller.sendCommand('fan.stop'),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildActionButton({
-    required String title,
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.inputBorder),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.02),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, color: color, size: 28),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              title,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 13,
-                color: AppColors.textPrimary,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRecentActivityList() {
-    return Obx(
-      () => ListView.separated(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: controller.recentActivity.length,
-        separatorBuilder: (context, index) =>
-            const Divider(height: 24, color: AppColors.inputBorder),
-        itemBuilder: (context, index) {
-          final item = controller.recentActivity[index];
-          final isFailed = item['status'] == 'Failed';
-
-          Color iconColor = AppColors.primary;
-          IconData icon = Icons.check_circle;
-
-          if (item['type'] == 'irrigation.start') iconColor = AppColors.success;
-          if (item['type'] == 'irrigation.stop') iconColor = AppColors.error;
-          if (item['type'] == 'fan.start') iconColor = Colors.blue;
-          if (item['type'] == 'fan.stop') iconColor = Colors.black54;
-
-          if (item['type'].toString().contains('irrigation')) {
-            icon = Icons.water_drop;
-          }
-          if (item['type'].toString().contains('fan')) icon = Icons.air;
-
-          return Row(
+        body: RefreshIndicator(
+          onRefresh: controller.refreshHistory,
+          child: ListView(
+            padding: const EdgeInsets.all(16),
             children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: iconColor.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(icon, color: iconColor, size: 20),
+              _DeviceHeader(device: controller.device),
+              const SizedBox(height: 22),
+              Text(
+                'device_controls'.tr,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge
+                    ?.copyWith(fontWeight: FontWeight.w700),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(height: 12),
+              Obx(
+                () => Column(
+                  children: [
+                    _Toggle(
+                      title: 'irrigation'.tr,
+                      icon: Icons.water_drop_outlined,
+                      value: controller.latestState(
+                        'irrigation.start',
+                        'irrigation.stop',
+                      ),
+                      onChanged: (on) => controller.sendCommand(
+                        on ? 'irrigation.start' : 'irrigation.stop',
+                      ),
+                    ),
+                    _Toggle(
+                      title: 'fan'.tr,
+                      icon: Icons.air,
+                      value: controller.latestState('fan.start', 'fan.stop'),
+                      onChanged: (on) =>
+                          controller.sendCommand(on ? 'fan.start' : 'fan.stop'),
+                    ),
+                    _Toggle(
+                      title: 'roof'.tr,
+                      icon: Icons.roofing_outlined,
+                      value: controller.latestState('roof.open', 'roof.close'),
+                      onChanged: (on) => controller
+                          .sendCommand(on ? 'roof.open' : 'roof.close'),
+                    ),
+                    _Toggle(
+                      title: 'camera'.tr,
+                      icon: Icons.camera_alt_outlined,
+                      button: true,
+                      value: false,
+                      onChanged: (_) =>
+                          controller.sendCommand('camera.capture'),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 22),
+              Text(
+                'recent_activity'.tr,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium
+                    ?.copyWith(fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 8),
+              Obx(
+                () => controller.history.isEmpty
+                    ? Padding(
+                        padding: const EdgeInsets.all(24),
+                        child:
+                            Text('no_history'.tr, textAlign: TextAlign.center),
+                      )
+                    : Column(
+                        children: controller.history
+                            .take(10)
+                            .map((item) => _HistoryTile(record: item))
+                            .toList(),
+                      ),
+              ),
+            ],
+          ),
+        ),
+      );
+}
+
+class _DeviceHeader extends StatelessWidget {
+  const _DeviceHeader({required this.device});
+  final DeviceModel device;
+  @override
+  Widget build(BuildContext context) => Card(
+        elevation: 0,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              const CircleAvatar(
+                radius: 30,
+                backgroundColor: Color(0xFFEAF3FF),
+                child: Icon(
+                  Icons.energy_savings_leaf,
+                  color: AppColors.primary,
+                  size: 32,
+                ),
+              ),
+              const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      item['action']!,
+                      device.name,
                       style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 17,
                       ),
                     ),
-                    const SizedBox(height: 4),
                     Text(
-                      item['time']!,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: AppColors.textSecondary,
-                      ),
+                      device.macAddress,
+                      style: const TextStyle(color: AppColors.textSecondary),
+                    ),
+                    Text(
+                      '${device.firmwareVersion ?? '-'} • ${device.accessRole.tr}',
+                      style: const TextStyle(color: AppColors.textSecondary),
                     ),
                   ],
                 ),
               ),
               Text(
-                item['status']!,
+                device.status.tr,
                 style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13,
-                  color: isFailed ? AppColors.error : AppColors.success,
+                  color: device.isOnline
+                      ? AppColors.success
+                      : AppColors.textSecondary,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ],
-          );
-        },
+          ),
+        ),
+      );
+}
+
+class _Toggle extends StatelessWidget {
+  const _Toggle({
+    required this.title,
+    required this.icon,
+    required this.value,
+    required this.onChanged,
+    this.button = false,
+  });
+  final String title;
+  final IconData icon;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+  final bool button;
+  @override
+  Widget build(BuildContext context) => Card(
+        elevation: 0,
+        child: ListTile(
+          leading: Icon(icon, color: AppColors.primary),
+          title: Text(title),
+          trailing: button
+              ? IconButton(
+                  onPressed: () => onChanged(true),
+                  icon: const Icon(Icons.play_circle, color: AppColors.primary),
+                )
+              : Switch(
+                  value: value,
+                  onChanged: onChanged,
+                  activeThumbColor: AppColors.success,
+                ),
+        ),
+      );
+}
+
+class _HistoryTile extends StatelessWidget {
+  const _HistoryTile({required this.record});
+  final ControlRecord record;
+  @override
+  Widget build(BuildContext context) {
+    final color = record.isPending
+        ? Colors.orange
+        : record.isCompleted
+            ? AppColors.success
+            : AppColors.error;
+    return ListTile(
+      leading: Icon(
+        record.isCompleted
+            ? Icons.check_circle
+            : record.isPending
+                ? Icons.schedule
+                : Icons.error,
+        color: color,
+      ),
+      title: Text(record.controlType.tr),
+      subtitle: Text(record.requestedAt.toLocal().toString().substring(0, 16)),
+      trailing: Text(
+        record.status.tr,
+        style: TextStyle(color: color, fontWeight: FontWeight.w700),
       ),
     );
   }

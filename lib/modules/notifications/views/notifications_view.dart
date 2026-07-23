@@ -91,9 +91,8 @@ class NotificationsView extends GetView<NotificationController> {
                     title: Text(
                       notification['title'],
                       style: TextStyle(
-                        fontWeight: isUnread
-                            ? FontWeight.bold
-                            : FontWeight.normal,
+                        fontWeight:
+                            isUnread ? FontWeight.bold : FontWeight.normal,
                         color: AppColors.textPrimary,
                       ),
                     ),
