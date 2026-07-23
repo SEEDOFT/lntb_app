@@ -145,6 +145,10 @@ class AuthController extends GetxController {
       });
 
       try {
+        await _googleSignIn.signOut();
+      } catch (_) {}
+
+      try {
         await _googleSignIn.authenticate();
 
         final idToken = await completer.future.timeout(

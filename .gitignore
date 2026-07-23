@@ -46,6 +46,10 @@ app.*.map.json
 
 .env
 
+# Firebase / Google Services
+**/google-services.json
+**/GoogleService-Info.plist
+
 # FVM
 .fvm/*
 !.fvm/fvm_config.json
