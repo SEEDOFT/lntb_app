@@ -8,8 +8,10 @@ class DevicesView extends GetView<DeviceController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.inputFill, // Slightly off-white background
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        backgroundColor: AppColors.inputFill, // Slightly off-white background
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -83,8 +85,9 @@ class DevicesView extends GetView<DeviceController> {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildDeviceCard(Map<String, dynamic> device) {
     return Card(

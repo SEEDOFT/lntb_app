@@ -8,8 +8,10 @@ class NotificationsView extends GetView<NotificationController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.inputFill,
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        backgroundColor: AppColors.inputFill,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -119,8 +121,9 @@ class NotificationsView extends GetView<NotificationController> {
           ),
         );
       }),
-    );
-  }
+    ),
+  );
+}
 
   IconData _getIconForType(String typeCode) {
     switch (typeCode) {

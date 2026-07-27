@@ -9,7 +9,9 @@ class OnboardingView extends GetView<OnboardingController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
       body: SafeArea(
         child: Column(
           children: [
@@ -120,8 +122,9 @@ class OnboardingView extends GetView<OnboardingController> {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildDot(bool isActive) {
     return AnimatedContainer(

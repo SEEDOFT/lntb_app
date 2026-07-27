@@ -10,7 +10,9 @@ class SharedUsersView extends GetView<SharedUsersController> {
   Widget build(BuildContext context) {
     final inputController = TextEditingController();
 
-    return Scaffold(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -149,8 +151,9 @@ class SharedUsersView extends GetView<SharedUsersController> {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildUserTile(Map<String, String> user, bool isOwner, int index) {
     return Container(
