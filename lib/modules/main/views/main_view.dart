@@ -12,72 +12,75 @@ class MainView extends GetView<MainController> {
   const MainView({super.key});
 
   @override
-  Widget build(BuildContext context) => Obx(
-        () => Scaffold(
-          body: IndexedStack(
-            index: controller.currentIndex.value,
-            children: const [
-              HomeView(),
-              FarmView(),
-              DevicesView(),
-              HistoryView(),
-              ProfileView(),
-            ],
-          ),
-          bottomNavigationBar: Container(
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(22),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.primaryDark.withValues(alpha: .08),
-                  blurRadius: 22,
-                  offset: const Offset(0, -5),
-                ),
+  Widget build(BuildContext context) => GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Obx(
+          () => Scaffold(
+            body: IndexedStack(
+              index: controller.currentIndex.value,
+              children: const [
+                HomeView(),
+                FarmView(),
+                DevicesView(),
+                HistoryView(),
+                ProfileView(),
               ],
             ),
-            clipBehavior: Clip.antiAlias,
-            child: NavigationBar(
-              selectedIndex: controller.currentIndex.value,
-              onDestinationSelected: controller.changePage,
-              indicatorColor: AppColors.primaryLight,
-              backgroundColor: AppColors.surface,
-              elevation: 0,
-              destinations: [
-                NavigationDestination(
-                  icon: const Icon(Icons.home_outlined),
-                  selectedIcon: const Icon(Icons.home_rounded, color: AppColors.primary),
-                  label: 'home'.tr,
+            bottomNavigationBar: Container(
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(22),
                 ),
-                NavigationDestination(
-                  icon: const Icon(Icons.eco_outlined),
-                  selectedIcon: const Icon(
-                    Icons.eco_rounded,
-                    color: AppColors.primary,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primaryDark.withValues(alpha: .08),
+                    blurRadius: 22,
+                    offset: const Offset(0, -5),
                   ),
-                  label: 'farm'.tr,
-                ),
-                NavigationDestination(
-                  icon: const Icon(Icons.router_outlined),
-                  selectedIcon: const Icon(
-                    Icons.router_rounded,
-                    color: AppColors.primary,
+                ],
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: NavigationBar(
+                selectedIndex: controller.currentIndex.value,
+                onDestinationSelected: controller.changePage,
+                indicatorColor: AppColors.primaryLight,
+                backgroundColor: AppColors.surface,
+                elevation: 0,
+                destinations: [
+                  NavigationDestination(
+                    icon: const Icon(Icons.home_outlined),
+                    selectedIcon: const Icon(Icons.home_rounded, color: AppColors.primary),
+                    label: 'home'.tr,
                   ),
-                  label: 'devices'.tr,
-                ),
-                NavigationDestination(
-                  icon: const Icon(Icons.history_outlined),
-                  selectedIcon: const Icon(Icons.history_rounded, color: AppColors.primary),
-                  label: 'history'.tr,
-                ),
-                NavigationDestination(
-                  icon: const Icon(Icons.person_outline_rounded),
-                  selectedIcon: const Icon(Icons.person_rounded, color: AppColors.primary),
-                  label: 'profile'.tr,
-                ),
-              ],
+                  NavigationDestination(
+                    icon: const Icon(Icons.eco_outlined),
+                    selectedIcon: const Icon(
+                      Icons.eco_rounded,
+                      color: AppColors.primary,
+                    ),
+                    label: 'farm'.tr,
+                  ),
+                  NavigationDestination(
+                    icon: const Icon(Icons.router_outlined),
+                    selectedIcon: const Icon(
+                      Icons.router_rounded,
+                      color: AppColors.primary,
+                    ),
+                    label: 'devices'.tr,
+                  ),
+                  NavigationDestination(
+                    icon: const Icon(Icons.history_outlined),
+                    selectedIcon: const Icon(Icons.history_rounded, color: AppColors.primary),
+                    label: 'history'.tr,
+                  ),
+                  NavigationDestination(
+                    icon: const Icon(Icons.person_outline_rounded),
+                    selectedIcon: const Icon(Icons.person_rounded, color: AppColors.primary),
+                    label: 'profile'.tr,
+                  ),
+                ],
+              ),
             ),
           ),
         ),

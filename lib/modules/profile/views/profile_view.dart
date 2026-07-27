@@ -9,7 +9,9 @@ class ProfileView extends GetView<ProfileController> {
   const ProfileView({super.key});
 
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) => GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
           centerTitle: false,
@@ -162,7 +164,8 @@ class ProfileView extends GetView<ProfileController> {
             ],
           ),
         ),
-      );
+      ),
+    );
 }
 
 class _ProfileIcon extends StatelessWidget {

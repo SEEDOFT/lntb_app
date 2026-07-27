@@ -16,7 +16,9 @@ class HomeView extends StatelessWidget {
     final profile = Get.find<ProfileController>();
     final notifications = Get.find<NotificationController>();
 
-    return Scaffold(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
       body: RefreshIndicator(
         onRefresh: devices.fetchDevices,
         child: CustomScrollView(
@@ -166,8 +168,9 @@ class HomeView extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 class _DeviceOverview extends StatelessWidget {

@@ -7,59 +7,73 @@ import 'package:lntb_app/modules/control/controllers/control_controller.dart';
 class ControlView extends GetView<ControlController> {
   const ControlView({super.key});
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: Text(controller.device.name),
-          actions: controller.device.isOwner
-              ? [
-                  IconButton(
-                    onPressed: controller.manageUsers,
-                    icon: const Icon(Icons.manage_accounts_outlined),
+  Widget build(BuildContext context) => GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(controller.device.name),
+            actions: controller.device.isOwner
+                ? [
+                    IconButton(
+                      onPressed: controller.manageUsers,
+                      icon: const Icon(Icons.manage_accounts_outlined),
+                    ),
+                  ]
+                : null,
+          ),
+          body: RefreshIndicator(
+            onRefresh: controller.refreshHistory,
+            child: ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                _DeviceHeader(device: controller.device),
+                const SizedBox(height: 22),
+                Text(
+                  'device_controls'.tr,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleLarge
+                      ?.copyWith(fontWeight: FontWeight.w700),
+                ),
+                const SizedBox(height: 12),
+                Obx(
+                  () => Column(
+                    children: [
+                      _Toggle(
+                        title: 'irrigation'.tr,
+                        icon: Icons.water_drop_outlined,
+                        value: controller.latestState(
+                          'irrigation.start',
+                          'irrigation.stop',
+                        ),
+                        onChanged: (on) => controller.sendCommand(
+                          on ? 'irrigation.start' : 'irrigation.stop',
+                        ),
+                      ),
+                      _Toggle(
+                        title: 'fan'.tr,
+                        icon: Icons.air,
+                        value: controller.latestState('fan.start', 'fan.stop'),
+                        onChanged: (on) =>
+                            controller.sendCommand(on ? 'fan.start' : 'fan.stop'),
+                      ),
+                      _Toggle(
+                        title: 'roof'.tr,
+                        icon: Icons.roofing_outlined,
+                        value: controller.latestState('roof.open', 'roof.close'),
+                        onChanged: (on) => controller
+                            .sendCommand(on ? 'roof.open' : 'roof.close'),
+                      ),
+                      _Toggle(
+                        title: 'camera'.tr,
+                        icon: Icons.camera_alt_outlined,
+                        button: true,
+                        value: false,
+                        onChanged: (_) =>
+                            controller.sendCommand('camera.capture'),
+                      ),
+                    ],
                   ),
-                ]
-              : null,
-        ),
-        body: RefreshIndicator(
-          onRefresh: controller.refreshHistory,
-          child: ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              _DeviceHeader(device: controller.device),
-              const SizedBox(height: 22),
-              Text(
-                'device_controls'.tr,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleLarge
-                    ?.copyWith(fontWeight: FontWeight.w700),
-              ),
-              const SizedBox(height: 12),
-              Obx(
-                () => Column(
-                  children: [
-                    _Toggle(
-                      title: 'irrigation'.tr,
-                      icon: Icons.water_drop_outlined,
-                      value: controller.latestState(
-                        'irrigation.start',
-                        'irrigation.stop',
-                      ),
-                      onChanged: (on) => controller.sendCommand(
-                        on ? 'irrigation.start' : 'irrigation.stop',
-                      ),
-                    ),
-                    _Toggle(
-                      title: 'fan'.tr,
-                      icon: Icons.air,
-                      value: controller.latestState('fan.start', 'fan.stop'),
-                      onChanged: (on) =>
-                          controller.sendCommand(on ? 'fan.start' : 'fan.stop'),
-                    ),
-                    _Toggle(
-                      title: 'roof'.tr,
-                      icon: Icons.roofing_outlined,
-                      value: controller.latestState('roof.open', 'roof.close'),
-                      onChanged: (on) => controller
                           .sendCommand(on ? 'roof.open' : 'roof.close'),
                     ),
                     _Toggle(

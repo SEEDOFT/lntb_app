@@ -8,7 +8,9 @@ class ClaimView extends GetView<ClaimController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.surface,
@@ -241,6 +243,7 @@ class ClaimView extends GetView<ClaimController> {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

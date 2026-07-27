@@ -9,69 +9,64 @@ class DevicesView extends GetView<DeviceController> {
   final bool sharedOnly;
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        backgroundColor: AppColors.background,
-        appBar: AppBar(
-          centerTitle: false,
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                sharedOnly ? 'shared_access'.tr : 'devices'.tr,
-                style: const TextStyle(fontWeight: FontWeight.w800),
-              ),
-              Text(
-                'devices_subtitle'.tr,
-                style: const TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
+  Widget build(BuildContext context) => GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          backgroundColor: AppColors.background,
+          appBar: AppBar(
+            centerTitle: false,
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  sharedOnly ? 'shared_access'.tr : 'devices'.tr,
+                  style: const TextStyle(fontWeight: FontWeight.w800),
+                ),
+                Text(
+                  'devices_subtitle'.tr,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+            actions: sharedOnly
+                ? null
+                : [
+                    IconButton(
+                      onPressed: controller.goToAddDevice,
+                      icon: const Icon(Icons.add_circle_outline),
+                    ),
+                  ],
+          ),
+          body: Obx(() {
+            final list =
+                sharedOnly ? controller.sharedDevices : controller.devices;
+            if (controller.isLoading.value && list.isEmpty) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (list.isEmpty) {
+              return _EmptyDevices(
+                title: sharedOnly ? 'no_shared_devices'.tr : 'no_devices'.tr,
+                actionLabel: sharedOnly ? null : 'claim_first_device'.tr,
+                action: sharedOnly ? null : controller.goToAddDevice,
+              );
+            }
+            return RefreshIndicator(
+              onRefresh: controller.fetchDevices,
+              child: ListView.builder(
+                padding: const EdgeInsets.fromLTRB(16, 10, 16, 28),
+                itemCount: list.length,
+                itemBuilder: (_, index) => _DeviceCard(
+                  device: list[index],
+                  onTap: () => controller.open(list[index]),
                 ),
               ),
-            ],
-          ),
-          actions: sharedOnly
-              ? null
-              : [
-                  IconButton.filledTonal(
-                    onPressed: controller.goToAddDevice,
-                    icon: const Icon(Icons.add_rounded),
-                  ),
-                  const SizedBox(width: 10),
-                ],
+            );
+          }),
         ),
-        body: Obx(() {
-          if (controller.isLoading.value && controller.devices.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          final list =
-              sharedOnly ? controller.sharedDevices : controller.devices;
-          if (controller.error.value != null && list.isEmpty) {
-            return _State(
-              icon: Icons.cloud_off,
-              text: 'load_failed'.tr,
-              action: controller.fetchDevices,
-            );
-          }
-          if (list.isEmpty) {
-            return _State(
-              icon: Icons.router_outlined,
-              text: sharedOnly ? 'no_shared_devices'.tr : 'no_devices'.tr,
-              action: sharedOnly ? null : controller.goToAddDevice,
-            );
-          }
-          return RefreshIndicator(
-            onRefresh: controller.fetchDevices,
-            child: ListView.builder(
-              padding: const EdgeInsets.fromLTRB(16, 10, 16, 28),
-              itemCount: list.length,
-              itemBuilder: (_, index) => _DeviceCard(
-                device: list[index],
-                onTap: () => controller.open(list[index]),
-              ),
-            ),
-          );
-        }),
       );
 }
 
