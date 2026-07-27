@@ -67,6 +67,4 @@ class ClaimController extends GetxController {
       isLoading.value = false;
     }
   }
-
-
 }

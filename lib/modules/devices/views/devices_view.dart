@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:lntb_app/core/models/phase_one_models.dart';
 import 'package:lntb_app/core/theme/app_colors.dart';
 import 'package:lntb_app/modules/devices/controllers/device_controller.dart';
+import 'package:lntb_app/modules/devices/views/device_placement_view.dart';
 
 class DevicesView extends GetView<DeviceController> {
   const DevicesView({super.key, this.sharedOnly = false});
@@ -35,6 +36,11 @@ class DevicesView extends GetView<DeviceController> {
             actions: sharedOnly
                 ? null
                 : [
+                    IconButton(
+                      onPressed: () => Get.to(() => const DevicePlacementView()),
+                      icon: const Icon(Icons.map_outlined),
+                      tooltip: 'farm_layout'.tr,
+                    ),
                     IconButton(
                       onPressed: controller.goToAddDevice,
                       icon: const Icon(Icons.add_circle_outline),

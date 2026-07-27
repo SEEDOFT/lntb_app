@@ -75,6 +75,7 @@ const Map<String, String> enUS = {
   'continue_email': 'Continue with email',
   'auth_terms': 'By continuing, you agree to use LNTB IoT securely.',
   'create_account': 'Create account',
+  'register_subtitle': 'Register to manage your smart farm',
   'phone_password_auth': 'Cambodia phone and password',
   'email_password_auth': 'Email and password',
   'password_min': 'Use at least 12 characters',

@@ -31,12 +31,14 @@ class DeviceModel {
     required this.macAddress,
     required this.status,
     required this.accessRole,
+    this.placement,
     this.serialNumber,
     this.firmwareVersion,
     this.lastSeenAt,
   });
   final int id;
   final String name;
+  final String? placement;
   final String macAddress;
   final String status;
   final String accessRole;
@@ -50,6 +52,7 @@ class DeviceModel {
   factory DeviceModel.fromJson(Map<String, dynamic> json) => DeviceModel(
         id: json['id'] as int,
         name: json['name'] as String? ?? 'LNTB IoT',
+        placement: json['placement'] as String?,
         macAddress: json['mac_address'] as String? ?? '',
         status: (json['status'] as Map<String, dynamic>?)?['code'] as String? ??
             'retired',

@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:lntb_app/core/constants/app_assets.dart';
 import 'package:lntb_app/core/theme/app_colors.dart';
 import 'package:lntb_app/modules/devices/controllers/device_controller.dart';
+import 'package:lntb_app/modules/devices/views/device_placement_view.dart';
+import 'package:lntb_app/modules/history/views/control_timeline_view.dart';
 import 'package:lntb_app/modules/notifications/controllers/notification_controller.dart';
 import 'package:lntb_app/modules/profile/controllers/profile_controller.dart';
 import 'package:lntb_app/routes/app_routes.dart';
@@ -97,7 +99,11 @@ class HomeView extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
-                    Obx(() => _DeviceOverview(devices: devices)),
+                    Obx(() => _DeviceOverview(
+                      total: devices.devices.length,
+                      online: devices.devices.where((d) => d.isOnline).length,
+                      owned: devices.devices.where((d) => d.isOwner).length,
+                    ),),
                     const SizedBox(height: 24),
                     _SectionHeader(title: 'quick_actions'.tr),
                     const SizedBox(height: 12),
@@ -114,19 +120,19 @@ class HomeView extends StatelessWidget {
                         const SizedBox(width: 10),
                         Expanded(
                           child: _QuickAction(
-                            icon: Icons.task_alt_rounded,
-                            label: 'today_tasks'.tr,
+                            icon: Icons.map_outlined,
+                            label: 'farm_layout'.tr,
                             color: AppColors.info,
-                            onTap: () => Get.toNamed(Routes.FARM_TASKS),
+                            onTap: () => Get.to(() => const DevicePlacementView()),
                           ),
                         ),
                         const SizedBox(width: 10),
                         Expanded(
                           child: _QuickAction(
-                            icon: Icons.water_drop_outlined,
-                            label: 'irrigation'.tr,
+                            icon: Icons.history_rounded,
+                            label: 'control_log'.tr,
                             color: AppColors.primaryDark,
-                            onTap: () => Get.toNamed(Routes.IRRIGATION),
+                            onTap: () => Get.to(() => const ControlTimelineView()),
                           ),
                         ),
                       ],
@@ -174,15 +180,18 @@ class HomeView extends StatelessWidget {
 }
 
 class _DeviceOverview extends StatelessWidget {
-  const _DeviceOverview({required this.devices});
+  const _DeviceOverview({
+    required this.total,
+    required this.online,
+    required this.owned,
+  });
 
-  final DeviceController devices;
+  final int total;
+  final int online;
+  final int owned;
 
   @override
   Widget build(BuildContext context) {
-    final total = devices.devices.length;
-    final online = devices.devices.where((device) => device.isOnline).length;
-    final owned = devices.devices.where((device) => device.isOwner).length;
     final shared = total - owned;
 
     return Container(

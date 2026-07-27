@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lntb_app/core/bindings/initial_binding.dart';
 import 'package:lntb_app/core/bootstrap/app_bootstrap.dart';
-import 'package:lntb_app/core/services/language_service.dart';
 import 'package:lntb_app/core/theme/app_colors.dart';
 import 'package:lntb_app/core/translations/app_translations.dart';
 import 'routes/app_pages.dart';
@@ -22,8 +21,8 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'LNTB',
       translations: AppTranslations(),
-      locale: LanguageService.to.currentLocale.value,
-      fallbackLocale: const Locale('en', 'US'),
+      locale: const Locale('km', 'KH'),
+      fallbackLocale: const Locale('km', 'KH'),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: AppColors.primary,

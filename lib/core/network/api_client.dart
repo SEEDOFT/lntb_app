@@ -147,7 +147,7 @@ class ApiClient {
   void _handleError(dynamic error) {
     if (error is DioException) {
       final statusCode = error.response?.statusCode;
-      final message = error.response?.data['message'] ?? error.message;
+      final message = error.response?.data?['status']?['message'] ?? error.message;
 
       if (statusCode != 401 && statusCode != 422) {
         // Skip 401 (handled by interceptor) and 422 (validation errors handled by UI)

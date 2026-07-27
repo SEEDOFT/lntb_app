@@ -48,9 +48,13 @@ class SharedUsersController extends GetxController {
   }
 
   Future<void> revoke(DeviceAccess access) async {
-    await repository.revokeAccess(device.id, access.id);
+    final index = users.indexOf(access);
     users.remove(access);
+    try {
+      await repository.revokeAccess(device.id, access.id);
+    } catch (error) {
+      if (index >= 0) users.insert(index, access);
+      Get.snackbar('revoke_failed'.tr, error.toString());
+    }
   }
-
-
 }

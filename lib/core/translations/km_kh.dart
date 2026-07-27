@@ -75,6 +75,7 @@ const Map<String, String> kmKH = {
   'continue_email': 'បន្តជាមួយអ៊ីមែល',
   'auth_terms': 'តាមរយៈការបន្ត អ្នកយល់ព្រមប្រើ LNTB IoT ដោយសុវត្ថិភាព។',
   'create_account': 'បង្កើតគណនី',
+  'register_subtitle': 'ចុះឈ្មោះដើម្បីគ្រប់គ្រងកសិដ្ឋានឆ្លាតវៃរបស់អ្នក',
   'phone_password_auth': 'លេខទូរស័ព្ទកម្ពុជា និងពាក្យសម្ងាត់',
   'email_password_auth': 'អ៊ីមែល និងពាក្យសម្ងាត់',
   'password_min': 'ប្រើយ៉ាងហោចណាស់ ១២ តួអក្សរ',

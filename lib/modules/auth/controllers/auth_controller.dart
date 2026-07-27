@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -11,8 +12,6 @@ import 'package:lntb_app/routes/app_routes.dart';
 
 enum AuthMode { login, register }
 
-enum AuthMethod { email, phone }
-
 class AuthController extends GetxController {
   final ApiClient apiClient = Get.find<ApiClient>();
   final FcmTokenSyncService? fcmTokens = Get.isRegistered<FcmTokenSyncService>()
@@ -22,15 +21,17 @@ class AuthController extends GetxController {
 
   final isLoading = false.obs;
   final mode = AuthMode.login.obs;
-  final method = AuthMethod.email.obs; // Prioritize Email
-  final formKey = GlobalKey<FormState>();
 
   final isPasswordVisible = false.obs;
   final isConfirmPasswordVisible = false.obs;
 
+  final phoneNumberError = Rx<String?>(null);
+  final passwordError = Rx<String?>(null);
+  final nameError = Rx<String?>(null);
+  final confirmPasswordError = Rx<String?>(null);
+
   final countryCodeController = TextEditingController(text: '+855');
   final phoneNumberController = TextEditingController();
-  final emailController = TextEditingController();
   final nameController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
@@ -53,40 +54,75 @@ class AuthController extends GetxController {
     Get.offNamed(Routes.LOGIN);
   }
 
-  void chooseMethod(AuthMethod value) {
-    method.value = value;
-  }
-
   Future<void> login() async {
     mode.value = AuthMode.login;
+    if (!_validateLogin()) return;
     await submit();
   }
 
   Future<void> register() async {
     mode.value = AuthMode.register;
+    if (!_validateRegister()) return;
     await submit();
   }
 
+  bool _validateLogin() {
+    phoneNumberError.value = null;
+    passwordError.value = null;
+
+    if (phoneNumberController.text.trim().isEmpty) {
+      phoneNumberError.value = 'Phone number is required';
+      return false;
+    }
+    if (passwordController.text.isEmpty) {
+      passwordError.value = 'Password is required';
+      return false;
+    }
+    return true;
+  }
+
+  bool _validateRegister() {
+    nameError.value = null;
+    phoneNumberError.value = null;
+    passwordError.value = null;
+    confirmPasswordError.value = null;
+
+    if (nameController.text.trim().isEmpty) {
+      nameError.value = 'Full name is required';
+      return false;
+    }
+    if (phoneNumberController.text.trim().isEmpty) {
+      phoneNumberError.value = 'Phone number is required';
+      return false;
+    }
+    if (passwordController.text.isEmpty) {
+      passwordError.value = 'Password is required';
+      return false;
+    }
+    if (passwordController.text.length < 8) {
+      passwordError.value = 'Password must be at least 8 characters';
+      return false;
+    }
+    if (confirmPasswordController.text.isEmpty) {
+      confirmPasswordError.value = 'Confirm password is required';
+      return false;
+    }
+    if (passwordController.text != confirmPasswordController.text) {
+      confirmPasswordError.value = 'Passwords do not match';
+      return false;
+    }
+    return true;
+  }
+
   Future<void> submit() async {
-    if (!(formKey.currentState?.validate() ?? false)) return;
     isLoading.value = true;
     try {
       final registering = mode.value == AuthMode.register;
       final fcmPayload = await fcmTokens?.authenticationPayload() ?? {};
       final data = <String, dynamic>{
         if (registering) 'name': nameController.text.trim(),
-        if (method.value == AuthMethod.phone) ...{
-          'country_code': countryCodeController.text.trim(),
-          'phone_number': phoneNumberController.text.trim(),
-          if (registering && emailController.text.trim().isNotEmpty)
-            'email': emailController.text.trim().toLowerCase(),
-        } else ...{
-          'email': emailController.text.trim().toLowerCase(),
-          if (registering && phoneNumberController.text.trim().isNotEmpty)
-            'country_code': countryCodeController.text.trim(),
-          if (registering && phoneNumberController.text.trim().isNotEmpty)
-            'phone_number': phoneNumberController.text.trim(),
-        },
+        'country_code': countryCodeController.text.trim(),
+        'phone_number': phoneNumberController.text.trim(),
         'password': passwordController.text,
         if (registering)
           'password_confirmation': confirmPasswordController.text,
@@ -96,10 +132,17 @@ class AuthController extends GetxController {
         registering ? ApiEndpoints.register : ApiEndpoints.login,
         data: data,
       );
+      
       await _completeAuthentication(
         ApiResponse<Map<String, dynamic>>.fromJson(response.data),
       );
-    } catch (error) {
+
+    } catch (error, stackTrace) {
+      debugPrint('[AuthController] submit error: $error');
+      debugPrint('[AuthController] stackTrace: $stackTrace');
+      if (error is DioException) {
+        debugPrint('[AuthController] response body: ${error.response?.data}');
+      }
       Get.snackbar('authentication_failed'.tr, _message(error));
     } finally {
       isLoading.value = false;
@@ -110,7 +153,7 @@ class AuthController extends GetxController {
     ApiResponse<Map<String, dynamic>> response,
   ) async {
     final token = response.data['token'] as String?;
-    if (token == null) throw Exception(response.status.message);
+    if (token == null) throw Exception('Response missing token field');
     await apiClient.storage.write(key: 'auth_token', value: token);
     await fcmTokens?.syncAuthenticatedDevice();
     final isNew = response.data['is_new_account'] == true;
@@ -150,7 +193,12 @@ class AuthController extends GetxController {
       await _completeAuthentication(
         ApiResponse<Map<String, dynamic>>.fromJson(response.data),
       );
-    } catch (error) {
+    } catch (error, stackTrace) {
+      debugPrint('[AuthController] google error: $error');
+      debugPrint('[AuthController] google stackTrace: $stackTrace');
+      if (error is DioException) {
+        debugPrint('[AuthController] google response body: ${error.response?.data}');
+      }
       Get.snackbar('authentication_failed'.tr, _message(error));
     } finally {
       await subscription?.cancel();
@@ -158,7 +206,11 @@ class AuthController extends GetxController {
     }
   }
 
-  String _message(Object error) =>
-      error.toString().replaceFirst('Exception: ', '');
-
+  String _message(Object error) {
+    if (error is DioException) {
+      final apiMessage = error.response?.data?['status']?['message'] as String?;
+      if (apiMessage != null && apiMessage.isNotEmpty) return apiMessage;
+    }
+    return error.toString().replaceFirst('Exception: ', '');
+  }
 }

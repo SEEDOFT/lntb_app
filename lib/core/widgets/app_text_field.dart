@@ -13,7 +13,6 @@ class AppTextField extends StatelessWidget {
   final bool obscureText;
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? inputFormatters;
-  final String? Function(String?)? validator;
   final bool readOnly;
   final TextAlign textAlign;
   final EdgeInsetsGeometry? contentPadding;
@@ -36,7 +35,6 @@ class AppTextField extends StatelessWidget {
     this.obscureText = false,
     this.keyboardType,
     this.inputFormatters,
-    this.validator,
     this.readOnly = false,
     this.textAlign = TextAlign.start,
     this.contentPadding,
@@ -93,12 +91,11 @@ class AppTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
+    return TextField(
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
-      validator: validator,
       readOnly: readOnly,
       textAlign: textAlign,
       onChanged: onChanged,
