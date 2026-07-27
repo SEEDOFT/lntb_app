@@ -11,7 +11,7 @@ import 'package:lntb_app/routes/app_routes.dart';
 
 enum AuthMode { login, register }
 
-enum AuthMethod { phone, email }
+enum AuthMethod { email, phone }
 
 class AuthController extends GetxController {
   final ApiClient apiClient = Get.find<ApiClient>();
@@ -22,14 +22,26 @@ class AuthController extends GetxController {
 
   final isLoading = false.obs;
   final mode = AuthMode.login.obs;
-  final method = AuthMethod.phone.obs;
+  final method = AuthMethod.email.obs; // Prioritize Email
   final formKey = GlobalKey<FormState>();
+
+  final isPasswordVisible = false.obs;
+  final isConfirmPasswordVisible = false.obs;
+
   final countryCodeController = TextEditingController(text: '+855');
   final phoneNumberController = TextEditingController();
   final emailController = TextEditingController();
   final nameController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+
+  void togglePasswordVisibility() {
+    isPasswordVisible.value = !isPasswordVisible.value;
+  }
+
+  void toggleConfirmPasswordVisibility() {
+    isConfirmPasswordVisible.value = !isConfirmPasswordVisible.value;
+  }
 
   void goToRegister() {
     mode.value = AuthMode.register;
@@ -41,9 +53,18 @@ class AuthController extends GetxController {
     Get.offNamed(Routes.LOGIN);
   }
 
-  void choose(AuthMethod value) {
+  void chooseMethod(AuthMethod value) {
     method.value = value;
-    Get.toNamed(Routes.REGISTER);
+  }
+
+  Future<void> login() async {
+    mode.value = AuthMode.login;
+    await submit();
+  }
+
+  Future<void> register() async {
+    mode.value = AuthMode.register;
+    await submit();
   }
 
   Future<void> submit() async {
@@ -55,14 +76,14 @@ class AuthController extends GetxController {
       final data = <String, dynamic>{
         if (registering) 'name': nameController.text.trim(),
         if (method.value == AuthMethod.phone) ...{
-          'country_code': '+855',
+          'country_code': countryCodeController.text.trim(),
           'phone_number': phoneNumberController.text.trim(),
           if (registering && emailController.text.trim().isNotEmpty)
             'email': emailController.text.trim().toLowerCase(),
         } else ...{
           'email': emailController.text.trim().toLowerCase(),
           if (registering && phoneNumberController.text.trim().isNotEmpty)
-            'country_code': '+855',
+            'country_code': countryCodeController.text.trim(),
           if (registering && phoneNumberController.text.trim().isNotEmpty)
             'phone_number': phoneNumberController.text.trim(),
         },
