@@ -22,7 +22,8 @@ class ClaimSuccessView extends StatelessWidget {
                 const CircleAvatar(
                   radius: 54,
                   backgroundColor: AppColors.success,
-                  child: Icon(Icons.check_rounded, size: 72, color: Colors.white),
+                  child:
+                      Icon(Icons.check_rounded, size: 72, color: Colors.white),
                 ),
                 const SizedBox(height: 26),
                 Text(

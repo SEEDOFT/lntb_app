@@ -12,117 +12,117 @@ class NotificationsView extends GetView<NotificationController> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         backgroundColor: AppColors.inputFill,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.primary),
-          onPressed: () => Get.back(),
-        ),
-        title: const Text(
-          'Notifications',
-          style: TextStyle(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.bold,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: AppColors.primary),
+            onPressed: () => Get.back(),
+          ),
+          title: const Text(
+            'Notifications',
+            style: TextStyle(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
-      ),
-      body: Obx(() {
-        if (controller.isLoading.value && controller.notifications.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
-        }
+        body: Obx(() {
+          if (controller.isLoading.value && controller.notifications.isEmpty) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-        if (controller.notifications.isEmpty) {
-          return const Center(
-            child: Text(
-              'No notifications yet.',
-              style: TextStyle(color: AppColors.textSecondary),
+          if (controller.notifications.isEmpty) {
+            return const Center(
+              child: Text(
+                'No notifications yet.',
+                style: TextStyle(color: AppColors.textSecondary),
+              ),
+            );
+          }
+
+          return RefreshIndicator(
+            onRefresh: () => controller.fetchNotifications(refresh: true),
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              itemCount: controller.notifications.length + 1,
+              itemBuilder: (context, index) {
+                if (index == controller.notifications.length) {
+                  if (controller.hasMore.value) {
+                    controller.fetchNotifications();
+                    return const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                }
+
+                final notification = controller.notifications[index];
+                final isUnread = notification['status']['code'] == 'unread';
+
+                return Dismissible(
+                  key: Key(notification['id'].toString()),
+                  direction: DismissDirection.endToStart,
+                  background: Container(
+                    color: AppColors.error,
+                    alignment: Alignment.centerRight,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: const Icon(Icons.delete, color: Colors.white),
+                  ),
+                  onDismissed: (direction) {
+                    controller.deleteNotification(notification['id']);
+                  },
+                  child: Container(
+                    color: isUnread ? Colors.white : AppColors.inputFill,
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      leading: CircleAvatar(
+                        backgroundColor: isUnread
+                            ? AppColors.primary.withValues(alpha: 0.1)
+                            : Colors.grey.withValues(alpha: 0.1),
+                        child: Icon(
+                          _getIconForType(notification['type']['code']),
+                          color: isUnread ? AppColors.primary : Colors.grey,
+                        ),
+                      ),
+                      title: Text(
+                        notification['title'],
+                        style: TextStyle(
+                          fontWeight:
+                              isUnread ? FontWeight.bold : FontWeight.normal,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      subtitle: Text(
+                        notification['body'],
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 13,
+                        ),
+                      ),
+                      onTap: () {
+                        if (isUnread) {
+                          controller.markAsRead(notification['id']);
+                        }
+                        _showNotificationDetails(context, notification);
+                      },
+                    ),
+                  ),
+                );
+              },
             ),
           );
-        }
-
-        return RefreshIndicator(
-          onRefresh: () => controller.fetchNotifications(refresh: true),
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            itemCount: controller.notifications.length + 1,
-            itemBuilder: (context, index) {
-              if (index == controller.notifications.length) {
-                if (controller.hasMore.value) {
-                  controller.fetchNotifications();
-                  return const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Center(child: CircularProgressIndicator()),
-                  );
-                } else {
-                  return const SizedBox.shrink();
-                }
-              }
-
-              final notification = controller.notifications[index];
-              final isUnread = notification['status']['code'] == 'unread';
-
-              return Dismissible(
-                key: Key(notification['id'].toString()),
-                direction: DismissDirection.endToStart,
-                background: Container(
-                  color: AppColors.error,
-                  alignment: Alignment.centerRight,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: const Icon(Icons.delete, color: Colors.white),
-                ),
-                onDismissed: (direction) {
-                  controller.deleteNotification(notification['id']);
-                },
-                child: Container(
-                  color: isUnread ? Colors.white : AppColors.inputFill,
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    leading: CircleAvatar(
-                      backgroundColor: isUnread
-                          ? AppColors.primary.withValues(alpha: 0.1)
-                          : Colors.grey.withValues(alpha: 0.1),
-                      child: Icon(
-                        _getIconForType(notification['type']['code']),
-                        color: isUnread ? AppColors.primary : Colors.grey,
-                      ),
-                    ),
-                    title: Text(
-                      notification['title'],
-                      style: TextStyle(
-                        fontWeight:
-                            isUnread ? FontWeight.bold : FontWeight.normal,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    subtitle: Text(
-                      notification['body'],
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: 13,
-                      ),
-                    ),
-                    onTap: () {
-                      if (isUnread) {
-                        controller.markAsRead(notification['id']);
-                      }
-                      _showNotificationDetails(context, notification);
-                    },
-                  ),
-                ),
-              );
-            },
-          ),
-        );
-      }),
-    ),
-  );
-}
+        }),
+      ),
+    );
+  }
 
   IconData _getIconForType(String typeCode) {
     switch (typeCode) {

@@ -50,9 +50,7 @@ class RepositoryStateView<T> extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                unavailable
-                    ? Icons.cloud_off_outlined
-                    : Icons.inbox_outlined,
+                unavailable ? Icons.cloud_off_outlined : Icons.inbox_outlined,
                 size: 34,
                 color: AppColors.primary,
               ),

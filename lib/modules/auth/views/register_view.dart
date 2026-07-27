@@ -12,163 +12,163 @@ class RegisterView extends GetView<AuthController> {
   Widget build(BuildContext context) => GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
-        backgroundColor: AppColors.background,
-        body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 450),
-                child: Form(
-                  key: controller.formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const SizedBox(height: 8),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: IconButton(
-                          onPressed: controller.goToLogin,
-                          icon: const Icon(Icons.arrow_back),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      const Center(
-                        child: Icon(
-                          Icons.person_add,
-                          size: 64,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                      const SizedBox(height: 22),
-                      Text(
-                        'create_account'.tr,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: AppColors.textPrimary,
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 28),
-                      Obx(
-                        () => SegmentedButton<AuthMethod>(
-                          segments: [
-                            ButtonSegment(
-                              value: AuthMethod.phone,
-                              icon: const Icon(Icons.phone_android),
-                              label: Text('phone_number'.tr),
-                            ),
-                            ButtonSegment(
-                              value: AuthMethod.email,
-                              icon: const Icon(Icons.alternate_email),
-                              label: Text('email'.tr),
-                            ),
-                          ],
-                          selected: {controller.method.value},
-                          onSelectionChanged: (selection) {
-                            controller.method.value = selection.first;
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 18),
-                      _RegisterField(
-                        controller: controller.nameController,
-                        label: 'name'.tr,
-                        icon: Icons.person_outline,
-                      ),
-                      const SizedBox(height: 16),
-                      Obx(
-                        () => controller.method.value == AuthMethod.phone
-                            ? _PhoneField(
-                                controller: controller.phoneNumberController,
-                              )
-                            : _RegisterField(
-                                controller: controller.emailController,
-                                label: 'email'.tr,
-                                icon: Icons.email_outlined,
-                                keyboardType: TextInputType.emailAddress,
-                              ),
-                      ),
-                      const SizedBox(height: 16),
-                      _RegisterField(
-                        controller: controller.passwordController,
-                        label: 'password'.tr,
-                        icon: Icons.lock_outline,
-                        obscureText: true,
-                        minimumLength: 12,
-                      ),
-                      const SizedBox(height: 16),
-                      _RegisterField(
-                        controller: controller.confirmPasswordController,
-                        label: 'confirm_password'.tr,
-                        icon: Icons.lock_outline,
-                        obscureText: true,
-                        matches: controller.passwordController,
-                      ),
-                      const SizedBox(height: 28),
-                      Obx(
-                        () => ElevatedButton(
-                          onPressed: controller.isLoading.value
-                              ? null
-                              : controller.submit,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
+          backgroundColor: AppColors.background,
+          body: SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 450),
+                  child: Form(
+                    key: controller.formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const SizedBox(height: 8),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: IconButton(
+                            onPressed: controller.goToLogin,
+                            icon: const Icon(Icons.arrow_back),
                           ),
-                          child: controller.isLoading.value
-                              ? const SizedBox.square(
-                                  dimension: 20,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2,
-                                  ),
+                        ),
+                        const SizedBox(height: 12),
+                        const Center(
+                          child: Icon(
+                            Icons.person_add,
+                            size: 64,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        const SizedBox(height: 22),
+                        Text(
+                          'create_account'.tr,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: AppColors.textPrimary,
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 28),
+                        Obx(
+                          () => SegmentedButton<AuthMethod>(
+                            segments: [
+                              ButtonSegment(
+                                value: AuthMethod.phone,
+                                icon: const Icon(Icons.phone_android),
+                                label: Text('phone_number'.tr),
+                              ),
+                              ButtonSegment(
+                                value: AuthMethod.email,
+                                icon: const Icon(Icons.alternate_email),
+                                label: Text('email'.tr),
+                              ),
+                            ],
+                            selected: {controller.method.value},
+                            onSelectionChanged: (selection) {
+                              controller.method.value = selection.first;
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 18),
+                        _RegisterField(
+                          controller: controller.nameController,
+                          label: 'name'.tr,
+                          icon: Icons.person_outline,
+                        ),
+                        const SizedBox(height: 16),
+                        Obx(
+                          () => controller.method.value == AuthMethod.phone
+                              ? _PhoneField(
+                                  controller: controller.phoneNumberController,
                                 )
-                              : Text(
-                                  'register'.tr,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                              : _RegisterField(
+                                  controller: controller.emailController,
+                                  label: 'email'.tr,
+                                  icon: Icons.email_outlined,
+                                  keyboardType: TextInputType.emailAddress,
                                 ),
                         ),
-                      ),
-                      const SizedBox(height: 30),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            '${'already_have_account'.tr} ',
-                            style: const TextStyle(
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: controller.goToLogin,
-                            child: Text(
-                              'login'.tr,
-                              style: const TextStyle(
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.w700,
+                        const SizedBox(height: 16),
+                        _RegisterField(
+                          controller: controller.passwordController,
+                          label: 'password'.tr,
+                          icon: Icons.lock_outline,
+                          obscureText: true,
+                          minimumLength: 12,
+                        ),
+                        const SizedBox(height: 16),
+                        _RegisterField(
+                          controller: controller.confirmPasswordController,
+                          label: 'confirm_password'.tr,
+                          icon: Icons.lock_outline,
+                          obscureText: true,
+                          matches: controller.passwordController,
+                        ),
+                        const SizedBox(height: 28),
+                        Obx(
+                          () => ElevatedButton(
+                            onPressed: controller.isLoading.value
+                                ? null
+                                : controller.submit,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
                               ),
                             ),
+                            child: controller.isLoading.value
+                                ? const SizedBox.square(
+                                    dimension: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : Text(
+                                    'register'.tr,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
                           ),
-                        ],
-                      ),
-                    ],
+                        ),
+                        const SizedBox(height: 30),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              '${'already_have_account'.tr} ',
+                              style: const TextStyle(
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: controller.goToLogin,
+                              child: Text(
+                                'login'.tr,
+                                style: const TextStyle(
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
           ),
         ),
-      ),
-    );
+      );
 }
 
 class _PhoneField extends StatelessWidget {

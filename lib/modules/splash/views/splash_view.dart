@@ -68,7 +68,8 @@ class SplashView extends StatelessWidget {
                       const SizedBox(height: 4),
                       const Text(
                         'Smart Agriculture, Better Life',
-                        style: TextStyle(fontSize: 12, color: Color(0xFFDDEEFF)),
+                        style:
+                            TextStyle(fontSize: 12, color: Color(0xFFDDEEFF)),
                       ),
                       const Spacer(),
                       const SizedBox(

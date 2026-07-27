@@ -48,9 +48,9 @@ class DevicesView extends GetView<DeviceController> {
               return const Center(child: CircularProgressIndicator());
             }
             if (list.isEmpty) {
-              return _EmptyDevices(
-                title: sharedOnly ? 'no_shared_devices'.tr : 'no_devices'.tr,
-                actionLabel: sharedOnly ? null : 'claim_first_device'.tr,
+              return _State(
+                icon: Icons.router_outlined,
+                text: sharedOnly ? 'no_shared_devices'.tr : 'no_devices'.tr,
                 action: sharedOnly ? null : controller.goToAddDevice,
               );
             }

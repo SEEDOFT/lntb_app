@@ -19,158 +19,158 @@ class HomeView extends StatelessWidget {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-      body: RefreshIndicator(
-        onRefresh: devices.fetchDevices,
-        child: CustomScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          slivers: [
-            SliverAppBar(
-              pinned: true,
-              centerTitle: false,
-              backgroundColor: AppColors.background,
-              surfaceTintColor: AppColors.background,
-              titleSpacing: 16,
-              title: Obx(
-                () => Row(
-                  children: [
-                    Container(
-                      width: 44,
-                      height: 44,
-                      padding: const EdgeInsets.all(7),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: AppColors.cardBorder),
-                      ),
-                      child: Image.asset(AppAssets.logo),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'hello'.tr,
-                            style: const TextStyle(
-                              color: AppColors.textSecondary,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          Text(
-                            profile.user.value?.name ?? 'app_title'.tr,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: AppColors.textPrimary,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              actions: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 10),
-                  child: IconButton.filledTonal(
-                    onPressed: () => Get.toNamed(Routes.NOTIFICATIONS),
-                    style: IconButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: AppColors.textPrimary,
-                    ),
-                    icon: Obx(
-                      () => Badge.count(
-                        count: notifications.unreadCount.value,
-                        isLabelVisible: notifications.unreadCount.value > 0,
-                        child: const Icon(Icons.notifications_none_rounded),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
-              sliver: SliverList(
-                delegate: SliverChildListDelegate([
-                  Obx(() => _DeviceOverview(devices: devices)),
-                  const SizedBox(height: 24),
-                  _SectionHeader(title: 'quick_actions'.tr),
-                  const SizedBox(height: 12),
-                  Row(
+        body: RefreshIndicator(
+          onRefresh: devices.fetchDevices,
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverAppBar(
+                pinned: true,
+                centerTitle: false,
+                backgroundColor: AppColors.background,
+                surfaceTintColor: AppColors.background,
+                titleSpacing: 16,
+                title: Obx(
+                  () => Row(
                     children: [
-                      Expanded(
-                        child: _QuickAction(
-                          icon: Icons.qr_code_scanner_rounded,
-                          label: 'claim_device'.tr,
-                          color: AppColors.primary,
-                          onTap: () => Get.toNamed(Routes.CLAIM),
+                      Container(
+                        width: 44,
+                        height: 44,
+                        padding: const EdgeInsets.all(7),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: AppColors.cardBorder),
                         ),
+                        child: Image.asset(AppAssets.logo),
                       ),
-                      const SizedBox(width: 10),
+                      const SizedBox(width: 12),
                       Expanded(
-                        child: _QuickAction(
-                          icon: Icons.task_alt_rounded,
-                          label: 'today_tasks'.tr,
-                          color: AppColors.info,
-                          onTap: () => Get.toNamed(Routes.FARM_TASKS),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: _QuickAction(
-                          icon: Icons.water_drop_outlined,
-                          label: 'irrigation'.tr,
-                          color: AppColors.primaryDark,
-                          onTap: () => Get.toNamed(Routes.IRRIGATION),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'hello'.tr,
+                              style: const TextStyle(
+                                color: AppColors.textSecondary,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Text(
+                              profile.user.value?.name ?? 'app_title'.tr,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: AppColors.textPrimary,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 26),
-                  _SectionHeader(
-                    title: 'recent_devices'.tr,
-                    actionLabel: 'claim_device'.tr,
-                    onAction: () => Get.toNamed(Routes.CLAIM),
+                ),
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: IconButton.filledTonal(
+                      onPressed: () => Get.toNamed(Routes.NOTIFICATIONS),
+                      style: IconButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: AppColors.textPrimary,
+                      ),
+                      icon: Obx(
+                        () => Badge.count(
+                          count: notifications.unreadCount.value,
+                          isLabelVisible: notifications.unreadCount.value > 0,
+                          child: const Icon(Icons.notifications_none_rounded),
+                        ),
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: 12),
-                  Obx(() {
-                    if (devices.devices.isEmpty) {
-                      return _EmptyDeviceCard(
-                        onAdd: () => Get.toNamed(Routes.CLAIM),
-                      );
-                    }
-
-                    return Column(
-                      children: devices.devices
-                          .take(4)
-                          .map(
-                            (device) => _DeviceCardItem(
-                              name: device.name,
-                              mac: device.macAddress,
-                              role: device.isOwner
-                                  ? 'owner'.tr
-                                  : 'shared_access_role'.tr,
-                              isOnline: device.isOnline,
-                              onTap: () => devices.open(device),
-                            ),
-                          )
-                          .toList(),
-                    );
-                  }),
-                ]),
+                ],
               ),
-            ),
-          ],
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    Obx(() => _DeviceOverview(devices: devices)),
+                    const SizedBox(height: 24),
+                    _SectionHeader(title: 'quick_actions'.tr),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _QuickAction(
+                            icon: Icons.qr_code_scanner_rounded,
+                            label: 'claim_device'.tr,
+                            color: AppColors.primary,
+                            onTap: () => Get.toNamed(Routes.CLAIM),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: _QuickAction(
+                            icon: Icons.task_alt_rounded,
+                            label: 'today_tasks'.tr,
+                            color: AppColors.info,
+                            onTap: () => Get.toNamed(Routes.FARM_TASKS),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: _QuickAction(
+                            icon: Icons.water_drop_outlined,
+                            label: 'irrigation'.tr,
+                            color: AppColors.primaryDark,
+                            onTap: () => Get.toNamed(Routes.IRRIGATION),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 26),
+                    _SectionHeader(
+                      title: 'recent_devices'.tr,
+                      actionLabel: 'claim_device'.tr,
+                      onAction: () => Get.toNamed(Routes.CLAIM),
+                    ),
+                    const SizedBox(height: 12),
+                    Obx(() {
+                      if (devices.devices.isEmpty) {
+                        return _EmptyDeviceCard(
+                          onAdd: () => Get.toNamed(Routes.CLAIM),
+                        );
+                      }
+
+                      return Column(
+                        children: devices.devices
+                            .take(4)
+                            .map(
+                              (device) => _DeviceCardItem(
+                                name: device.name,
+                                mac: device.macAddress,
+                                role: device.isOwner
+                                    ? 'owner'.tr
+                                    : 'shared_access_role'.tr,
+                                isOnline: device.isOnline,
+                                onTap: () => devices.open(device),
+                              ),
+                            )
+                            .toList(),
+                      );
+                    }),
+                  ]),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 }
 
 class _DeviceOverview extends StatelessWidget {
@@ -504,8 +504,7 @@ class _StatusBadge extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
         decoration: BoxDecoration(
-          color:
-              isOnline ? AppColors.onlineBadgeBg : AppColors.offlineBadgeBg,
+          color: isOnline ? AppColors.onlineBadgeBg : AppColors.offlineBadgeBg,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(

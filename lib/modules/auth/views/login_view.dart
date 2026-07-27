@@ -25,178 +25,179 @@ class LoginView extends GetView<AuthController> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         const SizedBox(height: 32),
-                      Container(
-                        height: 150,
-                        decoration: BoxDecoration(
-                          color: AppColors.inputFill,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: const Center(
-                          child: Icon(
-                            Icons.eco,
-                            size: 64,
-                            color: AppColors.primary,
+                        Container(
+                          height: 150,
+                          decoration: BoxDecoration(
+                            color: AppColors.inputFill,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: const Center(
+                            child: Icon(
+                              Icons.eco,
+                              size: 64,
+                              color: AppColors.primary,
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 36),
-                      const Text(
-                        'LNTB IoT',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: AppColors.primary,
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
+                        const SizedBox(height: 36),
+                        const Text(
+                          'LNTB',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: AppColors.primary,
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      Text(
-                        'phase_one_tagline'.tr,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: AppColors.textSecondary,
-                          fontSize: 15,
+                        Text(
+                          'phase_one_tagline'.tr,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 15,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 32),
-                      Obx(
-                        () => SegmentedButton<AuthMethod>(
-                          segments: [
-                            ButtonSegment(
-                              value: AuthMethod.phone,
-                              icon: const Icon(Icons.phone_android),
-                              label: Text('phone_number'.tr),
-                            ),
-                            ButtonSegment(
-                              value: AuthMethod.email,
-                              icon: const Icon(Icons.alternate_email),
-                              label: Text('email'.tr),
-                            ),
-                          ],
-                          selected: {controller.method.value},
-                          onSelectionChanged: (selection) {
-                            controller.method.value = selection.first;
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 18),
-                      Obx(
-                        () => controller.method.value == AuthMethod.phone
-                            ? _PhoneField(
-                                controller: controller.phoneNumberController,
-                              )
-                            : _AuthField(
-                                controller: controller.emailController,
-                                label: 'email'.tr,
-                                icon: Icons.email_outlined,
-                                keyboardType: TextInputType.emailAddress,
+                        const SizedBox(height: 32),
+                        Obx(
+                          () => SegmentedButton<AuthMethod>(
+                            segments: [
+                              ButtonSegment(
+                                value: AuthMethod.phone,
+                                icon: const Icon(Icons.phone_android),
+                                label: Text('phone_number'.tr),
                               ),
-                      ),
-                      const SizedBox(height: 16),
-                      _AuthField(
-                        controller: controller.passwordController,
-                        label: 'password'.tr,
-                        icon: Icons.lock_outline,
-                        obscureText: true,
-                      ),
-                      const SizedBox(height: 24),
-                      Obx(
-                        () => ElevatedButton(
-                          onPressed: controller.isLoading.value
-                              ? null
-                              : controller.submit,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            elevation: 0,
+                              ButtonSegment(
+                                value: AuthMethod.email,
+                                icon: const Icon(Icons.alternate_email),
+                                label: Text('email'.tr),
+                              ),
+                            ],
+                            selected: {controller.method.value},
+                            onSelectionChanged: (selection) {
+                              controller.method.value = selection.first;
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 18),
+                        Obx(
+                          () => controller.method.value == AuthMethod.phone
+                              ? _PhoneField(
+                                  controller: controller.phoneNumberController,
+                                )
+                              : _AuthField(
+                                  controller: controller.emailController,
+                                  label: 'email'.tr,
+                                  icon: Icons.email_outlined,
+                                  keyboardType: TextInputType.emailAddress,
+                                ),
+                        ),
+                        const SizedBox(height: 16),
+                        _AuthField(
+                          controller: controller.passwordController,
+                          label: 'password'.tr,
+                          icon: Icons.lock_outline,
+                          obscureText: true,
+                        ),
+                        const SizedBox(height: 24),
+                        Obx(
+                          () => ElevatedButton(
+                            onPressed: controller.isLoading.value
+                                ? null
+                                : controller.submit,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: controller.isLoading.value
+                                ? const SizedBox.square(
+                                    dimension: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : Text(
+                                    'login'.tr,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        Row(
+                          children: [
+                            const Expanded(child: Divider()),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 14),
+                              child: Text(
+                                'or'.tr,
+                                style: const TextStyle(
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                            ),
+                            const Expanded(child: Divider()),
+                          ],
+                        ),
+                        const SizedBox(height: 24),
+                        OutlinedButton.icon(
+                          onPressed: controller.loginWithGoogle,
+                          icon: const Icon(
+                            Icons.g_mobiledata,
+                            size: 28,
+                            color: Colors.blue,
+                          ),
+                          label: Text('continue_google'.tr),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: AppColors.textPrimary,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            side: const BorderSide(
+                              color: AppColors.inputBorder,
+                            ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          child: controller.isLoading.value
-                              ? const SizedBox.square(
-                                  dimension: 20,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : Text(
-                                  'login'.tr,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
                         ),
-                      ),
-                      const SizedBox(height: 24),
-                      Row(
-                        children: [
-                          const Expanded(child: Divider()),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 14),
-                            child: Text(
-                              'or'.tr,
+                        const SizedBox(height: 30),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              '${'dont_have_account'.tr} ',
                               style: const TextStyle(
                                 color: AppColors.textSecondary,
                               ),
                             ),
-                          ),
-                          const Expanded(child: Divider()),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
-                      OutlinedButton.icon(
-                        onPressed: controller.loginWithGoogle,
-                        icon: const Icon(
-                          Icons.g_mobiledata,
-                          size: 28,
-                          color: Colors.blue,
-                        ),
-                        label: Text('continue_google'.tr),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: AppColors.textPrimary,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          side: const BorderSide(
-                            color: AppColors.inputBorder,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 30),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            '${'dont_have_account'.tr} ',
-                            style: const TextStyle(
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: controller.goToRegister,
-                            child: Text(
-                              'register'.tr,
-                              style: const TextStyle(
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.w700,
+                            GestureDetector(
+                              onTap: controller.goToRegister,
+                              child: Text(
+                                'register'.tr,
+                                style: const TextStyle(
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
           ),
         ),
-      ),
-    );
+      );
 }
 
 class _PhoneField extends StatelessWidget {

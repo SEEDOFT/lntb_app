@@ -50,7 +50,10 @@ class MainView extends GetView<MainController> {
                 destinations: [
                   NavigationDestination(
                     icon: const Icon(Icons.home_outlined),
-                    selectedIcon: const Icon(Icons.home_rounded, color: AppColors.primary),
+                    selectedIcon: const Icon(
+                      Icons.home_rounded,
+                      color: AppColors.primary,
+                    ),
                     label: 'home'.tr,
                   ),
                   NavigationDestination(
@@ -71,12 +74,18 @@ class MainView extends GetView<MainController> {
                   ),
                   NavigationDestination(
                     icon: const Icon(Icons.history_outlined),
-                    selectedIcon: const Icon(Icons.history_rounded, color: AppColors.primary),
+                    selectedIcon: const Icon(
+                      Icons.history_rounded,
+                      color: AppColors.primary,
+                    ),
                     label: 'history'.tr,
                   ),
                   NavigationDestination(
                     icon: const Icon(Icons.person_outline_rounded),
-                    selectedIcon: const Icon(Icons.person_rounded, color: AppColors.primary),
+                    selectedIcon: const Icon(
+                      Icons.person_rounded,
+                      color: AppColors.primary,
+                    ),
                     label: 'profile'.tr,
                   ),
                 ],

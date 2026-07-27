@@ -5,6 +5,7 @@ import 'package:lntb_app/modules/shared_users/controllers/shared_users_controlle
 
 class SharedUsersView extends GetView<SharedUsersController> {
   const SharedUsersView({super.key});
+
   @override
   Widget build(BuildContext context) => GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
@@ -39,7 +40,7 @@ class SharedUsersView extends GetView<SharedUsersController> {
                         ),
                         const SizedBox(height: 10),
                         TextField(
-                          controller: controller.inviteContactController,
+                          controller: controller.inputController,
                           decoration: InputDecoration(
                             hintText: 'invite_contact_hint'.tr,
                             prefixIcon: const Icon(Icons.phone_android),
@@ -49,9 +50,9 @@ class SharedUsersView extends GetView<SharedUsersController> {
                         SizedBox(
                           width: double.infinity,
                           child: FilledButton.icon(
-                            onPressed: controller.canInvite
-                                ? controller.inviteUser
-                                : null,
+                            onPressed: controller.isLoading.value
+                                ? null
+                                : controller.grantAccess,
                             icon: const Icon(Icons.person_add),
                             label: Text('send_invite'.tr),
                           ),

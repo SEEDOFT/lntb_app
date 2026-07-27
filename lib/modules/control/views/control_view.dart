@@ -54,13 +54,14 @@ class ControlView extends GetView<ControlController> {
                         title: 'fan'.tr,
                         icon: Icons.air,
                         value: controller.latestState('fan.start', 'fan.stop'),
-                        onChanged: (on) =>
-                            controller.sendCommand(on ? 'fan.start' : 'fan.stop'),
+                        onChanged: (on) => controller
+                            .sendCommand(on ? 'fan.start' : 'fan.stop'),
                       ),
                       _Toggle(
                         title: 'roof'.tr,
                         icon: Icons.roofing_outlined,
-                        value: controller.latestState('roof.open', 'roof.close'),
+                        value:
+                            controller.latestState('roof.open', 'roof.close'),
                         onChanged: (on) => controller
                             .sendCommand(on ? 'roof.open' : 'roof.close'),
                       ),
@@ -74,43 +75,34 @@ class ControlView extends GetView<ControlController> {
                       ),
                     ],
                   ),
-                          .sendCommand(on ? 'roof.open' : 'roof.close'),
-                    ),
-                    _Toggle(
-                      title: 'camera'.tr,
-                      icon: Icons.camera_alt_outlined,
-                      button: true,
-                      value: false,
-                      onChanged: (_) =>
-                          controller.sendCommand('camera.capture'),
-                    ),
-                  ],
                 ),
-              ),
-              const SizedBox(height: 22),
-              Text(
-                'recent_activity'.tr,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium
-                    ?.copyWith(fontWeight: FontWeight.w700),
-              ),
-              const SizedBox(height: 8),
-              Obx(
-                () => controller.history.isEmpty
-                    ? Padding(
-                        padding: const EdgeInsets.all(24),
-                        child:
-                            Text('no_history'.tr, textAlign: TextAlign.center),
-                      )
-                    : Column(
-                        children: controller.history
-                            .take(10)
-                            .map((item) => _HistoryTile(record: item))
-                            .toList(),
-                      ),
-              ),
-            ],
+                const SizedBox(height: 22),
+                Text(
+                  'recent_activity'.tr,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium
+                      ?.copyWith(fontWeight: FontWeight.w700),
+                ),
+                const SizedBox(height: 8),
+                Obx(
+                  () => controller.history.isEmpty
+                      ? Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Text(
+                            'no_history'.tr,
+                            textAlign: TextAlign.center,
+                          ),
+                        )
+                      : Column(
+                          children: controller.history
+                              .take(10)
+                              .map((item) => _HistoryTile(record: item))
+                              .toList(),
+                        ),
+                ),
+              ],
+            ),
           ),
         ),
       );

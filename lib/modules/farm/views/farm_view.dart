@@ -48,11 +48,16 @@ class FarmView extends GetView<FarmContextController> {
                       decoration: BoxDecoration(
                         color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
+                        border: Border.all(
+                          color: Colors.black.withValues(alpha: 0.05),
+                        ),
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.location_on, color: AppColors.primary),
+                          const Icon(
+                            Icons.location_on,
+                            color: AppColors.primary,
+                          ),
                           const SizedBox(width: 10),
                           Expanded(
                             child: DropdownButtonHideUnderline(
@@ -107,7 +112,11 @@ class FarmView extends GetView<FarmContextController> {
                       children: [
                         _Tool('today_tasks', Icons.task_alt, Routes.FARM_TASKS),
                         _Tool('environment', Icons.eco, Routes.ENVIRONMENT),
-                        _Tool('irrigation', Icons.water_drop, Routes.IRRIGATION),
+                        _Tool(
+                          'irrigation',
+                          Icons.water_drop,
+                          Routes.IRRIGATION,
+                        ),
                         _Tool('usage_cost', Icons.paid_outlined, Routes.USAGE),
                         _Tool('ripeness', Icons.camera_alt, Routes.RIPENESS),
                         _Tool('farm_log', Icons.menu_book, Routes.FARM_LOG),

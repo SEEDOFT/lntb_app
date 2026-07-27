@@ -597,19 +597,28 @@ class _AssistantViewState extends State<AssistantView> {
 class HistoryHubView extends StatelessWidget {
   const HistoryHubView({super.key});
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: Text('history'.tr)),
-        body: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            _HistoryLink('control_history', Icons.settings_remote,
-                Routes.CONTROL_HISTORY),
-            _HistoryLink('farm_log', Icons.menu_book, Routes.FARM_LOG),
-            _HistoryLink('usage_cost', Icons.paid_outlined, Routes.USAGE),
-            _HistoryLink(
-                'ripeness', Icons.camera_alt_outlined, Routes.RIPENESS),
-            _HistoryLink('harvest', Icons.agriculture, Routes.HARVEST),
-          ],
+  Widget build(BuildContext context) => GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          appBar: AppBar(title: Text('history'.tr)),
+          body: ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              _HistoryLink(
+                'control_history',
+                Icons.settings_remote,
+                Routes.CONTROL_HISTORY,
+              ),
+              _HistoryLink('farm_log', Icons.menu_book, Routes.FARM_LOG),
+              _HistoryLink('usage_cost', Icons.paid_outlined, Routes.USAGE),
+              _HistoryLink(
+                'ripeness',
+                Icons.camera_alt_outlined,
+                Routes.RIPENESS,
+              ),
+              _HistoryLink('harvest', Icons.agriculture, Routes.HARVEST),
+            ],
+          ),
         ),
       );
 }
