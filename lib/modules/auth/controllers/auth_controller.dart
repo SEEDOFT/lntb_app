@@ -161,8 +161,4 @@ class AuthController extends GetxController {
   String _message(Object error) =>
       error.toString().replaceFirst('Exception: ', '');
 
-  @override
-  void onClose() {
-    super.onClose();
-  }
 }

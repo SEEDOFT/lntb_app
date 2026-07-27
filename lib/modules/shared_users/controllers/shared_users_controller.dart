@@ -52,8 +52,5 @@ class SharedUsersController extends GetxController {
     users.remove(access);
   }
 
-  @override
-  void onClose() {
-    super.onClose();
-  }
+
 }
