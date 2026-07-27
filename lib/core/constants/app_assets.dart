@@ -13,6 +13,8 @@ abstract class AppAssets {
   static const String splashSmartFarm = '$_imagesPath/splash_smart_farm.png';
 
   // SVG Assets
+  static const String googleIcon = '$_svgsPath/google-icon-logo.svg';
+  static const String cambodiaFlag = '$_svgsPath/Cambodia-flag.svg';
   static const String onboardingStep1Farmer =
       '$_svgsPath/onboarding_step_1_farmer.svg';
   static const String onboardingStep2Devices =
