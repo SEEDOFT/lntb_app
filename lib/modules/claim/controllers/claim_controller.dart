@@ -70,9 +70,6 @@ class ClaimController extends GetxController {
 
   @override
   void onClose() {
-    macController.dispose();
-    codeController.dispose();
-    nameController.dispose();
     super.onClose();
   }
 }

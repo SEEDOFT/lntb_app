@@ -54,7 +54,6 @@ class SharedUsersController extends GetxController {
 
   @override
   void onClose() {
-    inputController.dispose();
     super.onClose();
   }
 }

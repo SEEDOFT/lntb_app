@@ -163,12 +163,6 @@ class AuthController extends GetxController {
 
   @override
   void onClose() {
-    countryCodeController.dispose();
-    phoneNumberController.dispose();
-    emailController.dispose();
-    nameController.dispose();
-    passwordController.dispose();
-    confirmPasswordController.dispose();
     super.onClose();
   }
 }
