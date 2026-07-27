@@ -1,29 +1,38 @@
 import 'package:get/get.dart';
-import 'package:lntb_app/core/network/api_client.dart';
+import 'package:lntb_app/core/models/phase_one_models.dart';
+import 'package:lntb_app/core/repositories/device_repository.dart';
+import 'package:lntb_app/routes/app_routes.dart';
 
 class DeviceController extends GetxController {
-  final ApiClient apiClient = Get.find<ApiClient>();
+  final DeviceRepository repository = Get.find<DeviceRepository>();
   final isLoading = false.obs;
+  final error = RxnString();
+  final devices = <DeviceModel>[].obs;
 
-  // Placeholders for devices matching the mockup
-  final ownedDevices = [
-    {'name': 'Smart Farm #1', 'mac': 'AA:BB:CC:DD:EE:FF', 'is_online': true},
-    {
-      'name': 'Greenhouse Controller',
-      'mac': '11:22:33:44:55:66',
-      'is_online': false,
-    },
-  ].obs;
+  List<DeviceModel> get ownedDevices =>
+      devices.where((item) => item.isOwner).toList();
+  List<DeviceModel> get sharedDevices =>
+      devices.where((item) => !item.isOwner).toList();
 
-  final sharedDevices = [
-    {'name': "Dara's Farm", 'mac': 'AA:11:BB:22:CC:33', 'is_online': true},
-  ].obs;
-
-  void fetchDevices() {
-    // TODO: Implement API call to GET /api/v1/devices
+  @override
+  void onInit() {
+    super.onInit();
+    fetchDevices();
   }
 
-  void goToAddDevice() {
-    Get.toNamed('/claim');
+  Future<void> fetchDevices() async {
+    isLoading.value = true;
+    error.value = null;
+    try {
+      devices.assignAll(await repository.getDevices());
+    } catch (exception) {
+      error.value = exception.toString();
+    } finally {
+      isLoading.value = false;
+    }
   }
+
+  void open(DeviceModel device) =>
+      Get.toNamed(Routes.CONTROL, arguments: device);
+  void goToAddDevice() => Get.toNamed(Routes.CLAIM);
 }

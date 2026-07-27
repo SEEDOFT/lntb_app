@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart' hide Response;
+import 'package:lntb_app/core/services/language_service.dart';
 import 'package:lntb_app/routes/app_routes.dart';
 
 class ApiClient {
@@ -29,6 +30,10 @@ class ApiClient {
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';
           }
+          final lang = Get.isRegistered<LanguageService>()
+              ? LanguageService.to.currentLanguageCode
+              : 'km';
+          options.headers['Accept-Language'] = lang;
           return handler.next(options);
         },
         onError: (DioException e, handler) async {

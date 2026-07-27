@@ -1,53 +1,60 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lntb_app/core/network/api_client.dart';
+import 'package:lntb_app/core/models/phase_one_models.dart';
+import 'package:lntb_app/core/repositories/device_repository.dart';
 
 class SharedUsersController extends GetxController {
-  final ApiClient apiClient = Get.find<ApiClient>();
+  final repository = Get.find<DeviceRepository>();
+  late final DeviceModel device;
+  final users = <DeviceAccess>[].obs;
+  final inputController = TextEditingController();
   final isLoading = false.obs;
+  static const maxShared = 5;
 
-  // Mock data matching the mockup
-  final users = [
-    {'name': 'Sokun', 'email': 'sokun@example.com', 'role': 'Owner'},
-    {'name': 'Dara', 'email': 'dara@example.com', 'role': 'Shared'},
-    {'name': 'Bora', 'email': 'bora@example.com', 'role': 'Shared'},
-  ].obs;
-
-  int get sharedCount => users.where((u) => u['role'] != 'Owner').length;
-  final int maxShared = 5;
-
-  void grantAccess(String identifier) async {
-    if (identifier.isEmpty) return;
-    if (sharedCount >= maxShared) {
-      Get.snackbar(
-        'Error',
-        'Maximum 5 shared users reached.',
-        snackPosition: SnackPosition.BOTTOM,
-      );
-      return;
-    }
-
-    isLoading.value = true;
-    await Future.delayed(const Duration(seconds: 1)); // API call
-    isLoading.value = false;
-
-    users.add({'name': 'New User', 'email': identifier, 'role': 'Shared'});
-    Get.snackbar(
-      'Success',
-      'Access granted successfully.',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+  @override
+  void onInit() {
+    super.onInit();
+    device = Get.arguments as DeviceModel;
+    load();
   }
 
-  void revokeAccess(int index) async {
+  Future<void> load() async {
     isLoading.value = true;
-    await Future.delayed(const Duration(seconds: 1)); // API call
-    isLoading.value = false;
+    try {
+      users.assignAll(await repository.getSharedUsers(device.id));
+    } catch (error) {
+      Get.snackbar('load_failed'.tr, error.toString());
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
-    users.removeAt(index);
-    Get.snackbar(
-      'Success',
-      'Access revoked.',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+  Future<void> grantAccess() async {
+    if (inputController.text.trim().isEmpty) return;
+    if (users.length >= maxShared) {
+      Get.snackbar('limit_reached'.tr, 'five_user_limit'.tr);
+      return;
+    }
+    isLoading.value = true;
+    try {
+      await repository.grantAccess(device.id, inputController.text);
+      inputController.clear();
+      await load();
+    } catch (error) {
+      Get.snackbar('share_failed'.tr, error.toString());
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> revoke(DeviceAccess access) async {
+    await repository.revokeAccess(device.id, access.id);
+    users.remove(access);
+  }
+
+  @override
+  void onClose() {
+    inputController.dispose();
+    super.onClose();
   }
 }

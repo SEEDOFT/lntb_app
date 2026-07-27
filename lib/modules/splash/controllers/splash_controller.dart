@@ -2,10 +2,14 @@ import 'package:get/get.dart';
 import 'package:flutter/foundation.dart';
 import 'package:lntb_app/core/constants/api_endpoints.dart';
 import 'package:lntb_app/core/network/api_client.dart';
+import 'package:lntb_app/core/services/fcm_token_sync_service.dart';
 import 'package:lntb_app/routes/app_routes.dart';
 
 class SplashController extends GetxController {
   final ApiClient apiClient = Get.find<ApiClient>();
+  final FcmTokenSyncService? fcmTokens = Get.isRegistered<FcmTokenSyncService>()
+      ? Get.find<FcmTokenSyncService>()
+      : null;
 
   @override
   void onInit() {
@@ -15,9 +19,6 @@ class SplashController extends GetxController {
 
   void _initializeApp() async {
     try {
-      // Artificial delay for splash screen visibility
-      await Future.delayed(const Duration(seconds: 2));
-
       final token = await apiClient.storage.read(key: 'auth_token');
       final hasSeenOnboarding = await apiClient.storage.read(
         key: 'has_seen_onboarding',
@@ -25,8 +26,11 @@ class SplashController extends GetxController {
 
       if (token != null && token.isNotEmpty) {
         try {
-          // Actively validate the token with the backend
-          await apiClient.get(ApiEndpoints.me);
+          await Future.wait([
+            apiClient.get(ApiEndpoints.me),
+            Future<void>.delayed(const Duration(milliseconds: 2200)),
+          ]);
+          await fcmTokens?.syncAuthenticatedDevice();
           Get.offAllNamed(Routes.MAIN);
         } catch (e) {
           // If the error was a 401, the ApiClient interceptor has already deleted the token
@@ -40,8 +44,10 @@ class SplashController extends GetxController {
           }
         }
       } else if (hasSeenOnboarding == 'true') {
+        await Future<void>.delayed(const Duration(milliseconds: 2200));
         Get.offAllNamed(Routes.LOGIN);
       } else {
+        await Future<void>.delayed(const Duration(milliseconds: 2200));
         Get.offAllNamed(Routes.ONBOARDING);
       }
     } catch (e) {

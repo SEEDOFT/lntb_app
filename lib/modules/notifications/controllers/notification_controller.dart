@@ -8,6 +8,7 @@ class NotificationController extends GetxController {
 
   final isLoading = false.obs;
   final notifications = <dynamic>[].obs;
+  final unreadCount = 0.obs;
 
   // Pagination
   final currentPage = 1.obs;
@@ -45,6 +46,7 @@ class NotificationController extends GetxController {
         notifications.value = currentList;
 
         final lastPage = apiResponse.meta?['last_page'] as int?;
+        _syncUnreadCount(apiResponse.meta);
 
         if (lastPage != null && currentPage.value >= lastPage) {
           hasMore.value = false;
@@ -71,18 +73,30 @@ class NotificationController extends GetxController {
 
   Future<void> markAsRead(int notificationId) async {
     try {
-      await _apiClient.patch(
+      final response = await _apiClient.patch(
         '${ApiEndpoints.notifications}/$notificationId',
         data: {'status': 'read'},
       );
+      final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
+        response.data,
+      );
 
-      // Update local state
-      final index = notifications.indexWhere((n) => n['id'] == notificationId);
-      if (index != -1) {
+      if (apiResponse.status.success) {
+        _syncUnreadCount(apiResponse.meta);
+        final index = notifications.indexWhere(
+          (n) => n['id'] == notificationId,
+        );
+
+        if (index == -1) return;
+
         final updatedNotification = Map<String, dynamic>.from(
           notifications[index],
         );
-        updatedNotification['status']['code'] = 'read';
+        final updatedStatus = Map<String, dynamic>.from(
+          updatedNotification['status'],
+        );
+        updatedStatus['code'] = 'read';
+        updatedNotification['status'] = updatedStatus;
         notifications[index] = updatedNotification;
       }
     } catch (e) {
@@ -103,10 +117,14 @@ class NotificationController extends GetxController {
     notifications.removeAt(index);
 
     try {
-      await _apiClient.patch(
+      final response = await _apiClient.patch(
         '${ApiEndpoints.notifications}/$notificationId',
         data: {'status': 'deleted'},
       );
+      final apiResponse = ApiResponse<Map<String, dynamic>>.fromJson(
+        response.data,
+      );
+      _syncUnreadCount(apiResponse.meta);
     } catch (e) {
       // Revert if failed
       notifications.insert(index, removedItem);
@@ -115,6 +133,14 @@ class NotificationController extends GetxController {
         'Failed to delete notification.',
         snackPosition: SnackPosition.BOTTOM,
       );
+    }
+  }
+
+  void _syncUnreadCount(Map<String, dynamic>? meta) {
+    final value = meta?['unread_count'];
+
+    if (value is num) {
+      unreadCount.value = value.toInt();
     }
   }
 }

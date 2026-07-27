@@ -1,30 +1,78 @@
+import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lntb_app/core/network/api_client.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:lntb_app/core/models/phase_one_models.dart';
+import 'package:lntb_app/core/repositories/device_repository.dart';
+import 'package:lntb_app/modules/devices/controllers/device_controller.dart';
+import 'package:lntb_app/routes/app_routes.dart';
 
 class ClaimController extends GetxController {
-  final ApiClient apiClient = Get.find<ApiClient>();
-
+  final repository = Get.find<DeviceRepository>();
+  final formKey = GlobalKey<FormState>();
+  final macController = TextEditingController();
+  final codeController = TextEditingController();
+  final nameController = TextEditingController();
   final isLoading = false.obs;
+  bool _handled = false;
+
+  ClaimPayload parseQr(String raw) {
+    return ClaimPayload.fromJson(jsonDecode(raw) as Map<String, dynamic>);
+  }
 
   void scanBarcode() {
-    Get.snackbar(
-      'Scanner',
-      'Barcode scanning will be implemented soon!',
-      snackPosition: SnackPosition.BOTTOM,
+    _handled = false;
+    Get.to(
+      () => Scaffold(
+        appBar: AppBar(title: Text('scan_qr'.tr)),
+        body: MobileScanner(
+          onDetect: (capture) {
+            if (_handled) return;
+            final raw = capture.barcodes.isEmpty
+                ? null
+                : capture.barcodes.first.rawValue;
+            if (raw == null) return;
+            try {
+              final payload = parseQr(raw);
+              _handled = true;
+              macController.text = payload.macAddress;
+              codeController.text = payload.claimCode;
+              nameController.text = payload.name ?? '';
+              Get.back();
+            } catch (_) {
+              Get.snackbar('invalid_qr'.tr, 'manual_entry_help'.tr);
+            }
+          },
+        ),
+      ),
     );
   }
 
-  void claimDevice(String mac, String code, String name) async {
+  Future<void> claimDevice() async {
+    if (!(formKey.currentState?.validate() ?? false)) return;
     isLoading.value = true;
-    // Simulate API call for claim
-    await Future.delayed(const Duration(seconds: 1));
-    isLoading.value = false;
+    try {
+      final device = await repository.claimDevice(
+        macAddress: macController.text.trim().toUpperCase(),
+        claimCode: codeController.text.trim(),
+        name: nameController.text,
+      );
+      if (Get.isRegistered<DeviceController>()) {
+        await Get.find<DeviceController>().fetchDevices();
+      }
+      Get.offNamed(Routes.CLAIM_SUCCESS, arguments: device);
+    } catch (error) {
+      Get.snackbar('claim_failed'.tr, error.toString());
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
-    Get.back(); // Go back to Devices view on success
-    Get.snackbar(
-      'Success',
-      'Device successfully claimed!',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+  @override
+  void onClose() {
+    macController.dispose();
+    codeController.dispose();
+    nameController.dispose();
+    super.onClose();
   }
 }

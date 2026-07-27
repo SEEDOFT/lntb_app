@@ -13,22 +13,22 @@ class OnboardingController extends GetxController {
     {
       'title': 'ស្វាគមន៍មកកាន់ LNTB IoT',
       'subtitle': 'កម្មវិធីសម្រាប់កសិកម្មឆ្លាតវៃ',
-      'image': AppAssets.onboardingStep1,
+      'image': AppAssets.onboardingStep1Farmer,
     },
     {
       'title': 'ភ្ជាប់ឧបករណ៍ងាយស្រួល',
       'subtitle': 'ភ្ជាប់ឧបករណ៍ និងគ្រប់គ្រងបានគ្រប់ពេល',
-      'image': AppAssets.onboardingStep2,
+      'image': AppAssets.onboardingStep2Devices,
     },
     {
       'title': 'គ្រប់គ្រងពីចម្ងាយ',
       'subtitle': 'តាមដានស្ថានភាព និងបញ្ជាឧបករណ៍ពីចម្ងាយ',
-      'image': AppAssets.onboardingStep3,
+      'image': AppAssets.onboardingStep3Mobile,
     },
     {
       'title': 'ជួយឲ្យដំណាំលូតលាស់',
       'subtitle': 'បង្កើនទិន្នផល និងសន្សំសំចៃ',
-      'image': AppAssets.onboardingStep4,
+      'image': AppAssets.onboardingStep4Growth,
     },
   ];
 

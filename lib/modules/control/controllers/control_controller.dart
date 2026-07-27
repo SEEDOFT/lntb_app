@@ -1,62 +1,52 @@
 import 'package:get/get.dart';
-import 'package:lntb_app/core/network/api_client.dart';
+import 'package:lntb_app/core/models/phase_one_models.dart';
+import 'package:lntb_app/core/repositories/device_repository.dart';
+import 'package:lntb_app/routes/app_routes.dart';
 
 class ControlController extends GetxController {
-  final ApiClient apiClient = Get.find<ApiClient>();
+  final repository = Get.find<DeviceRepository>();
+  late final DeviceModel device;
+  final history = <ControlRecord>[].obs;
   final isLoading = false.obs;
 
-  // Mock device info
-  final deviceName = 'Smart Farm #1'.obs;
-  final deviceMac = 'AA:BB:CC:DD:EE:FF'.obs;
-  final isOnline = true.obs;
-
-  // Mock recent activity
-  final recentActivity = [
-    {
-      'action': 'Start Irrigation',
-      'time': 'Today, 9:30 AM',
-      'status': 'Completed',
-      'type': 'irrigation.start',
-    },
-    {
-      'action': 'Fan On',
-      'time': 'Today, 10:00 AM',
-      'status': 'Completed',
-      'type': 'fan.start',
-    },
-    {
-      'action': 'Stop Irrigation',
-      'time': 'Today, 10:10 AM',
-      'status': 'Failed',
-      'type': 'irrigation.stop',
-    },
-    {
-      'action': 'Fan Off',
-      'time': 'Today, 10:20 AM',
-      'status': 'Completed',
-      'type': 'fan.stop',
-    },
-  ].obs;
-
-  void sendCommand(String commandType) async {
-    isLoading.value = true;
-    Get.snackbar(
-      'Sending Command',
-      'Executing $commandType...',
-      snackPosition: SnackPosition.BOTTOM,
-    );
-
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 1));
-
-    // Add to activity feed
-    recentActivity.insert(0, {
-      'action': commandType.replaceAll('.', ' ').capitalizeFirst ?? commandType,
-      'time': 'Just now',
-      'status': 'Completed',
-      'type': commandType,
-    });
-
-    isLoading.value = false;
+  @override
+  void onInit() {
+    super.onInit();
+    device = Get.arguments as DeviceModel;
+    refreshHistory();
   }
+
+  Future<void> refreshHistory() async {
+    isLoading.value = true;
+    try {
+      history.assignAll(
+        await repository.getControlHistory(deviceId: device.id),
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  bool latestState(String start, String stop) {
+    final record = history.firstWhereOrNull(
+      (item) => item.controlType == start || item.controlType == stop,
+    );
+    return record?.controlType == start;
+  }
+
+  Future<void> sendCommand(String commandType) async {
+    isLoading.value = true;
+    try {
+      history.insert(
+        0,
+        await repository.sendControl(device.id, commandType),
+      );
+    } catch (error) {
+      Get.snackbar('command_failed'.tr, error.toString());
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void manageUsers() => Get.toNamed(Routes.SHARED_USERS, arguments: device);
 }
