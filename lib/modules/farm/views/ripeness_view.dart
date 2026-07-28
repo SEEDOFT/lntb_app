@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lntb_app/core/theme/app_typography.dart';
 import 'package:lntb_app/modules/farm/controllers/ripeness_controller.dart';
 
 class RipenessView extends GetView<RipenessController> {
@@ -37,8 +38,7 @@ class RipenessView extends GetView<RipenessController> {
                           ? const ColoredBox(
                               color: Color(0xFFEAF4EA),
                               child: Center(
-                                child:
-                                    Icon(Icons.image_outlined, size: 48),
+                                child: Icon(Icons.image_outlined, size: 48),
                               ),
                             )
                           : Image.network(
@@ -60,6 +60,10 @@ class RipenessView extends GetView<RipenessController> {
                           ),
                           Text(
                             '${(item.confidence * 100).toStringAsFixed(0)}%',
+                            style: AppTypography.sensorValue.copyWith(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ],
                       ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:lntb_app/core/constants/app_assets.dart';
 import 'package:lntb_app/core/theme/app_colors.dart';
+import 'package:lntb_app/core/theme/app_typography.dart';
 
 class SplashView extends StatelessWidget {
   const SplashView({super.key});
@@ -47,29 +49,30 @@ class SplashView extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      const Text(
-                        'LNTB IoT',
-                        style: TextStyle(
+                      Text(
+                        'app_title'.tr,
+                        style: AppTypography.onboardingTitle.copyWith(
                           fontSize: 30,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           color: Colors.white,
                         ),
                       ),
                       const SizedBox(height: 6),
-                      const Text(
-                        'ឆ្លាតវៃជាមួយកសិកម្មទំនើប',
-                        style: TextStyle(
+                      Text(
+                        'phase_one_tagline'.tr,
+                        style: AppTypography.onboardingTitle.copyWith(
                           fontSize: 16,
-                          fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 4),
-                      const Text(
-                        'Smart Agriculture, Better Life',
-                        style:
-                            TextStyle(fontSize: 12, color: Color(0xFFDDEEFF)),
+                      Text(
+                        'phase_one_tagline'.tr,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFFDDEEFF),
+                        ),
                       ),
                       const Spacer(),
                       const SizedBox(
@@ -81,9 +84,9 @@ class SplashView extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      const Text(
-                        'កំពុងរៀបចំ...',
-                        style: TextStyle(color: Colors.white),
+                      Text(
+                        'loading_splash'.tr,
+                        style: const TextStyle(color: Colors.white),
                       ),
                       const SizedBox(height: 10),
                       Container(

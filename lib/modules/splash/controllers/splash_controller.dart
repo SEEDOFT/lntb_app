@@ -17,14 +17,17 @@ class SplashController extends GetxController {
     _initializeApp();
   }
 
-  void _initializeApp() async {
+  Future<void> _initializeApp() async {
     try {
       final token = await apiClient.storage.read(key: 'auth_token');
       final hasSeenOnboarding = await apiClient.storage.read(
         key: 'has_seen_onboarding',
       );
 
-      if (token != null && token.isNotEmpty) {
+      if (hasSeenOnboarding != 'true') {
+        await Future<void>.delayed(const Duration(milliseconds: 2200));
+        Get.offAllNamed(Routes.ONBOARDING);
+      } else if (token != null && token.isNotEmpty) {
         try {
           await Future.wait([
             apiClient.get(ApiEndpoints.me),
@@ -43,12 +46,9 @@ class SplashController extends GetxController {
             Get.offAllNamed(Routes.LOGIN);
           }
         }
-      } else if (hasSeenOnboarding == 'true') {
-        await Future<void>.delayed(const Duration(milliseconds: 2200));
-        Get.offAllNamed(Routes.LOGIN);
       } else {
         await Future<void>.delayed(const Duration(milliseconds: 2200));
-        Get.offAllNamed(Routes.ONBOARDING);
+        Get.offAllNamed(Routes.LOGIN);
       }
     } catch (e) {
       debugPrint('Splash screen error: $e');

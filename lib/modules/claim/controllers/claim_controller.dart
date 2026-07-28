@@ -1,9 +1,9 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:lntb_app/core/models/phase_one_models.dart';
 import 'package:lntb_app/core/repositories/device_repository.dart';
+import 'package:lntb_app/modules/claim/controllers/qr_scanner_controller.dart';
+import 'package:lntb_app/modules/claim/views/qr_scanner_view.dart';
 import 'package:lntb_app/modules/devices/controllers/device_controller.dart';
 import 'package:lntb_app/routes/app_routes.dart';
 
@@ -14,38 +14,19 @@ class ClaimController extends GetxController {
   final codeController = TextEditingController();
   final nameController = TextEditingController();
   final isLoading = false.obs;
-  bool _handled = false;
 
-  ClaimPayload parseQr(String raw) {
-    return ClaimPayload.fromJson(jsonDecode(raw) as Map<String, dynamic>);
-  }
-
-  void scanBarcode() {
-    _handled = false;
-    Get.to(
-      () => Scaffold(
-        appBar: AppBar(title: Text('scan_qr'.tr)),
-        body: MobileScanner(
-          onDetect: (capture) {
-            if (_handled) return;
-            final raw = capture.barcodes.isEmpty
-                ? null
-                : capture.barcodes.first.rawValue;
-            if (raw == null) return;
-            try {
-              final payload = parseQr(raw);
-              _handled = true;
-              macController.text = payload.macAddress;
-              codeController.text = payload.claimCode;
-              nameController.text = payload.name ?? '';
-              Get.back();
-            } catch (_) {
-              Get.snackbar('invalid_qr'.tr, 'manual_entry_help'.tr);
-            }
-          },
-        ),
+  Future<void> scanBarcode() async {
+    final payload = await Get.to<ClaimPayload>(
+      () => const QrScannerView(),
+      binding: BindingsBuilder(
+        () => Get.put<QrScannerController>(QrScannerController()),
       ),
     );
+
+    if (payload == null) return;
+    macController.text = payload.macAddress.toUpperCase();
+    codeController.text = payload.claimCode;
+    nameController.text = payload.name ?? '';
   }
 
   Future<void> claimDevice() async {

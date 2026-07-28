@@ -48,15 +48,13 @@ class ClaimView extends GetView<ClaimController> {
               Text(
                 'claim_device'.tr,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      color: AppColors.textPrimary,
+                    ),
               ),
               const SizedBox(height: 6),
               Text(
-                'បញ្ចូលព័ត៌មានឧបករណ៍ដើម្បីភ្ជាប់',
+                'claim_subtitle'.tr,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 14,
@@ -84,9 +82,9 @@ class ClaimView extends GetView<ClaimController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // MAC Address
-                    const Text(
-                      'MAC Address',
-                      style: TextStyle(
+                    Text(
+                      'mac_address'.tr,
+                      style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: AppColors.textPrimary,
@@ -162,7 +160,7 @@ class ClaimView extends GetView<ClaimController> {
 
                     // Device Name (Optional)
                     Text(
-                      '${'device_name'.tr} (Optional)',
+                      '${'device_name'.tr} (${'optional'.tr})',
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -247,7 +245,7 @@ class ClaimView extends GetView<ClaimController> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'Tip: MAC Address & Claim Code can be found on the physical sticker label on your device.',
+                        'claim_tip'.tr,
                         style: TextStyle(
                           fontSize: 12,
                           color: AppColors.primaryDark,

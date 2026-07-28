@@ -29,15 +29,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return android;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -51,19 +45,19 @@ class DefaultFirebaseOptions {
   }
 
   static FirebaseOptions get android => FirebaseOptions(
-        apiKey: dotenv.get('FIREBASE_ANDROID_API_KEY'),
-        appId: dotenv.get('FIREBASE_ANDROID_APP_ID'),
-        messagingSenderId: dotenv.get('FIREBASE_MESSAGING_SENDER_ID'),
-        projectId: dotenv.get('FIREBASE_PROJECT_ID'),
-        storageBucket: dotenv.get('FIREBASE_STORAGE_BUCKET'),
+        apiKey: dotenv.env['FIREBASE_ANDROID_API_KEY'] ?? '',
+        appId: dotenv.env['FIREBASE_ANDROID_APP_ID'] ?? '',
+        messagingSenderId: dotenv.env['FIREBASE_MESSAGING_SENDER_ID'] ?? '',
+        projectId: dotenv.env['FIREBASE_PROJECT_ID'] ?? '',
+        storageBucket: dotenv.env['FIREBASE_STORAGE_BUCKET'] ?? '',
       );
 
   static FirebaseOptions get ios => FirebaseOptions(
-        apiKey: dotenv.get('FIREBASE_IOS_API_KEY'),
-        appId: dotenv.get('FIREBASE_IOS_APP_ID'),
-        messagingSenderId: dotenv.get('FIREBASE_MESSAGING_SENDER_ID'),
-        projectId: dotenv.get('FIREBASE_PROJECT_ID'),
-        storageBucket: dotenv.get('FIREBASE_STORAGE_BUCKET'),
-        iosBundleId: dotenv.get('FIREBASE_IOS_BUNDLE_ID'),
+        apiKey: dotenv.env['FIREBASE_IOS_API_KEY'] ?? '',
+        appId: dotenv.env['FIREBASE_IOS_APP_ID'] ?? '',
+        messagingSenderId: dotenv.env['FIREBASE_MESSAGING_SENDER_ID'] ?? '',
+        projectId: dotenv.env['FIREBASE_PROJECT_ID'] ?? '',
+        storageBucket: dotenv.env['FIREBASE_STORAGE_BUCKET'] ?? '',
+        iosBundleId: dotenv.env['FIREBASE_IOS_BUNDLE_ID'] ?? '',
       );
 }

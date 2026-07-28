@@ -11,26 +11,24 @@ class OnboardingController extends GetxController {
 
   final List<Map<String, String>> pages = [
     {
-      'title': 'ស្វាគមន៍មកកាន់ LNTB IoT',
-      'subtitle': 'កម្មវិធីសម្រាប់កសិកម្មឆ្លាតវៃ',
-      'image': AppAssets.onboardingStep1Farmer,
+      'title': 'onboarding_title_1',
+      'subtitle': 'onboarding_subtitle_1',
+      'image': AppAssets.onboarding1,
     },
     {
-      'title': 'ភ្ជាប់ឧបករណ៍ងាយស្រួល',
-      'subtitle': 'ភ្ជាប់ឧបករណ៍ និងគ្រប់គ្រងបានគ្រប់ពេល',
-      'image': AppAssets.onboardingStep2Devices,
+      'title': 'onboarding_title_2',
+      'subtitle': 'onboarding_subtitle_2',
+      'image': AppAssets.onboarding2,
     },
     {
-      'title': 'គ្រប់គ្រងពីចម្ងាយ',
-      'subtitle': 'តាមដានស្ថានភាព និងបញ្ជាឧបករណ៍ពីចម្ងាយ',
-      'image': AppAssets.onboardingStep3Mobile,
-    },
-    {
-      'title': 'ជួយឲ្យដំណាំលូតលាស់',
-      'subtitle': 'បង្កើនទិន្នផល និងសន្សំសំចៃ',
-      'image': AppAssets.onboardingStep4Growth,
+      'title': 'onboarding_title_3',
+      'subtitle': 'onboarding_subtitle_3',
+      'image': AppAssets.onboarding3,
     },
   ];
+
+  int get totalPages => pages.length;
+  bool get isLastPage => currentPage.value == totalPages - 1;
 
   @override
   void onClose() {
@@ -43,7 +41,7 @@ class OnboardingController extends GetxController {
   }
 
   void next() {
-    if (currentPage.value < pages.length - 1) {
+    if (!isLastPage) {
       pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeIn,

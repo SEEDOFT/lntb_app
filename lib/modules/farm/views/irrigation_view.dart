@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lntb_app/routes/app_routes.dart';
+import 'package:lntb_app/modules/farm/widgets/irrigation_view_info_card.dart';
 
 class IrrigationView extends StatelessWidget {
   const IrrigationView({super.key});
@@ -12,12 +13,12 @@ class IrrigationView extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          _InfoCard(
+          IrrigationInfoCard(
             icon: Icons.auto_mode,
             title: 'automatic_irrigation'.tr,
             body: 'irrigation_api_required'.tr,
           ),
-          _InfoCard(
+          IrrigationInfoCard(
             icon: Icons.tune,
             title: 'moisture_threshold'.tr,
             body: 'configured_by_backend'.tr,
@@ -36,30 +37,6 @@ class IrrigationView extends StatelessWidget {
             label: Text('open_devices'.tr),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _InfoCard extends StatelessWidget {
-  const _InfoCard({
-    required this.icon,
-    required this.title,
-    required this.body,
-  });
-
-  final IconData icon;
-  final String title;
-  final String body;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 0,
-      child: ListTile(
-        leading: Icon(icon, color: Colors.green),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w700)),
-        subtitle: Text(body),
       ),
     );
   }

@@ -82,8 +82,7 @@ class FarmTasksView extends GetView<FarmTasksController> {
             child: Text('cancel'.tr),
           ),
           FilledButton(
-            onPressed: () =>
-                Navigator.pop(context, textController.text.trim()),
+            onPressed: () => Navigator.pop(context, textController.text.trim()),
             child: Text('save'.tr),
           ),
         ],

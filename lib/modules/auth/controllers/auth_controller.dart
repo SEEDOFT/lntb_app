@@ -71,11 +71,11 @@ class AuthController extends GetxController {
     passwordError.value = null;
 
     if (phoneNumberController.text.trim().isEmpty) {
-      phoneNumberError.value = 'Phone number is required';
+      phoneNumberError.value = 'phone_number_required'.tr;
       return false;
     }
     if (passwordController.text.isEmpty) {
-      passwordError.value = 'Password is required';
+      passwordError.value = 'password_required'.tr;
       return false;
     }
     return true;
@@ -88,27 +88,27 @@ class AuthController extends GetxController {
     confirmPasswordError.value = null;
 
     if (nameController.text.trim().isEmpty) {
-      nameError.value = 'Full name is required';
+      nameError.value = 'name_required'.tr;
       return false;
     }
     if (phoneNumberController.text.trim().isEmpty) {
-      phoneNumberError.value = 'Phone number is required';
+      phoneNumberError.value = 'phone_number_required'.tr;
       return false;
     }
     if (passwordController.text.isEmpty) {
-      passwordError.value = 'Password is required';
+      passwordError.value = 'password_required'.tr;
       return false;
     }
-    if (passwordController.text.length < 8) {
-      passwordError.value = 'Password must be at least 8 characters';
+    if (passwordController.text.length < 12) {
+      passwordError.value = 'password_min_char'.tr;
       return false;
     }
     if (confirmPasswordController.text.isEmpty) {
-      confirmPasswordError.value = 'Confirm password is required';
+      confirmPasswordError.value = 'confirm_password_required'.tr;
       return false;
     }
     if (passwordController.text != confirmPasswordController.text) {
-      confirmPasswordError.value = 'Passwords do not match';
+      confirmPasswordError.value = 'passwords_not_match'.tr;
       return false;
     }
     return true;
@@ -132,11 +132,10 @@ class AuthController extends GetxController {
         registering ? ApiEndpoints.register : ApiEndpoints.login,
         data: data,
       );
-      
+
       await _completeAuthentication(
         ApiResponse<Map<String, dynamic>>.fromJson(response.data),
       );
-
     } catch (error, stackTrace) {
       debugPrint('[AuthController] submit error: $error');
       debugPrint('[AuthController] stackTrace: $stackTrace');
@@ -197,7 +196,9 @@ class AuthController extends GetxController {
       debugPrint('[AuthController] google error: $error');
       debugPrint('[AuthController] google stackTrace: $stackTrace');
       if (error is DioException) {
-        debugPrint('[AuthController] google response body: ${error.response?.data}');
+        debugPrint(
+          '[AuthController] google response body: ${error.response?.data}',
+        );
       }
       Get.snackbar('authentication_failed'.tr, _message(error));
     } finally {

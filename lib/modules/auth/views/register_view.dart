@@ -44,11 +44,10 @@ class RegisterView extends GetView<AuthController> {
                     const SizedBox(height: 16),
                     Text(
                       'create_account'.tr,
-                      style: const TextStyle(
-                        fontSize: 26,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
+                      style:
+                          Theme.of(context).textTheme.headlineLarge?.copyWith(
+                                color: AppColors.textPrimary,
+                              ),
                       textAlign: TextAlign.center,
                     ),
                     Text(
@@ -170,8 +169,7 @@ class RegisterView extends GetView<AuthController> {
                                 : Icons.visibility_off_outlined,
                             color: AppColors.textSecondary,
                           ),
-                          onPressed:
-                              controller.toggleConfirmPasswordVisibility,
+                          onPressed: controller.toggleConfirmPasswordVisibility,
                         ),
                         hintText: 'confirm_password'.tr,
                       ),
@@ -232,7 +230,8 @@ class RegisterView extends GetView<AuthController> {
                       children: [
                         Text(
                           'already_have_account'.tr,
-                          style: const TextStyle(color: AppColors.textSecondary),
+                          style:
+                              const TextStyle(color: AppColors.textSecondary),
                         ),
                         GestureDetector(
                           onTap: controller.goToLogin,

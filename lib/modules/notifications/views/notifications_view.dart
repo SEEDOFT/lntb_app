@@ -19,9 +19,9 @@ class NotificationsView extends GetView<NotificationController> {
             icon: const Icon(Icons.arrow_back, color: AppColors.primary),
             onPressed: () => Get.back(),
           ),
-          title: const Text(
-            'Notifications',
-            style: TextStyle(
+          title: Text(
+            'notifications'.tr,
+            style: const TextStyle(
               color: AppColors.textPrimary,
               fontWeight: FontWeight.bold,
             ),
@@ -33,10 +33,10 @@ class NotificationsView extends GetView<NotificationController> {
           }
 
           if (controller.notifications.isEmpty) {
-            return const Center(
+            return Center(
               child: Text(
-                'No notifications yet.',
-                style: TextStyle(color: AppColors.textSecondary),
+                'no_notifications'.tr,
+                style: const TextStyle(color: AppColors.textSecondary),
               ),
             );
           }
@@ -210,8 +210,8 @@ class NotificationsView extends GetView<NotificationController> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    'Close',
+                  child: Text(
+                    'close'.tr,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),

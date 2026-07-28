@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lntb_app/core/models/phase_one_models.dart';
-import 'package:lntb_app/core/theme/app_colors.dart';
 import 'package:lntb_app/modules/control/controllers/control_controller.dart';
+import 'package:lntb_app/modules/control/widgets/control_view_device_header.dart';
+import 'package:lntb_app/modules/control/widgets/control_view_history_tile.dart';
+import 'package:lntb_app/modules/control/widgets/control_view_toggle.dart';
 
 class ControlView extends GetView<ControlController> {
   const ControlView({super.key});
@@ -26,7 +27,7 @@ class ControlView extends GetView<ControlController> {
             child: ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                _DeviceHeader(device: controller.device),
+                ControlDeviceHeader(device: controller.device),
                 const SizedBox(height: 22),
                 Text(
                   'device_controls'.tr,
@@ -39,7 +40,7 @@ class ControlView extends GetView<ControlController> {
                 Obx(
                   () => Column(
                     children: [
-                      _Toggle(
+                      ControlToggle(
                         title: 'irrigation'.tr,
                         icon: Icons.water_drop_outlined,
                         value: controller.latestState(
@@ -50,14 +51,14 @@ class ControlView extends GetView<ControlController> {
                           on ? 'irrigation.start' : 'irrigation.stop',
                         ),
                       ),
-                      _Toggle(
+                      ControlToggle(
                         title: 'fan'.tr,
                         icon: Icons.air,
                         value: controller.latestState('fan.start', 'fan.stop'),
                         onChanged: (on) => controller
                             .sendCommand(on ? 'fan.start' : 'fan.stop'),
                       ),
-                      _Toggle(
+                      ControlToggle(
                         title: 'roof'.tr,
                         icon: Icons.roofing_outlined,
                         value:
@@ -65,7 +66,7 @@ class ControlView extends GetView<ControlController> {
                         onChanged: (on) => controller
                             .sendCommand(on ? 'roof.open' : 'roof.close'),
                       ),
-                      _Toggle(
+                      ControlToggle(
                         title: 'camera'.tr,
                         icon: Icons.camera_alt_outlined,
                         button: true,
@@ -97,7 +98,7 @@ class ControlView extends GetView<ControlController> {
                       : Column(
                           children: controller.history
                               .take(10)
-                              .map((item) => _HistoryTile(record: item))
+                              .map((item) => ControlHistoryTile(record: item))
                               .toList(),
                         ),
                 ),
@@ -106,123 +107,4 @@ class ControlView extends GetView<ControlController> {
           ),
         ),
       );
-}
-
-class _DeviceHeader extends StatelessWidget {
-  const _DeviceHeader({required this.device});
-  final DeviceModel device;
-  @override
-  Widget build(BuildContext context) => Card(
-        elevation: 0,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              const CircleAvatar(
-                radius: 30,
-                backgroundColor: Color(0xFFEAF3FF),
-                child: Icon(
-                  Icons.energy_savings_leaf,
-                  color: AppColors.primary,
-                  size: 32,
-                ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      device.name,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w800,
-                        fontSize: 17,
-                      ),
-                    ),
-                    Text(
-                      device.macAddress,
-                      style: const TextStyle(color: AppColors.textSecondary),
-                    ),
-                    Text(
-                      '${device.firmwareVersion ?? '-'} • ${device.accessRole.tr}',
-                      style: const TextStyle(color: AppColors.textSecondary),
-                    ),
-                  ],
-                ),
-              ),
-              Text(
-                device.status.tr,
-                style: TextStyle(
-                  color: device.isOnline
-                      ? AppColors.success
-                      : AppColors.textSecondary,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-}
-
-class _Toggle extends StatelessWidget {
-  const _Toggle({
-    required this.title,
-    required this.icon,
-    required this.value,
-    required this.onChanged,
-    this.button = false,
-  });
-  final String title;
-  final IconData icon;
-  final bool value;
-  final ValueChanged<bool> onChanged;
-  final bool button;
-  @override
-  Widget build(BuildContext context) => Card(
-        elevation: 0,
-        child: ListTile(
-          leading: Icon(icon, color: AppColors.primary),
-          title: Text(title),
-          trailing: button
-              ? IconButton(
-                  onPressed: () => onChanged(true),
-                  icon: const Icon(Icons.play_circle, color: AppColors.primary),
-                )
-              : Switch(
-                  value: value,
-                  onChanged: onChanged,
-                  activeThumbColor: AppColors.success,
-                ),
-        ),
-      );
-}
-
-class _HistoryTile extends StatelessWidget {
-  const _HistoryTile({required this.record});
-  final ControlRecord record;
-  @override
-  Widget build(BuildContext context) {
-    final color = record.isPending
-        ? Colors.orange
-        : record.isCompleted
-            ? AppColors.success
-            : AppColors.error;
-    return ListTile(
-      leading: Icon(
-        record.isCompleted
-            ? Icons.check_circle
-            : record.isPending
-                ? Icons.schedule
-                : Icons.error,
-        color: color,
-      ),
-      title: Text(record.controlType.tr),
-      subtitle: Text(record.requestedAt.toLocal().toString().substring(0, 16)),
-      trailing: Text(
-        record.status.tr,
-        style: TextStyle(color: color, fontWeight: FontWeight.w700),
-      ),
-    );
-  }
 }

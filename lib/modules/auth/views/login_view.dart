@@ -49,11 +49,10 @@ class LoginView extends GetView<AuthController> {
                     const SizedBox(height: 20),
                     Text(
                       'app_title'.tr,
-                      style: const TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
-                      ),
+                      style:
+                          Theme.of(context).textTheme.headlineLarge?.copyWith(
+                                color: AppColors.primary,
+                              ),
                       textAlign: TextAlign.center,
                     ),
                     Text(
@@ -212,7 +211,8 @@ class LoginView extends GetView<AuthController> {
                       children: [
                         Text(
                           'dont_have_account'.tr,
-                          style: const TextStyle(color: AppColors.textSecondary),
+                          style:
+                              const TextStyle(color: AppColors.textSecondary),
                         ),
                         GestureDetector(
                           onTap: controller.goToRegister,

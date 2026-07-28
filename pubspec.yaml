@@ -41,9 +41,9 @@ dependencies:
   firebase_core: ^4.12.1
   firebase_messaging: ^16.4.3
   flutter_local_notifications: ^22.1.0
-  google_fonts: ^8.2.0
   flutter_svg: ^2.3.0
   mobile_scanner: ^7.3.0
+  image_picker: ^1.2.2
   google_sign_in: ^7.2.0
   shared_preferences: ^2.5.2
   package_info_plus: ^9.0.1
@@ -75,6 +75,34 @@ flutter:
     - .env
     - assets/images/
     - assets/svgs/
+
+  fonts:
+    - family: NotoSansKhmer
+      fonts:
+        - asset: assets/fonts/Noto_Sans_Khmer/NotoSansKhmer-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Noto_Sans_Khmer/NotoSansKhmer-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Noto_Sans_Khmer/NotoSansKhmer-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Noto_Sans_Khmer/NotoSansKhmer-Bold.ttf
+          weight: 700
+    - family: NotoSans
+      fonts:
+        - asset: assets/fonts/Noto_Sans/NotoSans-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Noto_Sans/NotoSans-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Noto_Sans/NotoSans-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Noto_Sans/NotoSans-Bold.ttf
+          weight: 700
+    - family: KantumruyPro
+      fonts:
+        - asset: assets/fonts/Kantumruy_Pro/KantumruyPro-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Kantumruy_Pro/KantumruyPro-Bold.ttf
+          weight: 700
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

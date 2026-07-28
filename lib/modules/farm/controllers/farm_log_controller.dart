@@ -31,7 +31,12 @@ class FarmLogController extends GetxController {
   Future<void> createLog(String title, String? notes) async {
     final farmId = _farmId;
     if (farmId == null || title.isEmpty) return;
-    await repository.createLog(farmId, type: 'note', title: title, notes: notes);
+    await repository.createLog(
+      farmId,
+      type: 'note',
+      title: title,
+      notes: notes,
+    );
     await load();
   }
 }

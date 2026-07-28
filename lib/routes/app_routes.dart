@@ -1,4 +1,4 @@
-abstract class Routes {
+sealed class Routes {
   static const String SPLASH = '/splash';
   static const String ONBOARDING = '/onboarding';
   static const String LOGIN = '/login';

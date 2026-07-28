@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lntb_app/core/theme/app_colors.dart';
+import 'package:lntb_app/core/theme/app_typography.dart';
 import 'package:lntb_app/modules/farm/controllers/usage_controller.dart';
 
 class UsageView extends GetView<UsageController> {
@@ -32,11 +33,15 @@ class UsageView extends GetView<UsageController> {
                       ),
                       title: Text(
                         '\$${item.totalCostUsd.toStringAsFixed(2)}',
-                        style: const TextStyle(fontWeight: FontWeight.w800),
+                        style: AppTypography.sensorValue.copyWith(fontSize: 28),
                       ),
                       subtitle: Text(
                         '${item.waterCubicMeters.toStringAsFixed(2)} m³ • '
                         '${item.electricityKwh.toStringAsFixed(2)} kWh',
+                        style: AppTypography.sensorValue.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),

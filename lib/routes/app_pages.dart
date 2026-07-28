@@ -38,105 +38,105 @@ import 'package:lntb_app/modules/farm/views/assistant_view.dart';
 import 'package:lntb_app/modules/history/bindings/history_binding.dart';
 import 'package:lntb_app/modules/history/views/history_view.dart';
 
-class AppPages {
-  static final pages = [
-    GetPage(
-      name: Routes.SPLASH,
-      page: () => const SplashView(),
-      binding: SplashBinding(),
-    ),
-    GetPage(
-      name: Routes.ONBOARDING,
-      page: () => const OnboardingView(),
-      binding: OnboardingBinding(),
-    ),
-    GetPage(
-      name: Routes.LOGIN,
-      page: () => const LoginView(),
-      binding: AuthBinding(),
-    ),
-    GetPage(
-      name: Routes.REGISTER,
-      page: () => const RegisterView(),
-      binding: AuthBinding(),
-    ),
-    GetPage(
-      name: Routes.AUTH_SUCCESS,
-      page: () => const AuthSuccessView(),
-    ),
-    GetPage(
-      name: Routes.MAIN,
-      page: () => const MainView(),
-      binding: MainBinding(),
-    ),
-    GetPage(
-      name: Routes.CLAIM,
-      page: () => const ClaimView(),
-      binding: ClaimBinding(),
-    ),
-    GetPage(
-      name: Routes.CLAIM_SUCCESS,
-      page: () => const ClaimSuccessView(),
-    ),
-    GetPage(
-      name: Routes.SHARED_USERS,
-      page: () => const SharedUsersView(),
-      binding: SharedUsersBinding(),
-    ),
-    GetPage(
-      name: Routes.CONTROL,
-      page: () => const ControlView(),
-      binding: ControlBinding(),
-    ),
-    GetPage(
-      name: Routes.NOTIFICATIONS,
-      page: () => const NotificationsView(),
-      binding: NotificationBinding(),
-    ),
-    GetPage(
-      name: Routes.FARM_TASKS,
-      page: () => const FarmTasksView(),
-      binding: FarmTasksBinding(),
-    ),
-    GetPage(
-      name: Routes.ENVIRONMENT,
-      page: () => const EnvironmentView(),
-      binding: EnvironmentBinding(),
-    ),
-    GetPage(
-      name: Routes.IRRIGATION,
-      page: () => const IrrigationView(),
-      binding: IrrigationBinding(),
-    ),
-    GetPage(
-      name: Routes.USAGE,
-      page: () => const UsageView(),
-      binding: UsageBinding(),
-    ),
-    GetPage(
-      name: Routes.RIPENESS,
-      page: () => const RipenessView(),
-      binding: RipenessBinding(),
-    ),
-    GetPage(
-      name: Routes.FARM_LOG,
-      page: () => const FarmLogView(),
-      binding: FarmLogBinding(),
-    ),
-    GetPage(
-      name: Routes.HARVEST,
-      page: () => const HarvestView(),
-      binding: HarvestBinding(),
-    ),
-    GetPage(
-      name: Routes.ASSISTANT,
-      page: () => const AssistantView(),
-      binding: AssistantBinding(),
-    ),
-    GetPage(
-      name: Routes.CONTROL_HISTORY,
-      page: () => const HistoryView(),
-      binding: HistoryBinding(),
-    ),
-  ];
+sealed class AppPages {
+  static List<GetPage<dynamic>> get pages => [
+        GetPage(
+          name: Routes.SPLASH,
+          page: () => const SplashView(),
+          binding: SplashBinding(),
+        ),
+        GetPage(
+          name: Routes.ONBOARDING,
+          page: () => const OnboardingView(),
+          binding: OnboardingBinding(),
+        ),
+        GetPage(
+          name: Routes.LOGIN,
+          page: () => const LoginView(),
+          binding: AuthBinding(),
+        ),
+        GetPage(
+          name: Routes.REGISTER,
+          page: () => const RegisterView(),
+          binding: AuthBinding(),
+        ),
+        GetPage(
+          name: Routes.AUTH_SUCCESS,
+          page: () => const AuthSuccessView(),
+        ),
+        GetPage(
+          name: Routes.MAIN,
+          page: () => const MainView(),
+          binding: MainBinding(),
+        ),
+        GetPage(
+          name: Routes.CLAIM,
+          page: () => const ClaimView(),
+          binding: ClaimBinding(),
+        ),
+        GetPage(
+          name: Routes.CLAIM_SUCCESS,
+          page: () => const ClaimSuccessView(),
+        ),
+        GetPage(
+          name: Routes.SHARED_USERS,
+          page: () => const SharedUsersView(),
+          binding: SharedUsersBinding(),
+        ),
+        GetPage(
+          name: Routes.CONTROL,
+          page: () => const ControlView(),
+          binding: ControlBinding(),
+        ),
+        GetPage(
+          name: Routes.NOTIFICATIONS,
+          page: () => const NotificationsView(),
+          binding: NotificationBinding(),
+        ),
+        GetPage(
+          name: Routes.FARM_TASKS,
+          page: () => const FarmTasksView(),
+          binding: FarmTasksBinding(),
+        ),
+        GetPage(
+          name: Routes.ENVIRONMENT,
+          page: () => const EnvironmentView(),
+          binding: EnvironmentBinding(),
+        ),
+        GetPage(
+          name: Routes.IRRIGATION,
+          page: () => const IrrigationView(),
+          binding: IrrigationBinding(),
+        ),
+        GetPage(
+          name: Routes.USAGE,
+          page: () => const UsageView(),
+          binding: UsageBinding(),
+        ),
+        GetPage(
+          name: Routes.RIPENESS,
+          page: () => const RipenessView(),
+          binding: RipenessBinding(),
+        ),
+        GetPage(
+          name: Routes.FARM_LOG,
+          page: () => const FarmLogView(),
+          binding: FarmLogBinding(),
+        ),
+        GetPage(
+          name: Routes.HARVEST,
+          page: () => const HarvestView(),
+          binding: HarvestBinding(),
+        ),
+        GetPage(
+          name: Routes.ASSISTANT,
+          page: () => const AssistantView(),
+          binding: AssistantBinding(),
+        ),
+        GetPage(
+          name: Routes.CONTROL_HISTORY,
+          page: () => const HistoryView(),
+          binding: HistoryBinding(),
+        ),
+      ];
 }

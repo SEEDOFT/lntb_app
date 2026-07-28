@@ -101,8 +101,8 @@ class NotificationController extends GetxController {
       }
     } catch (e) {
       Get.snackbar(
-        'Error',
-        'Failed to mark notification as read.',
+        'error'.tr,
+        'error_marking_read'.tr,
         snackPosition: SnackPosition.BOTTOM,
       );
     }

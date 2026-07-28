@@ -33,8 +33,7 @@ class FarmLogView extends GetView<FarmLogController> {
             itemBuilder: (_, index) {
               final log = controller.logs[index];
               return ListTile(
-                leading:
-                    const Icon(Icons.menu_book, color: AppColors.primary),
+                leading: const Icon(Icons.menu_book, color: AppColors.primary),
                 title: Text(log.title),
                 subtitle: Text(log.notes ?? log.type.tr),
               );

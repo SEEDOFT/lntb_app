@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lntb_app/core/theme/app_colors.dart';
+import 'package:lntb_app/core/theme/app_typography.dart';
 import 'package:lntb_app/modules/farm/controllers/environment_controller.dart';
 
 class EnvironmentView extends GetView<EnvironmentController> {
@@ -28,8 +29,8 @@ class EnvironmentView extends GetView<EnvironmentController> {
             itemCount: controller.metrics.length,
             itemBuilder: (_, index) {
               final metric = controller.metrics[index];
-              final warning = metric.status == 'warning' ||
-                  metric.status == 'critical';
+              final warning =
+                  metric.status == 'warning' || metric.status == 'critical';
               return Card(
                 elevation: 0,
                 child: Padding(
@@ -46,10 +47,7 @@ class EnvironmentView extends GetView<EnvironmentController> {
                       Text(metric.code.tr),
                       Text(
                         '${metric.value.toStringAsFixed(1)} ${metric.unit}',
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w800,
-                        ),
+                        style: AppTypography.sensorValue.copyWith(fontSize: 28),
                       ),
                       Text(
                         metric.status.tr,

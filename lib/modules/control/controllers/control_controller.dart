@@ -1,6 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:lntb_app/core/models/phase_one_models.dart';
 import 'package:lntb_app/core/repositories/device_repository.dart';
+import 'package:lntb_app/modules/devices/controllers/device_controller.dart';
 import 'package:lntb_app/routes/app_routes.dart';
 
 class ControlController extends GetxController {
@@ -22,6 +24,10 @@ class ControlController extends GetxController {
       history.assignAll(
         await repository.getControlHistory(deviceId: device.id),
       );
+    } catch (error) {
+      if (!_handleRevokedAccess(error)) {
+        Get.snackbar('load_failed'.tr, error.toString());
+      }
     } finally {
       isLoading.value = false;
     }
@@ -42,11 +48,25 @@ class ControlController extends GetxController {
         await repository.sendControl(device.id, commandType),
       );
     } catch (error) {
-      Get.snackbar('command_failed'.tr, error.toString());
+      if (!_handleRevokedAccess(error)) {
+        Get.snackbar('command_failed'.tr, error.toString());
+      }
     } finally {
       isLoading.value = false;
     }
   }
 
   void manageUsers() => Get.toNamed(Routes.SHARED_USERS, arguments: device);
+
+  bool _handleRevokedAccess(Object error) {
+    if (error is! DioException || error.response?.statusCode != 403) {
+      return false;
+    }
+    if (Get.isRegistered<DeviceController>()) {
+      Get.find<DeviceController>().fetchDevices();
+    }
+    Get.back();
+    Get.snackbar('access_revoked'.tr, 'access_revoked_message'.tr);
+    return true;
+  }
 }

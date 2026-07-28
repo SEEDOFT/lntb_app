@@ -1,99 +1,59 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:lntb_app/core/bindings/initial_binding.dart';
+import 'package:flutter/services.dart';
+import 'package:lntb_app/app/app.dart';
 import 'package:lntb_app/core/bootstrap/app_bootstrap.dart';
-import 'package:lntb_app/core/theme/app_colors.dart';
-import 'package:lntb_app/core/translations/app_translations.dart';
-import 'routes/app_pages.dart';
-import 'routes/app_routes.dart';
+import 'package:lntb_app/core/theme/app_typography.dart';
 
-void main() async {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  await _preloadAppFonts();
   await AppBootstrap.init();
-  runApp(const MyApp());
+  runApp(const LntbAppRoot());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'LNTB',
-      translations: AppTranslations(),
-      locale: const Locale('km', 'KH'),
-      fallbackLocale: const Locale('km', 'KH'),
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: AppColors.primary,
-          primary: AppColors.primary,
-          surface: Colors.white,
-        ),
-        scaffoldBackgroundColor: AppColors.background,
-        textTheme: GoogleFonts.notoSansKhmerTextTheme(
-          Theme.of(context).textTheme,
-        ),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: AppColors.background,
-          foregroundColor: AppColors.textPrimary,
-          elevation: 0,
-          centerTitle: true,
-          scrolledUnderElevation: 0,
-        ),
-        cardTheme: CardThemeData(
-          color: AppColors.surface,
-          elevation: 0,
-          margin: const EdgeInsets.all(4),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-            side: const BorderSide(color: AppColors.cardBorder),
-          ),
-        ),
-        inputDecorationTheme: InputDecorationTheme(
-          filled: true,
-          fillColor: Colors.white,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(14),
-            borderSide: const BorderSide(color: AppColors.inputBorder),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(14),
-            borderSide: const BorderSide(color: AppColors.inputBorder),
-          ),
-        ),
-        filledButtonTheme: FilledButtonThemeData(
-          style: FilledButton.styleFrom(
-            minimumSize: const Size(0, 52),
-            backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
-            textStyle: const TextStyle(fontWeight: FontWeight.w700),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-          ),
-        ),
-        navigationBarTheme: NavigationBarThemeData(
-          height: 72,
-          elevation: 0,
-          backgroundColor: Colors.white,
-          indicatorColor: AppColors.primaryLight,
-          labelTextStyle: WidgetStateProperty.resolveWith(
-            (states) => TextStyle(
-              fontSize: 11,
-              fontWeight: states.contains(WidgetState.selected)
-                  ? FontWeight.w700
-                  : FontWeight.w500,
-              color: states.contains(WidgetState.selected)
-                  ? AppColors.primary
-                  : AppColors.textSecondary,
-            ),
-          ),
-        ),
-        useMaterial3: true,
+Future<void> _preloadAppFonts() {
+  final khmer = FontLoader(AppTypography.khmerFont)
+    ..addFont(
+      rootBundle.load(
+        'assets/fonts/Noto_Sans_Khmer/NotoSansKhmer-Regular.ttf',
       ),
-      initialRoute: Routes.SPLASH,
-      initialBinding: InitialBinding(),
-      getPages: AppPages.pages,
+    )
+    ..addFont(
+      rootBundle.load(
+        'assets/fonts/Noto_Sans_Khmer/NotoSansKhmer-Medium.ttf',
+      ),
+    )
+    ..addFont(
+      rootBundle.load(
+        'assets/fonts/Noto_Sans_Khmer/NotoSansKhmer-SemiBold.ttf',
+      ),
+    )
+    ..addFont(
+      rootBundle.load(
+        'assets/fonts/Noto_Sans_Khmer/NotoSansKhmer-Bold.ttf',
+      ),
     );
-  }
+  final latin = FontLoader(AppTypography.latinFont)
+    ..addFont(rootBundle.load('assets/fonts/Noto_Sans/NotoSans-Regular.ttf'))
+    ..addFont(rootBundle.load('assets/fonts/Noto_Sans/NotoSans-Medium.ttf'))
+    ..addFont(rootBundle.load('assets/fonts/Noto_Sans/NotoSans-SemiBold.ttf'))
+    ..addFont(rootBundle.load('assets/fonts/Noto_Sans/NotoSans-Bold.ttf'));
+  final display = FontLoader(AppTypography.displayKhmerFont)
+    ..addFont(
+      rootBundle.load(
+        'assets/fonts/Kantumruy_Pro/KantumruyPro-SemiBold.ttf',
+      ),
+    )
+    ..addFont(
+      rootBundle.load(
+        'assets/fonts/Kantumruy_Pro/KantumruyPro-Bold.ttf',
+      ),
+    );
+
+  return Future.wait(<Future<void>>[
+    khmer.load(),
+    latin.load(),
+    display.load(),
+  ]);
 }

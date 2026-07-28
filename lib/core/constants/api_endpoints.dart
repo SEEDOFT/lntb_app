@@ -13,6 +13,7 @@ class ApiEndpoints {
   // Devices
   static const String devices = '/devices';
   static const String controls = '/controls';
+  static const String batchControls = '/devices/controls/batch';
   static String deviceControls(int deviceId) => '/devices/$deviceId/controls';
   static String deviceUsers(int deviceId) => '/devices/$deviceId/users';
 

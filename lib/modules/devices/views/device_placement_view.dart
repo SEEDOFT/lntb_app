@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lntb_app/modules/devices/controllers/device_controller.dart';
 import 'package:lntb_app/core/models/phase_one_models.dart';
 import 'package:lntb_app/core/theme/app_colors.dart';
-import 'package:lntb_app/routes/app_routes.dart';
+import 'package:lntb_app/modules/devices/controllers/device_controller.dart';
+import 'package:lntb_app/modules/devices/widgets/device_placement_view_farm_layout_header.dart';
+import 'package:lntb_app/modules/devices/widgets/device_placement_view_zone_section.dart';
 
 class DevicePlacementView extends GetView<DeviceController> {
   const DevicePlacementView({super.key});
@@ -15,11 +16,63 @@ class DevicePlacementView extends GetView<DeviceController> {
         title: Text('farm_devices'.tr),
         surfaceTintColor: AppColors.background,
         actions: [
+          Obx(
+            () => TextButton(
+              onPressed: controller.selectionMode.value
+                  ? controller.cancelSelection
+                  : () => controller.beginSelection(),
+              child: Text(
+                controller.selectionMode.value
+                    ? 'cancel'.tr
+                    : 'select_devices'.tr,
+              ),
+            ),
+          ),
           IconButton(
             onPressed: controller.goToAddDevice,
             icon: const Icon(Icons.add_rounded),
           ),
         ],
+      ),
+      bottomNavigationBar: Obx(
+        () => controller.selectionMode.value
+            ? SafeArea(
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+                  decoration: const BoxDecoration(
+                    color: AppColors.surface,
+                    border: Border(
+                      top: BorderSide(color: AppColors.cardBorder),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        onPressed: controller.clearSelection,
+                        tooltip: 'clear'.tr,
+                        icon: const Icon(Icons.clear_all_rounded),
+                      ),
+                      Expanded(
+                        child: Text(
+                          'selected_count'.trParams({
+                            'count':
+                                controller.selectedDeviceIds.length.toString(),
+                          }),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      FilledButton(
+                        onPressed: controller.selectedDeviceIds.isEmpty
+                            ? null
+                            : () => _showControlReview(context),
+                        child: Text('control_selected'.tr),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            : const SizedBox.shrink(),
       ),
       body: RefreshIndicator(
         onRefresh: controller.fetchDevices,
@@ -32,7 +85,11 @@ class DevicePlacementView extends GetView<DeviceController> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.router_outlined, size: 64, color: AppColors.textSecondary),
+                  const Icon(
+                    Icons.router_outlined,
+                    size: 64,
+                    color: AppColors.textSecondary,
+                  ),
                   const SizedBox(height: 16),
                   Text('no_devices'.tr),
                   const SizedBox(height: 16),
@@ -49,7 +106,7 @@ class DevicePlacementView extends GetView<DeviceController> {
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              _FarmLayoutHeader(
+              FarmLayoutHeader(
                 total: controller.devices.length,
                 online: controller.devices.where((d) => d.isOnline).length,
                 owned: controller.devices.where((d) => d.isOwner).length,
@@ -72,326 +129,260 @@ class DevicePlacementView extends GetView<DeviceController> {
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Owned devices section
-              if (controller.ownedDevices.isNotEmpty) ...[
-                _ZoneSection(
-                  label: 'my_devices'.tr,
-                  color: AppColors.primary,
-                  devices: controller.ownedDevices,
-                ),
-                const SizedBox(height: 20),
-              ],
-
-              // Shared devices section
-              if (controller.sharedDevices.isNotEmpty) ...[
-                _ZoneSection(
-                  label: 'shared_devices'.tr,
-                  color: AppColors.info,
-                  devices: controller.sharedDevices,
-                ),
-              ],
+              ...controller.zones.expand(
+                (zone) => [
+                  ZoneSection(
+                    label:
+                        zone.key == '_unassigned' ? 'unassigned'.tr : zone.name,
+                    color: AppColors.primary,
+                    devices: zone.devices,
+                    zone: zone,
+                    selectionMode: controller.selectionMode.value,
+                    selectedDeviceIds: controller.selectedDeviceIds,
+                    pendingDeviceIds: controller.pendingCommandDeviceIds,
+                    onDeviceTap: (device) {
+                      if (controller.selectionMode.value) {
+                        controller.toggleSelection(device);
+                      } else {
+                        controller.open(device);
+                      }
+                    },
+                    onSelectAll: () => controller.selectZone(zone),
+                    onEdit: (device) => _editDevice(context, device),
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
             ],
           );
         }),
       ),
     );
   }
-}
 
-class _FarmLayoutHeader extends StatelessWidget {
-  const _FarmLayoutHeader({
-    required this.total,
-    required this.online,
-    required this.owned,
-  });
+  Future<void> _showControlReview(BuildContext context) async {
+    const commands = <String>[
+      'irrigation.start',
+      'irrigation.stop',
+      'fan.start',
+      'fan.stop',
+      'roof.open',
+      'roof.close',
+      'camera.capture',
+    ];
+    var selectedCommand = commands.first;
 
-  final int total;
-  final int online;
-  final int owned;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            AppColors.primaryDark,
-            AppColors.primary,
-            AppColors.primary.withValues(alpha: 0.85),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.18),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: const Icon(Icons.map_outlined, color: Colors.white, size: 26),
-              ),
-              const SizedBox(width: 14),
-              Column(
+    final shouldSend = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      builder: (sheetContext) => StatefulBuilder(
+        builder: (context, setState) => SafeArea(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(
+              20,
+              20,
+              20,
+              20 + MediaQuery.viewInsetsOf(context).bottom,
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'farm_map'.tr,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w800,
-                    ),
+                    'review_command'.tr,
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
+                  const SizedBox(height: 8),
                   Text(
-                    '$total ${'devices_in_farm'.tr}',
-                    style: const TextStyle(
-                      color: Color(0xFFD8FFE5),
-                      fontSize: 13,
+                    'selected_count'.trParams({
+                      'count': controller.selectedDevices.length.toString(),
+                    }),
+                    style: const TextStyle(color: AppColors.textSecondary),
+                  ),
+                  const SizedBox(height: 12),
+                  ...controller.zones
+                      .where(
+                        (zone) => zone.devices.any(
+                          (device) =>
+                              controller.selectedDeviceIds.contains(device.id),
+                        ),
+                      )
+                      .map(
+                        (zone) => Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Text(
+                            '${zone.key == '_unassigned' ? 'unassigned'.tr : zone.name}: '
+                            '${zone.devices.where((device) => controller.selectedDeviceIds.contains(device.id)).map((device) => device.name).join(', ')}',
+                          ),
+                        ),
+                      ),
+                  const Divider(height: 28),
+                  Text(
+                    'choose_command'.tr,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 10),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: commands
+                        .map(
+                          (command) => ChoiceChip(
+                            label: Text(_commandLabel(command)),
+                            selected: selectedCommand == command,
+                            onSelected: (_) =>
+                                setState(() => selectedCommand = command),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton(
+                      onPressed: () => Navigator.pop(sheetContext, true),
+                      child: Text('review_and_send'.tr),
                     ),
                   ),
                 ],
               ),
-            ],
+            ),
           ),
-          const SizedBox(height: 20),
-          Row(
+        ),
+      ),
+    );
+    if (shouldSend != true || !context.mounted) return;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text('confirm_command'.tr),
+        content: Text(
+          'confirm_batch_command'.trParams({
+            'command': _commandLabel(selectedCommand),
+            'count': controller.selectedDeviceIds.length.toString(),
+          }),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text('cancel'.tr),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: Text('send'.tr),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+
+    final result = await controller.sendBatchControl(selectedCommand);
+    if (result == null || !context.mounted) return;
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text('command_results'.tr),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _HeaderStat(
-                icon: Icons.wifi_rounded,
-                value: '$online',
-                label: 'online'.tr,
+              Text(
+                'batch_result_summary'.trParams({
+                  'accepted': result.acceptedCount.toString(),
+                  'failed': result.failedCount.toString(),
+                }),
               ),
-              _HeaderStat(
-                icon: Icons.verified_user_outlined,
-                value: '$owned',
-                label: 'owned'.tr,
-              ),
-              _HeaderStat(
-                icon: Icons.people_outline_rounded,
-                value: '${total - owned}',
-                label: 'shared'.tr,
+              const SizedBox(height: 12),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 300),
+                child: ListView(
+                  shrinkWrap: true,
+                  children: result.results.map((item) {
+                    final device = controller.devices.firstWhereOrNull(
+                      (device) => device.id == item.deviceId,
+                    );
+                    return ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: Icon(
+                        item.accepted
+                            ? Icons.check_circle_rounded
+                            : Icons.error_outline_rounded,
+                        color:
+                            item.accepted ? AppColors.primary : AppColors.error,
+                      ),
+                      title: Text(device?.name ?? '#${item.deviceId}'),
+                      subtitle: item.accepted
+                          ? Text('command_pending'.tr)
+                          : Text(item.errorCode ?? 'command_failed'.tr),
+                    );
+                  }).toList(),
+                ),
               ),
             ],
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class _HeaderStat extends StatelessWidget {
-  const _HeaderStat({
-    required this.icon,
-    required this.value,
-    required this.label,
-  });
-
-  final IconData icon;
-  final String value;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        children: [
-          Icon(icon, color: const Color(0xFFB9F5CC), size: 20),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          Text(
-            label,
-            style: const TextStyle(
-              color: Color(0xFFD8FFE5),
-              fontSize: 11,
-            ),
+        ),
+        actions: [
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text('done'.tr),
           ),
         ],
       ),
     );
   }
-}
 
-class _ZoneSection extends StatelessWidget {
-  const _ZoneSection({
-    required this.label,
-    required this.color,
-    required this.devices,
-  });
+  String _commandLabel(String command) => command.replaceAll('.', '_').tr;
 
-  final String label;
-  final Color color;
-  final List<DeviceModel> devices;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
+  Future<void> _editDevice(
+    BuildContext context,
+    DeviceModel device,
+  ) async {
+    final name = TextEditingController(text: device.name);
+    final placement = TextEditingController(text: device.placement ?? '');
+    final shouldSave = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text('edit_device'.tr),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: 10,
-              height: 10,
-              decoration: BoxDecoration(
-                color: color,
-                shape: BoxShape.circle,
-              ),
+            TextField(
+              controller: name,
+              decoration: InputDecoration(labelText: 'device_name'.tr),
             ),
-            const SizedBox(width: 8),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w700,
-                color: color,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              '(${devices.length})',
-              style: const TextStyle(
-                color: AppColors.textSecondary,
-                fontSize: 13,
-              ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: placement,
+              decoration: InputDecoration(labelText: 'placement'.tr),
             ),
           ],
         ),
-        const SizedBox(height: 12),
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 0.95,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text('cancel'.tr),
           ),
-          itemCount: devices.length,
-          itemBuilder: (_, index) => _DevicePlacementCard(
-            device: devices[index],
-            onTap: () => Get.toNamed(Routes.CONTROL, arguments: devices[index]),
+          FilledButton(
+            onPressed: name.text.trim().isEmpty
+                ? null
+                : () => Navigator.pop(dialogContext, true),
+            child: Text('save'.tr),
           ),
-        ),
-      ],
-    );
-  }
-}
-
-class _DevicePlacementCard extends StatelessWidget {
-  const _DevicePlacementCard({
-    required this.device,
-    required this.onTap,
-  });
-
-  final DeviceModel device;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(18),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(18),
-        child: Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: AppColors.cardBorder),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: device.isOnline
-                      ? AppColors.onlineBadgeBg
-                      : AppColors.offlineBadgeBg,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Icon(
-                  _deviceIcon,
-                  color: device.isOnline
-                      ? AppColors.onlineBadgeText
-                      : AppColors.offlineBadgeText,
-                  size: 26,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                device.name,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13,
-                ),
-              ),
-              const SizedBox(height: 3),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 3,
-                ),
-                decoration: BoxDecoration(
-                  color: device.isOnline
-                      ? AppColors.onlineBadgeBg
-                      : AppColors.offlineBadgeBg,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  device.isOnline ? 'online'.tr : 'offline'.tr,
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    color: device.isOnline
-                        ? AppColors.onlineBadgeText
-                        : AppColors.offlineBadgeText,
-                  ),
-                ),
-              ),
-              if (!device.isOwner) ...[
-                const SizedBox(height: 4),
-                Text(
-                  'shared_access_role'.tr,
-                  style: const TextStyle(
-                    fontSize: 9,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
+        ],
       ),
     );
-  }
-
-  IconData get _deviceIcon {
-    if (device.name.toLowerCase().contains('irrig')) return Icons.water_drop_outlined;
-    if (device.name.toLowerCase().contains('fan')) return Icons.air;
-    if (device.name.toLowerCase().contains('roof')) return Icons.roofing_outlined;
-    if (device.name.toLowerCase().contains('camera')) return Icons.camera_alt_outlined;
-    return Icons.sensors;
+    if (shouldSave == true) {
+      await controller.updateDevice(
+        device,
+        name: name.text,
+        placement: placement.text,
+      );
+    }
+    name.dispose();
+    placement.dispose();
   }
 }

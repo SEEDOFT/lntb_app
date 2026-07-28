@@ -5,6 +5,8 @@ import 'package:lntb_app/core/models/farm/farm_models.dart';
 import 'package:lntb_app/core/theme/app_colors.dart';
 import 'package:lntb_app/modules/farm/widgets/repository_state_view.dart';
 import 'package:lntb_app/routes/app_routes.dart';
+import 'package:lntb_app/modules/farm/widgets/farm_view_farm_summary.dart';
+import 'package:lntb_app/modules/farm/widgets/farm_view_tool.dart';
 
 class FarmView extends GetView<FarmContextController> {
   const FarmView({super.key});
@@ -91,7 +93,7 @@ class FarmView extends GetView<FarmContextController> {
                         state: controller.dashboard.value,
                         onRetry: controller.loadDashboard,
                         dataBuilder: (dashboard) =>
-                            _FarmSummary(dashboard: dashboard),
+                            FarmSummary(dashboard: dashboard),
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -110,18 +112,26 @@ class FarmView extends GetView<FarmContextController> {
                       physics: const NeverScrollableScrollPhysics(),
                       childAspectRatio: 1.22,
                       children: [
-                        _Tool('today_tasks', Icons.task_alt, Routes.FARM_TASKS),
-                        _Tool('environment', Icons.eco, Routes.ENVIRONMENT),
-                        _Tool(
+                        FarmTool(
+                          'today_tasks',
+                          Icons.task_alt,
+                          Routes.FARM_TASKS,
+                        ),
+                        FarmTool('environment', Icons.eco, Routes.ENVIRONMENT),
+                        FarmTool(
                           'irrigation',
                           Icons.water_drop,
                           Routes.IRRIGATION,
                         ),
-                        _Tool('usage_cost', Icons.paid_outlined, Routes.USAGE),
-                        _Tool('ripeness', Icons.camera_alt, Routes.RIPENESS),
-                        _Tool('farm_log', Icons.menu_book, Routes.FARM_LOG),
-                        _Tool('harvest', Icons.agriculture, Routes.HARVEST),
-                        _Tool(
+                        FarmTool(
+                          'usage_cost',
+                          Icons.paid_outlined,
+                          Routes.USAGE,
+                        ),
+                        FarmTool('ripeness', Icons.camera_alt, Routes.RIPENESS),
+                        FarmTool('farm_log', Icons.menu_book, Routes.FARM_LOG),
+                        FarmTool('harvest', Icons.agriculture, Routes.HARVEST),
+                        FarmTool(
                           'ai_assistant',
                           Icons.smart_toy_outlined,
                           Routes.ASSISTANT,
@@ -131,164 +141,6 @@ class FarmView extends GetView<FarmContextController> {
                   ],
                 ),
               ),
-            ),
-          ),
-        ),
-      );
-}
-
-class _FarmSummary extends StatelessWidget {
-  const _FarmSummary({required this.dashboard});
-  final FarmDashboard dashboard;
-
-  @override
-  Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.all(18),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [AppColors.primaryDark, AppColors.primary],
-          ),
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primary.withValues(alpha: .2),
-              blurRadius: 24,
-              offset: const Offset(0, 12),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    dashboard.farm.name,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 21,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 5,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: .16),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.circle,
-                        size: 8,
-                        color: Color(0xFF9AF2B5),
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        dashboard.farm.status.tr,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            Text(
-              dashboard.farm.currentCrop ?? 'no_active_crop'.tr,
-              style: const TextStyle(color: Color(0xFFD8FFE5)),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                _Counter(
-                  value: '${dashboard.openTaskCount}',
-                  label: 'open_tasks'.tr,
-                ),
-                _Counter(
-                  value: '${dashboard.onlineDeviceCount}',
-                  label: 'online_devices'.tr,
-                ),
-                _Counter(
-                  value: '${dashboard.metrics.length}',
-                  label: 'sensor_readings'.tr,
-                ),
-              ],
-            ),
-          ],
-        ),
-      );
-}
-
-class _Counter extends StatelessWidget {
-  const _Counter({required this.value, required this.label});
-  final String value;
-  final String label;
-  @override
-  Widget build(BuildContext context) => Expanded(
-        child: Column(
-          children: [
-            Text(
-              value,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w800,
-                fontSize: 22,
-              ),
-            ),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Color(0xFFD8FFE5), fontSize: 11),
-            ),
-          ],
-        ),
-      );
-}
-
-class _Tool extends StatelessWidget {
-  const _Tool(this.labelKey, this.icon, this.route);
-  final String labelKey;
-  final IconData icon;
-  final String route;
-  @override
-  Widget build(BuildContext context) => Card(
-        elevation: 0,
-        margin: EdgeInsets.zero,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(20),
-          onTap: () => Get.toNamed(route),
-          child: Padding(
-            padding: const EdgeInsets.all(14),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryLight,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Icon(icon, color: AppColors.primary, size: 26),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  labelKey.tr,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontWeight: FontWeight.w700),
-                ),
-              ],
             ),
           ),
         ),

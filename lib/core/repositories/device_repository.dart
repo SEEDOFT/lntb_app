@@ -84,4 +84,34 @@ class DeviceRepository {
       '${ApiEndpoints.deviceUsers(deviceId)}/$accessId',
     );
   }
+
+  Future<DeviceModel> updateDevice(
+    int deviceId, {
+    required String name,
+    required String placement,
+  }) async {
+    final response = await _apiClient.patch(
+      '${ApiEndpoints.devices}/$deviceId',
+      data: {
+        'name': name.trim(),
+        'placement': placement.trim().isEmpty ? null : placement.trim(),
+      },
+    );
+    return DeviceModel.fromJson(_resource(response));
+  }
+
+  Future<BatchControlResult> sendBatchControl({
+    required List<int> deviceIds,
+    required String controlType,
+  }) async {
+    final response = await _apiClient.post(
+      ApiEndpoints.batchControls,
+      data: {
+        'device_ids': deviceIds,
+        'control_type': controlType,
+        'control_data': <String, dynamic>{},
+      },
+    );
+    return BatchControlResult.fromJson(_resource(response));
+  }
 }

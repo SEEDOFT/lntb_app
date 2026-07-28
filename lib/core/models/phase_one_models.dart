@@ -51,7 +51,7 @@ class DeviceModel {
 
   factory DeviceModel.fromJson(Map<String, dynamic> json) => DeviceModel(
         id: json['id'] as int,
-        name: json['name'] as String? ?? 'LNTB IoT',
+        name: json['name'] as String? ?? 'LNTB',
         placement: json['placement'] as String?,
         macAddress: json['mac_address'] as String? ?? '',
         status: (json['status'] as Map<String, dynamic>?)?['code'] as String? ??
@@ -98,6 +98,65 @@ class ControlRecord {
       failureMessage: json['failure_message'] as String?,
     );
   }
+}
+
+class BatchControlItem {
+  const BatchControlItem({
+    required this.deviceId,
+    required this.accepted,
+    this.control,
+    this.errorCode,
+  });
+
+  final int deviceId;
+  final bool accepted;
+  final ControlRecord? control;
+  final String? errorCode;
+
+  factory BatchControlItem.fromJson(Map<String, dynamic> json) =>
+      BatchControlItem(
+        deviceId: json['device_id'] as int,
+        accepted: json['accepted'] as bool? ?? false,
+        control: json['control'] is Map<String, dynamic>
+            ? ControlRecord.fromJson(json['control'] as Map<String, dynamic>)
+            : null,
+        errorCode: json['error_code'] as String?,
+      );
+}
+
+class BatchControlResult {
+  const BatchControlResult({
+    required this.acceptedCount,
+    required this.failedCount,
+    required this.results,
+  });
+
+  final int acceptedCount;
+  final int failedCount;
+  final List<BatchControlItem> results;
+
+  factory BatchControlResult.fromJson(Map<String, dynamic> json) =>
+      BatchControlResult(
+        acceptedCount: json['accepted_count'] as int? ?? 0,
+        failedCount: json['failed_count'] as int? ?? 0,
+        results: (json['results'] as List? ?? const [])
+            .map(
+              (item) => BatchControlItem.fromJson(item as Map<String, dynamic>),
+            )
+            .toList(),
+      );
+}
+
+class DeviceZone {
+  const DeviceZone({
+    required this.key,
+    required this.name,
+    required this.devices,
+  });
+
+  final String key;
+  final String name;
+  final List<DeviceModel> devices;
 }
 
 class DeviceAccess {

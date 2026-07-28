@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:lntb_app/core/theme/app_colors.dart';
 
 class CambodiaCountryCodeField extends StatelessWidget {
@@ -7,7 +8,7 @@ class CambodiaCountryCodeField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      label: 'Cambodia country code plus eight five five',
+      label: 'country_code'.tr,
       child: Container(
         height: 56,
         padding: const EdgeInsets.symmetric(horizontal: 12),

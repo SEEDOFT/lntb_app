@@ -4,6 +4,7 @@ import 'package:lntb_app/core/services/language_service.dart';
 import 'package:lntb_app/core/theme/app_colors.dart';
 import 'package:lntb_app/routes/app_routes.dart';
 import 'package:lntb_app/modules/profile/controllers/profile_controller.dart';
+import 'package:lntb_app/modules/profile/widgets/profile_view_profile_icon.dart';
 
 class ProfileView extends GetView<ProfileController> {
   const ProfileView({super.key});
@@ -114,7 +115,7 @@ class ProfileView extends GetView<ProfileController> {
                           horizontal: 14,
                           vertical: 5,
                         ),
-                        leading: const _ProfileIcon(
+                        leading: const ProfileIcon(
                           icon: Icons.notifications_none_rounded,
                         ),
                         title: Text('notifications'.tr),
@@ -130,12 +131,14 @@ class ProfileView extends GetView<ProfileController> {
                           horizontal: 14,
                           vertical: 5,
                         ),
-                        leading: const _ProfileIcon(
+                        leading: const ProfileIcon(
                           icon: Icons.language_rounded,
                         ),
                         title: Text('language'.tr),
                         subtitle: Text(
-                          LanguageService.to.isKhmer ? 'ភាសាខ្មែរ' : 'English',
+                          LanguageService.to.isKhmer
+                              ? 'khmer'.tr
+                              : 'english'.tr,
                         ),
                         trailing: const Icon(
                           Icons.swap_horiz_rounded,
@@ -165,22 +168,5 @@ class ProfileView extends GetView<ProfileController> {
             ),
           ),
         ),
-      );
-}
-
-class _ProfileIcon extends StatelessWidget {
-  const _ProfileIcon({required this.icon});
-
-  final IconData icon;
-
-  @override
-  Widget build(BuildContext context) => Container(
-        width: 44,
-        height: 44,
-        decoration: BoxDecoration(
-          color: AppColors.primaryLight,
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Icon(icon, color: AppColors.primary),
       );
 }

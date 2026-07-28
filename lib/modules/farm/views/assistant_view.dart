@@ -53,8 +53,7 @@ class AssistantView extends GetView<AssistantController> {
                   suffixIcon: controller.isLoading.value
                       ? const Padding(
                           padding: EdgeInsets.all(12),
-                          child:
-                              CircularProgressIndicator(strokeWidth: 2),
+                          child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : IconButton(
                           onPressed: () {
