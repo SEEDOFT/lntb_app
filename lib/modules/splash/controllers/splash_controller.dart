@@ -1,5 +1,6 @@
-import 'package:get/get.dart';
 import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lntb_app/core/constants/api_endpoints.dart';
 import 'package:lntb_app/core/network/api_client.dart';
 import 'package:lntb_app/core/services/fcm_token_sync_service.dart';
@@ -20,11 +21,9 @@ class SplashController extends GetxController {
   Future<void> _initializeApp() async {
     try {
       final token = await apiClient.storage.read(key: 'auth_token');
-      final hasSeenOnboarding = await apiClient.storage.read(
-        key: 'has_seen_onboarding',
-      );
+      final hasSeenOnboarding = await _readOnboardingFlag();
 
-      if (hasSeenOnboarding != 'true') {
+      if (hasSeenOnboarding != true) {
         await Future<void>.delayed(const Duration(milliseconds: 2200));
         Get.offAllNamed(Routes.ONBOARDING);
       } else if (token != null && token.isNotEmpty) {
@@ -55,5 +54,21 @@ class SplashController extends GetxController {
       // Fallback if secure storage fails (common on some emulators or Windows)
       Get.offAllNamed(Routes.ONBOARDING);
     }
+  }
+
+  Future<bool> _readOnboardingFlag() async {
+    final prefs = await SharedPreferences.getInstance();
+    final fromPrefs = prefs.getBool('has_seen_onboarding');
+    if (fromPrefs != null) return fromPrefs;
+
+    // Migrate from secure storage (legacy)
+    final fromSecure = await apiClient.storage.read(key: 'has_seen_onboarding');
+    if (fromSecure == 'true') {
+      await prefs.setBool('has_seen_onboarding', true);
+      await apiClient.storage.delete(key: 'has_seen_onboarding');
+      return true;
+    }
+
+    return false;
   }
 }

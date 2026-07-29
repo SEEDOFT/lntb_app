@@ -1,12 +1,15 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:lntb_app/core/constants/app_assets.dart';
 import 'package:lntb_app/core/network/api_client.dart';
 import 'package:lntb_app/core/services/fcm_token_sync_service.dart';
 import 'package:lntb_app/core/services/firebase_messaging_service.dart';
 import 'package:lntb_app/core/services/language_service.dart';
+import 'package:lntb_app/core/theme/app_typography.dart';
 import 'package:lntb_app/core/utils/app_logger.dart';
 import 'package:lntb_app/firebase_options.dart';
 
@@ -18,6 +21,7 @@ class AppBootstrap {
     _setupErrorLogging();
 
     AppLogger.info('AppBootstrap: Initializing application services...');
+    await _preloadAppFonts();
 
     // 2. Load Environment Variables
     try {
@@ -89,5 +93,33 @@ class AppBootstrap {
       );
       tokenSync.start();
     }
+  }
+
+  static Future<void> _preloadAppFonts() async {
+    AppLogger.info('AppBootstrap: Preloading fonts...');
+
+    final khmer = FontLoader(AppTypography.khmerFont)
+      ..addFont(rootBundle.load(AppAssets.notoSansKhmerRegular))
+      ..addFont(rootBundle.load(AppAssets.notoSansKhmerMedium))
+      ..addFont(rootBundle.load(AppAssets.notoSansKhmerSemiBold))
+      ..addFont(rootBundle.load(AppAssets.notoSansKhmerBold));
+
+    final latin = FontLoader(AppTypography.latinFont)
+      ..addFont(rootBundle.load(AppAssets.notoSansRegular))
+      ..addFont(rootBundle.load(AppAssets.notoSansMedium))
+      ..addFont(rootBundle.load(AppAssets.notoSansSemiBold))
+      ..addFont(rootBundle.load(AppAssets.notoSansBold));
+
+    final display = FontLoader(AppTypography.displayKhmerFont)
+      ..addFont(rootBundle.load(AppAssets.kantumruyProSemiBold))
+      ..addFont(rootBundle.load(AppAssets.kantumruyProBold));
+
+    await Future.wait(<Future<void>>[
+      khmer.load(),
+      latin.load(),
+      display.load(),
+    ]);
+
+    AppLogger.info('AppBootstrap: Fonts preloaded successfully.');
   }
 }

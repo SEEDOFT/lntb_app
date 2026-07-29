@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lntb_app/core/constants/app_assets.dart';
-import 'package:lntb_app/core/network/api_client.dart';
 import 'package:lntb_app/routes/app_routes.dart';
 
 class OnboardingController extends GetxController {
-  final ApiClient apiClient = Get.find<ApiClient>();
   final PageController pageController = PageController();
   final RxInt currentPage = 0.obs;
 
@@ -57,7 +56,8 @@ class OnboardingController extends GetxController {
 
   void finishOnboarding() async {
     try {
-      await apiClient.storage.write(key: 'has_seen_onboarding', value: 'true');
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('has_seen_onboarding', true);
     } catch (e) {
       debugPrint('Storage write error: $e');
     } finally {

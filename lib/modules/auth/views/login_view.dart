@@ -27,25 +27,25 @@ class LoginView extends GetView<AuthController> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const SizedBox(height: 20),
-                    Center(
-                      child: Container(
-                        width: 84,
-                        height: 84,
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.primary.withValues(alpha: 0.15),
-                              blurRadius: 20,
-                              offset: const Offset(0, 8),
-                            ),
-                          ],
-                        ),
-                        child: Image.asset(AppAssets.logo),
-                      ),
-                    ),
+                    // Center(
+                    //   child: Container(
+                    //     width: 84,
+                    //     height: 84,
+                    //     padding: const EdgeInsets.all(12),
+                    //     decoration: BoxDecoration(
+                    //       color: Colors.white,
+                    //       shape: BoxShape.circle,
+                    //       boxShadow: [
+                    //         BoxShadow(
+                    //           color: AppColors.primary.withValues(alpha: 0.15),
+                    //           blurRadius: 20,
+                    //           offset: const Offset(0, 8),
+                    //         ),
+                    //       ],
+                    //     ),
+                    //     child: Image.asset(AppAssets.logo),
+                    //   ),
+                    // ),
                     const SizedBox(height: 20),
                     Text(
                       'app_title'.tr,
