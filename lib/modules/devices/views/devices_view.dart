@@ -6,74 +6,121 @@ import 'package:lntb_app/modules/devices/views/device_placement_view.dart';
 import 'package:lntb_app/modules/devices/widgets/devices_view_device_card.dart';
 import 'package:lntb_app/modules/devices/widgets/devices_view_state.dart';
 
-class DevicesView extends GetView<DeviceController> {
-  const DevicesView({super.key, this.sharedOnly = false});
-  final bool sharedOnly;
+class DevicesView extends StatefulWidget {
+  const DevicesView({super.key});
+  @override
+  State<DevicesView> createState() => _DevicesViewState();
+}
+
+class _DevicesViewState extends State<DevicesView> {
+  String filter = 'owned';
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Scaffold(
-          backgroundColor: AppColors.background,
-          appBar: AppBar(
-            centerTitle: false,
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  sharedOnly ? 'shared_access'.tr : 'devices'.tr,
-                  style: const TextStyle(fontWeight: FontWeight.w800),
-                ),
-                Text(
-                  'devices_subtitle'.tr,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-              ],
+  Widget build(BuildContext context) {
+    final controller = Get.find<DeviceController>();
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        centerTitle: false,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('devices'.tr),
+            Text(
+              'devices_subtitle'.tr,
+              style: Theme.of(context).textTheme.bodySmall,
             ),
-            actions: sharedOnly
-                ? null
-                : [
-                    IconButton(
-                      onPressed: () =>
-                          Get.to(() => const DevicePlacementView()),
-                      icon: const Icon(Icons.map_outlined),
-                      tooltip: 'farm_layout'.tr,
+          ],
+        ),
+        actions: [
+          IconButton(
+            onPressed: () => Get.to(() => const DevicePlacementView()),
+            icon: const Icon(Icons.dashboard_customize_outlined),
+            tooltip: 'farm_layout'.tr,
+          ),
+          if (filter == 'owned')
+            IconButton(
+              onPressed: controller.goToAddDevice,
+              icon: const Icon(Icons.add_circle_outline),
+            ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+            child: SizedBox(
+              width: double.infinity,
+              child: SegmentedButton<String>(
+                segments: [
+                  ButtonSegment(
+                    value: 'owned',
+                    icon: const Icon(Icons.person_outline),
+                    label: Text('owned'.tr),
+                  ),
+                  ButtonSegment(
+                    value: 'shared',
+                    icon: const Icon(Icons.people_outline),
+                    label: Text('shared'.tr),
+                  ),
+                ],
+                selected: {filter},
+                onSelectionChanged: (value) =>
+                    setState(() => filter = value.first),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Obx(() {
+              final list = filter == 'shared'
+                  ? controller.sharedDevices
+                  : controller.ownedDevices;
+              if (controller.isLoading.value && list.isEmpty) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (list.isEmpty) {
+                return DevicesState(
+                  icon: filter == 'shared'
+                      ? Icons.people_outline
+                      : Icons.router_outlined,
+                  text: filter == 'shared'
+                      ? 'no_shared_devices'.tr
+                      : 'no_devices'.tr,
+                  action: filter == 'shared' ? null : controller.goToAddDevice,
+                );
+              }
+              return RefreshIndicator(
+                onRefresh: controller.fetchDevices,
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(16, 6, 16, 28),
+                  children: [
+                    Card(
+                      color: AppColors.primaryLight,
+                      child: ListTile(
+                        leading: const Icon(
+                          Icons.map_outlined,
+                          color: AppColors.primary,
+                        ),
+                        title: Text('zone_control_board'.tr),
+                        subtitle: Text('zone_control_board_help'.tr),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () => Get.to(() => const DevicePlacementView()),
+                      ),
                     ),
-                    IconButton(
-                      onPressed: controller.goToAddDevice,
-                      icon: const Icon(Icons.add_circle_outline),
+                    const SizedBox(height: 8),
+                    ...list.map(
+                      (device) => DeviceCard(
+                        device: device,
+                        onTap: () => controller.open(device),
+                      ),
                     ),
                   ],
-          ),
-          body: Obx(() {
-            final list =
-                sharedOnly ? controller.sharedDevices : controller.ownedDevices;
-            if (controller.isLoading.value && list.isEmpty) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (list.isEmpty) {
-              return DevicesState(
-                icon: Icons.router_outlined,
-                text: sharedOnly ? 'no_shared_devices'.tr : 'no_devices'.tr,
-                action: sharedOnly ? null : controller.goToAddDevice,
-              );
-            }
-            return RefreshIndicator(
-              onRefresh: controller.fetchDevices,
-              child: ListView.builder(
-                padding: const EdgeInsets.fromLTRB(16, 10, 16, 28),
-                itemCount: list.length,
-                itemBuilder: (_, index) => DeviceCard(
-                  device: list[index],
-                  onTap: () => controller.open(list[index]),
                 ),
-              ),
-            );
-          }),
-        ),
-      );
+              );
+            }),
+          ),
+        ],
+      ),
+    );
+  }
 }

@@ -8,6 +8,8 @@ import 'package:lntb_app/core/controllers/farm_context_controller.dart';
 import 'package:lntb_app/core/services/fcm_token_sync_service.dart';
 import 'package:lntb_app/core/services/firebase_messaging_service.dart';
 import 'package:lntb_app/core/services/farm_data_sync.dart';
+import 'package:lntb_app/core/config/app_data_source.dart';
+import 'package:lntb_app/core/repositories/demo_prototype_repository.dart';
 
 class InitialBinding extends Bindings {
   @override
@@ -52,6 +54,14 @@ class InitialBinding extends Bindings {
     if (!Get.isRegistered<FarmRealtimeGateway>()) {
       Get.put<FarmRealtimeGateway>(
         DisabledFarmRealtimeGateway(),
+        permanent: true,
+      );
+    }
+
+    if (AppDataSourceConfig.isDemo &&
+        !Get.isRegistered<DemoPrototypeRepository>()) {
+      Get.put<DemoPrototypeRepository>(
+        DemoPrototypeRepository(),
         permanent: true,
       );
     }

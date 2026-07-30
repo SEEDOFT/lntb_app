@@ -59,6 +59,22 @@ class LntbAppRoot extends StatelessWidget {
             borderSide: const BorderSide(color: AppColors.inputBorder),
           ),
         ),
+        navigationBarTheme: NavigationBarThemeData(
+          height: 72,
+          elevation: 0,
+          backgroundColor: Colors.white,
+          indicatorColor: AppColors.primaryLight,
+          labelTextStyle: WidgetStateProperty.resolveWith(
+            (states) => AppTypography.textThemeFor(locale).labelSmall?.copyWith(
+                  fontWeight: states.contains(WidgetState.selected)
+                      ? FontWeight.w600
+                      : FontWeight.w500,
+                  color: states.contains(WidgetState.selected)
+                      ? AppColors.primary
+                      : AppColors.textSecondary,
+                ),
+          ),
+        ),
         filledButtonTheme: FilledButtonThemeData(
           style: FilledButton.styleFrom(
             minimumSize: const Size(0, 52),
@@ -68,23 +84,6 @@ class LntbAppRoot extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
-          ),
-        ),
-        navigationBarTheme: NavigationBarThemeData(
-          height: 72,
-          elevation: 0,
-          backgroundColor: Colors.white,
-          indicatorColor: AppColors.primaryLight,
-          labelTextStyle: WidgetStateProperty.resolveWith(
-            (states) =>
-                AppTypography.textThemeFor(locale).labelSmall?.copyWith(
-                      fontWeight: states.contains(WidgetState.selected)
-                          ? FontWeight.w600
-                          : FontWeight.w500,
-                      color: states.contains(WidgetState.selected)
-                          ? AppColors.primary
-                          : AppColors.textSecondary,
-                    ),
           ),
         ),
         useMaterial3: true,
