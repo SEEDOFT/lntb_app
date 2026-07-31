@@ -64,6 +64,17 @@ class DeviceRepository {
     return ControlRecord.fromJson(_resource(response));
   }
 
+  Future<DeviceModel> updateDevicePower(
+    int deviceId, {
+    required int? ratedPowerWatts,
+  }) async {
+    final response = await _apiClient.patch(
+      '${ApiEndpoints.devices}/$deviceId',
+      data: {'rated_power_watts': ratedPowerWatts},
+    );
+    return DeviceModel.fromJson(_resource(response));
+  }
+
   Future<List<DeviceAccess>> getSharedUsers(int deviceId) async {
     final response = await _apiClient.get(ApiEndpoints.deviceUsers(deviceId));
     final payload = response.data as Map<String, dynamic>;

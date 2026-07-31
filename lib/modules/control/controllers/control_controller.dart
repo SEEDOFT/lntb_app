@@ -11,7 +11,7 @@ import 'package:lntb_app/routes/app_routes.dart';
 
 class ControlController extends GetxController {
   final repository = Get.find<DeviceRepository>();
-  late final DeviceModel device;
+  late DeviceModel device;
   final history = <ControlRecord>[].obs;
   final isLoading = false.obs;
 
@@ -63,6 +63,23 @@ class ControlController extends GetxController {
       }
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<bool> updateRatedPower(int? watts) async {
+    try {
+      final updated = await repository.updateDevicePower(
+        device.id,
+        ratedPowerWatts: watts,
+      );
+      device = updated;
+      update();
+      return true;
+    } catch (error) {
+      if (!_handleRevokedAccess(error)) {
+        Get.snackbar('power_update_failed'.tr, error.toString());
+      }
+      return false;
     }
   }
 

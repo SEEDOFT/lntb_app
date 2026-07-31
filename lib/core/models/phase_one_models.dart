@@ -34,6 +34,7 @@ class DeviceModel {
     this.placement,
     this.serialNumber,
     this.firmwareVersion,
+    this.ratedPowerWatts,
     this.lastSeenAt,
     this.typeCode,
     this.typeName,
@@ -46,6 +47,7 @@ class DeviceModel {
   final String accessRole;
   final String? serialNumber;
   final String? firmwareVersion;
+  final int? ratedPowerWatts;
   final DateTime? lastSeenAt;
   final String? typeCode;
   final String? typeName;
@@ -75,6 +77,7 @@ class DeviceModel {
       accessRole: json['access_role'] as String? ?? 'shared',
       serialNumber: json['serial_number'] as String?,
       firmwareVersion: json['firmware_version'] as String?,
+      ratedPowerWatts: json['rated_power_watts'] as int?,
       lastSeenAt: DateTime.tryParse(json['last_seen_at'] as String? ?? ''),
       typeCode: type?['code'] as String?,
       typeName: type?['name'] as String?,

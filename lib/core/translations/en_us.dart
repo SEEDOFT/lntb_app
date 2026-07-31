@@ -452,4 +452,15 @@ const Map<String, String> enUS = {
   'nothing_running': 'Nothing is operating',
   'daily_control': 'Daily control',
   'firmware': 'Firmware',
+  'rated_power': 'Rated power',
+  'watts': 'W',
+  'edit_power_title': 'Set device power',
+  'edit_power_message':
+      'Enter the power the device consumes per hour (watts). This is used to estimate operating cost and energy usage.',
+  'power_label': 'Watts per hour',
+  'save_power': 'Save power',
+  'power_updated': 'Device power updated',
+  'power_update_failed': 'Could not update device power',
+  'power_empty_hint': 'Not set',
+  'invalid_input': 'Invalid value. Enter a whole number of at least 1.',
 };
