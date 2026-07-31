@@ -24,49 +24,76 @@ class ControlViewDailyControlCard extends StatelessWidget {
   final ValueChanged<String> onCommand;
 
   @override
-  Widget build(BuildContext context) => Card(
-        color: AppColors.primaryLight,
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(6, 4, 6, 8),
-                child: Text(
-                  'daily_control'.tr,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ),
-              if (isFan)
-                ControlToggle(
-                  title: 'fan'.tr,
-                  icon: Icons.air_rounded,
-                  value: fanRunning,
-                  enabled: enabled,
-                  onChanged: (value) =>
-                      onCommand(value ? 'fan.start' : 'fan.stop'),
-                ),
-              if (isRoof)
-                ControlToggle(
-                  title: 'roof'.tr,
-                  icon: Icons.roofing_outlined,
-                  value: roofOpen,
-                  enabled: enabled,
-                  onChanged: (value) =>
-                      onCommand(value ? 'roof.open' : 'roof.close'),
-                ),
-              if (isCamera)
-                ControlToggle(
-                  title: 'camera'.tr,
-                  icon: Icons.camera_alt_outlined,
-                  value: false,
-                  button: true,
-                  enabled: enabled,
-                  onChanged: (_) => onCommand('camera.capture'),
-                ),
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.fromLTRB(14, 16, 14, 14),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: const [
+              AppColors.primaryLight,
+              AppColors.surface,
             ],
           ),
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(color: AppColors.cardBorder),
+        ),        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withValues(alpha: .12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.tune_rounded,
+                    color: AppColors.primary,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  'daily_control'.tr,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.textPrimary,
+                      ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            if (isFan)
+              ControlToggle(
+                title: 'fan'.tr,
+                icon: Icons.air_rounded,
+                value: fanRunning,
+                enabled: enabled,
+                onChanged: (value) =>
+                    onCommand(value ? 'fan.start' : 'fan.stop'),
+              ),
+            if (isRoof)
+              ControlToggle(
+                title: 'roof'.tr,
+                icon: Icons.roofing_outlined,
+                value: roofOpen,
+                enabled: enabled,
+                onChanged: (value) =>
+                    onCommand(value ? 'roof.open' : 'roof.close'),
+              ),
+            if (isCamera)
+              ControlToggle(
+                title: 'camera'.tr,
+                icon: Icons.camera_alt_outlined,
+                value: false,
+                button: true,
+                enabled: enabled,
+                onChanged: (_) => onCommand('camera.capture'),
+              ),
+          ],
         ),
       );
 }

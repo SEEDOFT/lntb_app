@@ -20,10 +20,19 @@ class HomeController extends GetxController {
   final dashboard = Rxn<FarmDashboard>();
   final isLoading = false.obs;
   final error = RxnString();
+  final period = 'all'.obs;
+
+  List<String> get periodOptions => ['all', 'today', '7d', '30d'];
 
   @override
   void onInit() {
     super.onInit();
+    unawaited(load());
+  }
+
+  void selectPeriod(String value) {
+    if (period.value == value) return;
+    period.value = value;
     unawaited(load());
   }
 
@@ -32,8 +41,14 @@ class HomeController extends GetxController {
     error.value = null;
     try {
       final farms = await repository.getFarms();
-      dashboard.value =
-          farms.isEmpty ? null : await repository.getDashboard(farms.first.id);
+      if (farms.isEmpty) {
+        dashboard.value = null;
+        return;
+      }
+      dashboard.value = await repository.getDashboard(
+        farms.first.id,
+        period: period.value == 'all' ? null : period.value,
+      );
     } catch (exception) {
       error.value = exception.toString();
     } finally {

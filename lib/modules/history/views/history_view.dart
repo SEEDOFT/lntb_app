@@ -112,22 +112,72 @@ class HistoryView extends GetView<HistoryController> {
                               SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: Row(
-                                  children: controller.dayFilters
-                                      .map(
-                                        (day) => Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 8),
-                                          child: ChoiceChip(
-                                            label: Text(day.tr),
-                                            selected:
-                                                controller.selectedDay.value ==
-                                                    day,
-                                            onSelected: (_) =>
-                                                controller.selectDay(day),
+                                  children: [
+                                    ...controller.dayFilters
+                                        .map(
+                                          (day) => Padding(
+                                            padding: const EdgeInsets.only(
+                                              right: 8,
+                                            ),
+                                            child: ChoiceChip(
+                                              label: Text(day.tr),
+                                              selected:
+                                                  controller.selectedDay.value ==
+                                                      day,
+                                              onSelected: (_) =>
+                                                  controller.selectDay(day),
+                                            ),
                                           ),
                                         ),
-                                      )
-                                      .toList(),
+                                    Obx(
+                                      () => controller.selectedDate.value !=
+                                              null
+                                          ? Padding(
+                                              padding: const EdgeInsets.only(
+                                                right: 8,
+                                              ),
+                                              child: InputChip(
+                                                label: Text(
+                                                  controller.selectedDate.value!
+                                                      .toDayHeaderString(),
+                                                ),
+                                                onDeleted: () =>
+                                                    controller.selectDate(null),
+                                                deleteIcon: const Icon(
+                                                  Icons.close_rounded,
+                                                  size: 16,
+                                                ),
+                                              ),
+                                            )
+                                          : const SizedBox.shrink(),
+                                    ),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(right: 8),
+                                      child: ActionChip(
+                                        avatar: const Icon(
+                                          Icons.calendar_today_rounded,
+                                          size: 16,
+                                        ),
+                                        label: Text('pick_date'.tr),
+                                        onPressed: () async {
+                                          final now = DateTime.now();
+                                          final picked = await showDatePicker(
+                                            context: context,
+                                            initialDate:
+                                                controller.selectedDate.value ??
+                                                    now,
+                                            firstDate: DateTime(2020),
+                                            lastDate: now,
+                                            helpText: 'pick_date'.tr,
+                                          );
+                                          if (picked != null) {
+                                            controller.selectDate(picked);
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],

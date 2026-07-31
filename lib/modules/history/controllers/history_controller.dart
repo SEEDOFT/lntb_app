@@ -12,6 +12,7 @@ class HistoryController extends GetxController {
   final records = <ControlRecord>[].obs;
   final selectedType = 'all'.obs;
   final selectedDay = 'all'.obs;
+  final selectedDate = Rxn<DateTime>();
   final isLoading = false.obs;
 
   List<String> get typeFilters => [
@@ -32,7 +33,7 @@ class HistoryController extends GetxController {
         : records
             .where((record) => record.deviceTypeCode == selectedType.value);
 
-    final byDay = switch (selectedDay.value) {
+    final byDate = switch (selectedDay.value) {
       'today' => byType.where(
           (record) => record.requestedAt.toLocal().isSameDay(DateTime.now())),
       'last_7_days' => byType.where(
@@ -40,10 +41,15 @@ class HistoryController extends GetxController {
                 DateTime.now().subtract(const Duration(days: 7)),
               ),
         ),
+      'date' => byType.where((record) {
+          final day = selectedDate.value;
+          return day != null &&
+              record.requestedAt.toLocal().isSameDay(day);
+        }),
       _ => byType,
     };
 
-    return byDay.toList();
+    return byDate.toList();
   }
 
   /// Records enriched with paired runtime and estimated energy use.
@@ -106,6 +112,11 @@ class HistoryController extends GetxController {
   void selectType(String type) => selectedType.value = type;
 
   void selectDay(String day) => selectedDay.value = day;
+
+  void selectDate(DateTime? date) {
+    selectedDate.value = date;
+    selectedDay.value = date == null ? 'all' : 'date';
+  }
 
   @override
   void onInit() {

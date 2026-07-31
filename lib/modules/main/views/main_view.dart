@@ -3,9 +3,11 @@ import 'package:get/get.dart';
 import 'package:lntb_app/core/theme/app_colors.dart';
 import 'package:lntb_app/modules/devices/views/devices_view.dart';
 import 'package:lntb_app/modules/history/views/history_view.dart';
+import 'package:lntb_app/modules/home/controllers/home_controller.dart';
 import 'package:lntb_app/modules/home/views/home_view.dart';
 import 'package:lntb_app/modules/main/controllers/main_controller.dart';
 import 'package:lntb_app/modules/profile/views/profile_view.dart';
+import 'package:lntb_app/routes/app_routes.dart';
 
 class MainView extends GetView<MainController> {
   const MainView({super.key});
@@ -24,6 +26,9 @@ class MainView extends GetView<MainController> {
                 ProfileView(),
               ],
             ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerDocked,
+            floatingActionButton: _AssistantButton(),
             bottomNavigationBar: Container(
               decoration: BoxDecoration(
                 color: AppColors.surface,
@@ -84,4 +89,29 @@ class MainView extends GetView<MainController> {
           ),
         ),
       );
+}
+
+class _AssistantButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Obx(
+      () {
+        final farm = Get.isRegistered<HomeController>()
+            ? Get.find<HomeController>().dashboard.value?.farm
+            : null;
+        final enabled = farm != null;
+        return FloatingActionButton(
+          heroTag: 'assistant',
+          elevation: 4,
+          backgroundColor: AppColors.primary,
+          foregroundColor: Colors.white,
+          onPressed: enabled
+              ? () => Get.toNamed(Routes.ASSISTANT, arguments: farm)
+              : null,
+          tooltip: 'ai_assistant'.tr,
+          child: const Icon(Icons.auto_awesome_rounded, size: 26),
+        );
+      },
+    );
+  }
 }

@@ -95,16 +95,23 @@ class HomeView extends GetView<HomeController> {
 
           return RefreshIndicator(
             onRefresh: controller.load,
-            child: _DashboardContent(dashboard: dashboard),
+            child: _DashboardContent(
+              dashboard: dashboard,
+              controller: controller,
+            ),
           );
         }),
       );
 }
 
 class _DashboardContent extends StatelessWidget {
-  const _DashboardContent({required this.dashboard});
+  const _DashboardContent({
+    required this.dashboard,
+    required this.controller,
+  });
 
   final FarmDashboard dashboard;
+  final HomeController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -141,6 +148,8 @@ class _DashboardContent extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             HomeSectionHeader(title: 'statistics'.tr),
+            const SizedBox(height: 8),
+            _PeriodSelector(controller: controller),
             const SizedBox(height: 12),
             _UsageSummary(usage: dashboard.usage),
             const SizedBox(height: 24),
@@ -221,6 +230,36 @@ Color _metricColor(String code) => switch (code) {
       'light' => const Color(0xFFE0A21A),
       _ => AppColors.primary,
     };
+
+class _PeriodSelector extends StatelessWidget {
+  const _PeriodSelector({required this.controller});
+
+  final HomeController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(
+      () => SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: controller.periodOptions
+              .map(
+                (option) => Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: ChoiceChip(
+                    label: Text(option.tr),
+                    selected: controller.period.value == option,
+                    onSelected: (_) => controller.selectPeriod(option),
+                    showCheckmark: false,
+                  ),
+                ),
+              )
+              .toList(),
+        ),
+      ),
+    );
+  }
+}
 
 class _UsageSummary extends StatelessWidget {
   const _UsageSummary({required this.usage});

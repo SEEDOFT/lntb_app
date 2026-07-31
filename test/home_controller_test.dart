@@ -69,6 +69,7 @@ class _FarmRepositoryFake implements FarmDashboardRepository {
   final FarmDashboard? dashboard;
   final Exception? error;
   int? requestedFarmId;
+  String? requestedPeriod;
 
   @override
   Future<List<FarmSummary>> getFarms() async {
@@ -77,8 +78,9 @@ class _FarmRepositoryFake implements FarmDashboardRepository {
   }
 
   @override
-  Future<FarmDashboard> getDashboard(int farmId) async {
+  Future<FarmDashboard> getDashboard(int farmId, {String? period}) async {
     requestedFarmId = farmId;
+    requestedPeriod = period;
     if (error case final failure?) throw failure;
     return dashboard!;
   }

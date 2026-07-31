@@ -142,6 +142,7 @@ const Map<String, String> kmKH = {
   'no_internet_message':
       'សូមពិនិត្យ Wi-Fi ឬទិន្នន័យទូរស័ព្ទ រួចព្យាយាមម្ដងទៀត។',
   'active': 'អនឡាញ',
+  'activate': 'ដំណើរការ',
   'suspended': 'ផ្អាក',
   'maintenance': 'ថែទាំ',
   'retired': 'ឈប់ប្រើ',
@@ -193,6 +194,9 @@ const Map<String, String> kmKH = {
   'requested_at': 'ស្នើសុំនៅម៉ោង',
   'failure_reason': 'មូលហេតុនៃការបរាជ័យ',
   'last_7_days': '៧ថ្ងៃចុងក្រោយ',
+  '7d': '៧ថ្ងៃចុងក្រោយ',
+  '30d': '៣០ថ្ងៃចុងក្រោយ',
+  'pick_date': 'ជ្រើសរើសកាលបរិច្ឆេទ',
   'invite_contact_hint': 'បញ្ចូលលេខទូរស័ព្ទដែលបានចុះឈ្មោះ',
   'send_invite': 'ផ្ញើការអញ្ជើញ',
   'revoke_failed': 'មិនអាចលុបសិទ្ធិចូលប្រើ',

@@ -16,8 +16,11 @@ class FarmDashboardRepository {
         .toList();
   }
 
-  Future<FarmDashboard> getDashboard(int farmId) async {
-    final response = await _apiClient.get(ApiEndpoints.farmDashboard(farmId));
+  Future<FarmDashboard> getDashboard(int farmId, {String? period}) async {
+    final response = await _apiClient.get(
+      ApiEndpoints.farmDashboard(farmId),
+      queryParameters: {if (period != null) 'period': period},
+    );
     final payload = response.data as Map<String, dynamic>;
 
     return FarmDashboard.fromJson(payload['data'] as Map<String, dynamic>);
