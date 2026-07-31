@@ -16,6 +16,25 @@ class DeviceController extends GetxController {
   List<DeviceModel> get sharedDevices =>
       devices.where((item) => !item.isOwner && item.isControllable).toList();
 
+  int get onlineCount => devices.where((item) => item.isOnline).length;
+  int get ownedCount => ownedDevices.length;
+  int get sharedCount => sharedDevices.length;
+
+  /// Groups a device list by normalized placement. Blank placements go into an
+  /// "Unassigned" group; non-blank placements are grouped case-insensitively.
+  Map<String, List<DeviceModel>> groupByPlacement(List<DeviceModel> list) {
+    final groups = <String, List<DeviceModel>>{};
+    for (final device in list) {
+      final placement = device.placement?.trim() ?? '';
+      final key = placement.toLowerCase();
+      groups.putIfAbsent(key, () => []).add(device);
+    }
+    return groups;
+  }
+
+  String placementLabel(String key) =>
+      key.isEmpty ? 'unassigned'.tr : key;
+
   @override
   void onInit() {
     super.onInit();

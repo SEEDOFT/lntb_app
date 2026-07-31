@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:get/get.dart';
+import 'package:lntb_app/core/constants/device_power_constants.dart';
 import 'package:lntb_app/core/models/phase_one_models.dart';
 import 'package:lntb_app/core/repositories/device_repository.dart';
 
@@ -42,6 +43,65 @@ class HistoryController extends GetxController {
 
     return byDay.toList();
   }
+
+  /// Records enriched with paired runtime and estimated energy use.
+  List<HistoryTimelineEntry> get timelineEntries {
+    final runtimes = _pairRuntimes(filteredRecords);
+    return filteredRecords
+        .map((record) {
+          final runtime = runtimes[record.id];
+          final watts = wattsForType(
+            record.deviceTypeCode,
+            record.controlType,
+          );
+          final energyKwh = runtime == null || runtime.inSeconds <= 0
+              ? null
+              : watts * (runtime.inSeconds / 3600) / 1000;
+          return HistoryTimelineEntry(
+            record: record,
+            runtime: runtime,
+            energyKwh: energyKwh,
+          );
+        })
+        .toList();
+  }
+
+  /// Pairs start→stop commands per device and returns the active runtime for
+  /// each record that participates in a pair.
+  Map<int, Duration> _pairRuntimes(List<ControlRecord> source) {
+    final byDevice = <int, List<ControlRecord>>{};
+    for (final record in source) {
+      byDevice.putIfAbsent(record.deviceId, () => []).add(record);
+    }
+
+    final runtimes = <int, Duration>{};
+    for (final deviceRecords in byDevice.values) {
+      final sorted = [...deviceRecords]..sort(
+          (a, b) => a.requestedAt.compareTo(b.requestedAt),
+        );
+      final pending = <String, ControlRecord>{};
+      for (final record in sorted) {
+        final base = record.controlType.split('.').first;
+        if (isStart(record.controlType)) {
+          pending[base] = record;
+        } else if (isStop(record.controlType)) {
+          final start = pending.remove(base);
+          if (start != null) {
+            final runtime = record.requestedAt.difference(start.requestedAt);
+            runtimes[start.id] = runtime;
+            runtimes[record.id] = runtime;
+          }
+        }
+      }
+    }
+    return runtimes;
+  }
+
+  bool isStart(String controlType) =>
+      controlType.endsWith('.start') || controlType.endsWith('.open');
+
+  bool isStop(String controlType) =>
+      controlType.endsWith('.stop') || controlType.endsWith('.close');
 
   void selectType(String type) => selectedType.value = type;
 

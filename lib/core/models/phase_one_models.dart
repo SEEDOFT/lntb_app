@@ -1,3 +1,6 @@
+import 'package:get/get.dart';
+import 'package:lntb_app/core/constants/device_power_constants.dart';
+
 class AppUser {
   const AppUser({
     required this.id,
@@ -64,6 +67,11 @@ class DeviceModel {
   bool get isCamera => typeCode == 'camera';
   bool get isMeter => typeCode == 'water_energy_meter';
 
+  /// Khmer-aware display name for seeded demo devices; falls back to the
+  /// user-set name.
+  String get deviceDisplayName =>
+      kKhmerDeviceNames[name] ?? name;
+
   factory DeviceModel.fromJson(Map<String, dynamic> json) {
     final type = json['type'] as Map<String, dynamic>?;
 
@@ -129,8 +137,31 @@ class ControlRecord {
   }
 }
 
-class DeviceAccess {
-  const DeviceAccess({
+/// A control-history record enriched with the paired runtime and the estimated
+/// energy used while the action was active.
+class HistoryTimelineEntry {
+  const HistoryTimelineEntry({
+    required this.record,
+    this.runtime,
+    this.energyKwh,
+  });
+
+  final ControlRecord record;
+
+  /// Duration the action was active (start→stop pairing). Null when no
+  /// matching start/stop pair is known.
+  final Duration? runtime;
+
+  /// Estimated energy in kWh for this action, or null when unknown.
+  final double? energyKwh;
+
+  String get deviceDisplayName =>
+      record.deviceName != null && kKhmerDeviceNames.containsKey(record.deviceName)
+          ? kKhmerDeviceNames[record.deviceName]!
+          : record.deviceName ?? 'device'.tr;
+}
+
+class DeviceAccess {  const DeviceAccess({
     required this.id,
     required this.user,
     required this.status,

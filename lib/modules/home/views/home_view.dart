@@ -6,6 +6,7 @@ import 'package:lntb_app/core/models/farm_dashboard_models.dart';
 import 'package:lntb_app/core/models/phase_one_models.dart';
 import 'package:lntb_app/core/services/notification_display_service.dart';
 import 'package:lntb_app/core/theme/app_colors.dart';
+import 'package:lntb_app/core/utils/app_date_formatter.dart';
 import 'package:lntb_app/modules/home/controllers/home_controller.dart';
 import 'package:lntb_app/modules/home/widgets/home_view_farm_health_card.dart';
 import 'package:lntb_app/modules/home/widgets/home_view_metric_card.dart';
@@ -127,6 +128,12 @@ class _DashboardContent extends StatelessWidget {
               temperatureValue: temperature?.value,
               humidityValue: humidity?.value,
             ),
+            const SizedBox(height: 12),
+            _DeviceStatusCard(
+              onlineCount: dashboard.onlineDeviceCount,
+              totalCount: dashboard.devices.length,
+              devices: dashboard.devices,
+            ),
             ...dashboard.warnings.map(
               (warning) => Padding(
                 padding: const EdgeInsets.only(top: 12),
@@ -222,35 +229,204 @@ class _UsageSummary extends StatelessWidget {
   final DashboardUsage? usage;
 
   @override
-  Widget build(BuildContext context) => LayoutBuilder(
-        builder: (context, constraints) {
-          final width = (constraints.maxWidth - 12) / 2;
+  Widget build(BuildContext context) {
+    final width = (MediaQuery.sizeOf(context).width - 44) / 2;
 
-          return Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            children: [
-              HomeViewMetricCard(
-                width: width,
-                label: 'water_used'.tr,
-                value: usage?.waterCubicMeters ?? 0,
-                unit: 'm3',
-                icon: Icons.water_drop_rounded,
-                color: const Color(0xFF2E90D1),
-                decimals: 2,
+    return Column(
+      children: [
+        Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          children: [
+            HomeViewMetricCard(
+              width: width,
+              label: 'water_used'.tr,
+              value: usage?.waterCubicMeters ?? 0,
+              unit: 'm3',
+              icon: Icons.water_drop_rounded,
+              color: const Color(0xFF2E90D1),
+              decimals: 2,
+            ),
+            HomeViewMetricCard(
+              width: width,
+              label: 'electricity_used'.tr,
+              value: usage?.electricityKwh ?? 0,
+              unit: 'kWh',
+              icon: Icons.bolt_rounded,
+              color: const Color(0xFFE0A21A),
+              decimals: 2,
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        _OperatingCostCard(usage: usage),
+      ],
+    );
+  }
+}
+
+class _OperatingCostCard extends StatelessWidget {
+  const _OperatingCostCard({required this.usage});
+
+  final DashboardUsage? usage;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: AppColors.cardBorder),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: .1),
+                borderRadius: BorderRadius.circular(14),
               ),
-              HomeViewMetricCard(
-                width: width,
-                label: 'electricity_used'.tr,
-                value: usage?.electricityKwh ?? 0,
-                unit: 'kWh',
-                icon: Icons.bolt_rounded,
-                color: const Color(0xFFE0A21A),
-                decimals: 2,
+              child: const Icon(
+                Icons.account_balance_wallet_outlined,
+                color: AppColors.primary,
               ),
-            ],
-          );
-        },
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'estimated_operating_cost'.tr,
+                    style: const TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 12,
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    '\$${usage?.totalCostUsd.toStringAsFixed(2) ?? '0.00'}',
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (usage?.recordedOn != null)
+              Text(
+                usage!.recordedOn!.toAppFormattedString(),
+                style: const TextStyle(
+                  color: AppColors.textMuted,
+                  fontSize: 11,
+                ),
+              ),
+          ],
+        ),
+      );
+}
+
+class _DeviceStatusCard extends StatelessWidget {
+  const _DeviceStatusCard({
+    required this.onlineCount,
+    required this.totalCount,
+    required this.devices,
+  });
+
+  final int onlineCount;
+  final int totalCount;
+  final List<DeviceModel> devices;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: AppColors.cardBorder),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(
+                  Icons.devices_other_rounded,
+                  size: 20,
+                  color: AppColors.primary,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'device_overview'.tr,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  '$onlineCount/$totalCount',
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: devices
+                  .map(
+                    (device) => Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
+                      decoration: BoxDecoration(
+                        color: device.isOnline
+                            ? AppColors.onlineBadgeBg
+                            : AppColors.offlineBadgeBg,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            device.isOnline
+                                ? Icons.circle
+                                : Icons.circle_outlined,
+                            size: 8,
+                            color: device.isOnline
+                                ? AppColors.onlineBadgeText
+                                : AppColors.offlineBadgeText,
+                          ),
+                          const SizedBox(width: 5),
+                          Text(
+                            device.deviceDisplayName,
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: device.isOnline
+                                  ? AppColors.onlineBadgeText
+                                  : AppColors.offlineBadgeText,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+          ],
+        ),
       );
 }
 

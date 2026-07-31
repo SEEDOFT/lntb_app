@@ -54,4 +54,74 @@ extension AppDateTimeFormat on DateTime {
 
     return '$day $month $year $hourStr:$minute $period';
   }
+
+  /// Formats a date as a short header like "31 Jul 2026" (Khmer-aware).
+  String toDayHeaderString() {
+    final local = toLocal();
+    final isKhmer = Get.locale?.languageCode == 'km';
+
+    const enMonths = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
+
+    const kmMonths = [
+      'មករា',
+      'កុម្ភៈ',
+      'មីនា',
+      'មេសា',
+      'ឧសភា',
+      'មិថុនា',
+      'កក្កដា',
+      'សីហា',
+      'កញ្ញា',
+      'តុលា',
+      'វិច្ឆិកា',
+      'ធ្នូ'
+    ];
+
+    final month = isKhmer
+        ? kmMonths[local.month - 1]
+        : enMonths[local.month - 1];
+    return '${local.day} $month ${local.year}';
+  }
+
+  /// Formats a day header subtitle as a weekday name (Khmer-aware).
+  String toDayHeaderSubtitle() {
+    final local = toLocal();
+    final isKhmer = Get.locale?.languageCode == 'km';
+
+    const enWeekdays = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday'
+    ];
+
+    const kmWeekdays = [
+      'ច័ន្ទ',
+      'អង្គារ',
+      'ពុធ',
+      'ព្រហស្បតិ៍',
+      'សុក្រ',
+      'សៅរ៍',
+      'អាទិត្យ'
+    ];
+
+    final weekday = local.weekday - 1;
+    return isKhmer ? kmWeekdays[weekday] : enWeekdays[weekday];
+  }
 }

@@ -43,7 +43,7 @@ class DeviceCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        device.name,
+                        device.deviceDisplayName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -54,7 +54,8 @@ class DeviceCard extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         [
-                          if (device.typeName != null) device.typeName,
+                          if (device.typeCode != null)
+                            'device_type_${device.typeCode}'.tr,
                           if (device.placement != null) device.placement,
                           device.firmwareVersion,
                         ].whereType<String>().join(' • '),

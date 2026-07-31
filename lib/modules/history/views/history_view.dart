@@ -74,15 +74,12 @@ class HistoryView extends GetView<HistoryController> {
                 }
                 return RefreshIndicator(
                   onRefresh: controller.load,
-                  child: ListView.builder(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
-                    itemCount: controller.filteredRecords.isEmpty
-                        ? 2
-                        : controller.filteredRecords.length + 1,
-                    itemBuilder: (_, index) {
-                      if (index == 0) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
+                  child: CustomScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    slivers: [
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -95,7 +92,11 @@ class HistoryView extends GetView<HistoryController> {
                                           padding:
                                               const EdgeInsets.only(right: 8),
                                           child: ChoiceChip(
-                                            label: Text(type.tr),
+                                            label: Text(
+                                              type == 'all'
+                                                  ? type.tr
+                                                  : 'device_type_$type'.tr,
+                                            ),
                                             selected:
                                                 controller.selectedType.value ==
                                                     type,
@@ -131,25 +132,10 @@ class HistoryView extends GetView<HistoryController> {
                               ),
                             ],
                           ),
-                        );
-                      }
-                      final records = controller.filteredRecords;
-                      if (records.isEmpty) {
-                        return Padding(
-                          padding: const EdgeInsets.all(24),
-                          child: Text(
-                            'no_history'.tr,
-                            textAlign: TextAlign.center,
-                          ),
-                        );
-                      }
-                      final record = records[index - 1];
-                      return TimelineItem(
-                        record: record,
-                        isLast: index == records.length,
-                        onTap: () => _showRecordDetail(context, record),
-                      );
-                    },
+                        ),
+                      ),
+                      ..._buildDayGroups(context, controller.timelineEntries),
+                    ],
                   ),
                 );
               }),
@@ -157,23 +143,141 @@ class HistoryView extends GetView<HistoryController> {
           ),
         ),
       );
+
+  List<Widget> _buildDayGroups(
+    BuildContext context,
+    List<HistoryTimelineEntry> entries,
+  ) {
+    if (entries.isEmpty) {
+      return [
+        const SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.all(32),
+            child: Text(
+              '',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      ];
+    }
+
+    final groups = <DateTime, List<HistoryTimelineEntry>>{};
+    for (final entry in entries) {
+      final day = DateTime(
+        entry.record.requestedAt.toLocal().year,
+        entry.record.requestedAt.toLocal().month,
+        entry.record.requestedAt.toLocal().day,
+      );
+      groups.putIfAbsent(day, () => []).add(entry);
+    }
+
+    final days = groups.keys.toList()..sort((a, b) => b.compareTo(a));
+    return [
+      for (final day in days)
+        SliverToBoxAdapter(child: _DayHeader(day: day, entries: groups[day]!)),
+      for (final day in days)
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          sliver: SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (_, index) {
+                final entry = groups[day]![index];
+                final isLast = index == groups[day]!.length - 1;
+                return TimelineItem(
+                  entry: entry,
+                  isLast: isLast,
+                  onTap: () => _showRecordDetail(context, entry),
+                );
+              },
+              childCount: groups[day]!.length,
+            ),
+          ),
+        ),
+    ];
+  }
 }
 
-void _showRecordDetail(BuildContext context, ControlRecord record) {
+class _DayHeader extends StatelessWidget {
+  const _DayHeader({required this.day, required this.entries});
+
+  final DateTime day;
+  final List<HistoryTimelineEntry> entries;
+
+  @override
+  Widget build(BuildContext context) {
+    final label = _dayLabel();
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 6, 16, 2),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+              Text(
+                '${entries.length} ${'actions'.tr}',
+                style: const TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 2),
+          Text(
+            day.toDayHeaderSubtitle(),
+            style: const TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: 11.5,
+            ),
+          ),
+          const SizedBox(height: 8),
+        ],
+      ),
+    );
+  }
+
+  String _dayLabel() {
+    final now = DateTime.now();
+    if (_isSameDay(day, now)) return 'today'.tr;
+    if (_isSameDay(day, now.subtract(const Duration(days: 1)))) {
+      return 'yesterday'.tr;
+    }
+    return day.toDayHeaderString();
+  }
+
+  bool _isSameDay(DateTime a, DateTime b) =>
+      a.year == b.year && a.month == b.month && a.day == b.day;
+}
+
+void _showRecordDetail(BuildContext context, HistoryTimelineEntry entry) {
   unawaited(
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => _RecordDetailSheet(record: record),
+      builder: (_) => _RecordDetailSheet(entry: entry),
     ),
   );
 }
 
 class _RecordDetailSheet extends StatelessWidget {
-  const _RecordDetailSheet({required this.record});
+  const _RecordDetailSheet({required this.entry});
 
-  final ControlRecord record;
+  final HistoryTimelineEntry entry;
+  ControlRecord get record => entry.record;
 
   @override
   Widget build(BuildContext context) {
@@ -185,8 +289,8 @@ class _RecordDetailSheet extends StatelessWidget {
 
     return DraggableScrollableSheet(
       expand: false,
-      initialChildSize: 0.55,
-      minChildSize: 0.35,
+      initialChildSize: 0.6,
+      minChildSize: 0.4,
       maxChildSize: 0.9,
       builder: (_, scrollController) => Container(
         decoration: const BoxDecoration(
@@ -256,13 +360,13 @@ class _RecordDetailSheet extends StatelessWidget {
             _DetailRow(
               icon: Icons.router_outlined,
               label: 'device'.tr,
-              value: record.deviceName ?? '-',
+              value: entry.deviceDisplayName,
             ),
             if (record.deviceTypeName != null)
               _DetailRow(
                 icon: Icons.category_outlined,
                 label: 'device_type'.tr,
-                value: record.deviceTypeName!,
+                value: 'device_type_${record.deviceTypeCode}'.tr,
               ),
             _DetailRow(
               icon: Icons.flag_outlined,
@@ -275,6 +379,19 @@ class _RecordDetailSheet extends StatelessWidget {
               label: 'requested_at'.tr,
               value: record.requestedAt.toAppFormattedString(),
             ),
+            if (entry.runtime != null)
+              _DetailRow(
+                icon: Icons.timelapse_rounded,
+                label: 'runtime'.tr,
+                value: formatRuntime(entry.runtime),
+              ),
+            if (entry.energyKwh != null)
+              _DetailRow(
+                icon: Icons.bolt_rounded,
+                label: 'energy_used'.tr,
+                value: formatEnergyKwh(entry.energyKwh),
+                valueColor: AppColors.primary,
+              ),
             if (record.failureMessage != null)
               _DetailRow(
                 icon: Icons.warning_amber_rounded,

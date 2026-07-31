@@ -16,7 +16,7 @@ class ControlTimelineView extends StatefulWidget {
 
 class _ControlTimelineViewState extends State<ControlTimelineView> {
   final repository = Get.find<DeviceRepository>();
-  final records = <ControlRecord>[].obs;
+  final records = <HistoryTimelineEntry>[].obs;
   final isLoading = true.obs;
 
   @override
@@ -28,7 +28,12 @@ class _ControlTimelineViewState extends State<ControlTimelineView> {
   Future<void> load() async {
     isLoading.value = true;
     try {
-      records.assignAll(await repository.getControlHistory());
+      final source = await repository.getControlHistory();
+      records.assignAll(
+        source.map(
+          (record) => HistoryTimelineEntry(record: record),
+        ),
+      );
     } finally {
       isLoading.value = false;
     }
@@ -74,9 +79,9 @@ class _ControlTimelineViewState extends State<ControlTimelineView> {
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
             itemCount: records.length,
             itemBuilder: (_, index) {
-              final record = records[index];
+              final entry = records[index];
               final isLast = index == records.length - 1;
-              return TimelineItem(record: record, isLast: isLast);
+              return TimelineItem(entry: entry, isLast: isLast);
             },
           ),
         );

@@ -12,7 +12,7 @@ class ControlView extends GetView<ControlController> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: Text(controller.device.name),
+          title: Text(controller.device.deviceDisplayName),
           actions: controller.device.isOwner
               ? [
                   IconButton(

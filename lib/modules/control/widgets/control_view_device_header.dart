@@ -28,7 +28,7 @@ class ControlDeviceHeader extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      device.name,
+                      device.deviceDisplayName,
                       style: const TextStyle(
                         fontWeight: FontWeight.w800,
                         fontSize: 17,
