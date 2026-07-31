@@ -11,15 +11,14 @@ void main() {
   setUpAll(() {
     Get.testMode = true;
     Get.addTranslations(AppTranslations().keys);
-    Get.updateLocale(const Locale('en', 'US'));
   });
 
-  test('localizedUnit returns Khmer words in Khmer locale', () {
-    Get.updateLocale(const Locale('km', 'KH'));
+  test('localizedUnit returns Khmer words in Khmer locale', () async {
+    await Get.updateLocale(const Locale('km', 'KH'));
     expect(localizedUnit('m3'), 'ម៉ែត្រគូប');
     expect(localizedUnit('kWh'), 'គីឡូវ៉ាត់ម៉ោង');
     expect(localizedUnit('°C'), 'អង្សារសេ');
-    Get.updateLocale(const Locale('en', 'US'));
+    await Get.updateLocale(const Locale('en', 'US'));
   });
   test('formatRuntime renders hours, minutes, and seconds', () {
     expect(
