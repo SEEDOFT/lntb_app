@@ -477,4 +477,7 @@ const Map<String, String> enUS = {
   'unit_cubic_meter': 'm3',
   'unit_kwh': 'kWh',
   'unit_celsius': '°C',
+  'unit_hour': 'h',
+  'unit_minute': 'm',
+  'unit_second': 's',
 };

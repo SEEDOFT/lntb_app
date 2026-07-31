@@ -33,6 +33,20 @@ void main() {
     expect(formatRuntime(null), '—');
   });
 
+  test('formatRuntime uses Khmer unit words in the Khmer locale', () async {
+    await Get.updateLocale(const Locale('km', 'KH'));
+    expect(
+      formatRuntime(const Duration(hours: 2, minutes: 5)),
+      '2ម៉ោង 05នាទី',
+    );
+    expect(
+      formatRuntime(const Duration(minutes: 45, seconds: 20)),
+      '45នាទី 20វិនាទី',
+    );
+    expect(formatRuntime(const Duration(seconds: 30)), '30វិនាទី');
+    await Get.updateLocale(const Locale('en', 'US'));
+  });
+
   test('formatEnergyKwh renders kWh with three decimals', () {
     expect(formatEnergyKwh(0.0425), '0.043 kWh');
     expect(formatEnergyKwh(null), '—');

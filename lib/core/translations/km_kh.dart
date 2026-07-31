@@ -476,4 +476,7 @@ const Map<String, String> kmKH = {
   'unit_cubic_meter': 'ម៉ែត្រគូប',
   'unit_kwh': 'គីឡូវ៉ាត់ម៉ោង',
   'unit_celsius': 'អង្សារសេ',
+  'unit_hour': 'ម៉ោង',
+  'unit_minute': 'នាទី',
+  'unit_second': 'វិនាទី',
 };

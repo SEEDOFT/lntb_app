@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:lntb_app/core/models/phase_one_models.dart';
 import 'package:lntb_app/core/theme/app_colors.dart';
 import 'package:lntb_app/core/translations/control_type_labels.dart';
 import 'package:lntb_app/core/utils/app_date_formatter.dart';
 import 'package:lntb_app/core/utils/unit_formatter.dart';
 
-/// Formats runtime as "2h 05m" or "45m" or "30s".
+/// Formats runtime as "2h 05m" or "45m" or "30s" (localized).
 String formatRuntime(Duration? runtime) {
   if (runtime == null || runtime.inSeconds <= 0) return '—';
   final hours = runtime.inHours;
   final minutes = runtime.inMinutes % 60;
   final seconds = runtime.inSeconds % 60;
-  if (hours > 0) return '${hours}h ${minutes.toString().padLeft(2, '0')}m';
-  if (minutes > 0) return '${minutes}m ${seconds.toString().padLeft(2, '0')}s';
-  return '${seconds}s';
+  if (hours > 0) {
+    return '$hours${'unit_hour'.tr} '
+        '${minutes.toString().padLeft(2, '0')}${'unit_minute'.tr}';
+  }
+  if (minutes > 0) {
+    return '$minutes${'unit_minute'.tr} '
+        '${seconds.toString().padLeft(2, '0')}${'unit_second'.tr}';
+  }
+  return '$seconds${'unit_second'.tr}';
 }
 
 String formatEnergyKwh(double? kwh) =>
