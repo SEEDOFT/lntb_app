@@ -4,13 +4,19 @@ import 'package:get/get.dart';
 import 'package:lntb_app/core/models/farm_dashboard_models.dart';
 import 'package:lntb_app/core/models/phase_one_models.dart';
 import 'package:lntb_app/core/repositories/farm_dashboard_repository.dart';
+import 'package:lntb_app/core/services/notification_display_service.dart';
 import 'package:lntb_app/routes/app_routes.dart';
 
 class HomeController extends GetxController {
-  HomeController({FarmDashboardRepository? repository})
-      : repository = repository ?? Get.find<FarmDashboardRepository>();
+  HomeController({
+    FarmDashboardRepository? repository,
+    NotificationDisplayService? notificationDisplay,
+  })  : repository = repository ?? Get.find<FarmDashboardRepository>(),
+        notificationDisplay =
+            notificationDisplay ?? Get.find<NotificationDisplayService>();
 
   final FarmDashboardRepository repository;
+  final NotificationDisplayService notificationDisplay;
   final dashboard = Rxn<FarmDashboard>();
   final isLoading = false.obs;
   final error = RxnString();

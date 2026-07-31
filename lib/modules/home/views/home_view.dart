@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lntb_app/core/models/farm_dashboard_models.dart';
 import 'package:lntb_app/core/models/phase_one_models.dart';
-import 'package:lntb_app/core/services/notification_display_service.dart';
 import 'package:lntb_app/core/theme/app_colors.dart';
 import 'package:lntb_app/core/utils/app_date_formatter.dart';
 import 'package:lntb_app/core/utils/unit_formatter.dart';
@@ -55,8 +54,7 @@ class HomeView extends GetView<HomeController> {
           ),
           actions: [
             Obx(
-              () => (!Get.isRegistered<NotificationDisplayService>() ||
-                      Get.find<NotificationDisplayService>().isEnabled.value)
+              () => controller.notificationDisplay.isEnabled.value
                   ? Padding(
                       padding: const EdgeInsets.only(right: 14),
                       child: IconButton.filledTonal(

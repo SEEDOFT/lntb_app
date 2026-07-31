@@ -7,11 +7,12 @@ import 'package:lntb_app/core/theme/app_colors.dart';
 import 'package:lntb_app/routes/app_routes.dart';
 
 class NoInternetView extends StatelessWidget {
-  const NoInternetView({super.key});
+  const NoInternetView({super.key, required this.service});
+
+  final InternetStatusService service;
 
   @override
   Widget build(BuildContext context) {
-    final service = Get.find<InternetStatusService>();
 
     return Scaffold(
       backgroundColor: AppColors.background,

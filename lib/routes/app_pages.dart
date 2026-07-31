@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'app_routes.dart';
+import 'package:lntb_app/core/services/internet_status_service.dart';
 import 'package:lntb_app/modules/splash/bindings/splash_binding.dart';
 import 'package:lntb_app/modules/splash/views/splash_view.dart';
 import 'package:lntb_app/modules/internet/views/no_internet_view.dart';
@@ -34,7 +35,9 @@ sealed class AppPages {
         ),
         GetPage(
           name: Routes.NO_INTERNET,
-          page: () => const NoInternetView(),
+          page: () => NoInternetView(
+            service: Get.find<InternetStatusService>(),
+          ),
         ),
         GetPage(
           name: Routes.ONBOARDING,

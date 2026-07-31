@@ -17,7 +17,10 @@ class MainBinding extends Bindings {
   void dependencies() {
     Get.lazyPut<MainController>(() => MainController());
     Get.lazyPut<HomeController>(
-      () => HomeController(repository: Get.find<FarmDashboardRepository>()),
+      () => HomeController(
+        repository: Get.find<FarmDashboardRepository>(),
+        notificationDisplay: Get.find<NotificationDisplayService>(),
+      ),
       fenix: true,
     );
     Get.lazyPut<NotificationController>(

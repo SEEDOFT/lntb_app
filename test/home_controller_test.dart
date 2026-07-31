@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lntb_app/core/models/farm_dashboard_models.dart';
 import 'package:lntb_app/core/repositories/farm_dashboard_repository.dart';
+import 'package:lntb_app/core/services/notification_display_service.dart';
 import 'package:lntb_app/modules/home/controllers/home_controller.dart';
 
 void main() {
@@ -9,7 +10,10 @@ void main() {
       farms: const [FarmSummary(id: 7, name: 'Sokha Farm', status: 'active')],
       dashboard: _dashboard(),
     );
-    final controller = HomeController(repository: repository);
+    final controller = HomeController(
+      repository: repository,
+      notificationDisplay: NotificationDisplayService(),
+    );
 
     await controller.load();
 
@@ -22,6 +26,7 @@ void main() {
   test('keeps an empty state when the API account has no farm', () async {
     final controller = HomeController(
       repository: _FarmRepositoryFake(farms: const []),
+      notificationDisplay: NotificationDisplayService(),
     );
 
     await controller.load();
@@ -33,6 +38,7 @@ void main() {
   test('exposes API failures without creating fallback data', () async {
     final controller = HomeController(
       repository: _FarmRepositoryFake(error: Exception('network unavailable')),
+      notificationDisplay: NotificationDisplayService(),
     );
 
     await controller.load();
