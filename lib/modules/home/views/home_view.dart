@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lntb_app/core/models/farm_dashboard_models.dart';
@@ -7,6 +9,7 @@ import 'package:lntb_app/core/theme/app_colors.dart';
 import 'package:lntb_app/modules/home/controllers/home_controller.dart';
 import 'package:lntb_app/modules/home/widgets/home_view_farm_health_card.dart';
 import 'package:lntb_app/modules/home/widgets/home_view_metric_card.dart';
+import 'package:lntb_app/modules/home/widgets/home_view_metric_detail_sheet.dart';
 import 'package:lntb_app/modules/home/widgets/home_view_section_header.dart';
 import 'package:lntb_app/modules/home/widgets/home_view_warning_card.dart';
 import 'package:lntb_app/routes/app_routes.dart';
@@ -131,8 +134,6 @@ class _DashboardContent extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            _ProjectDetailPanel(dashboard: dashboard),
-            const SizedBox(height: 24),
             HomeSectionHeader(title: 'statistics'.tr),
             const SizedBox(height: 12),
             _UsageSummary(usage: dashboard.usage),
@@ -155,6 +156,7 @@ class _DashboardContent extends StatelessWidget {
                           icon: _metricIcon(metric.code),
                           color: _metricColor(metric.code),
                           decimals: metric.code == 'temperature' ? 1 : 0,
+                          onTap: () => _showMetricDetail(context, metric),
                         ),
                       )
                       .toList(),
@@ -178,49 +180,41 @@ class _DashboardContent extends StatelessWidget {
         'light' => 'light'.tr,
         _ => code.tr,
       };
-
-  IconData _metricIcon(String code) => switch (code) {
-        'soil_moisture' => Icons.water_drop_rounded,
-        'temperature' => Icons.thermostat_rounded,
-        'humidity' => Icons.air_rounded,
-        'light' => Icons.wb_sunny_rounded,
-        _ => Icons.sensors_rounded,
-      };
-
-  Color _metricColor(String code) => switch (code) {
-        'soil_moisture' => const Color(0xFF2E90D1),
-        'temperature' => const Color(0xFFE8793E),
-        'humidity' => const Color(0xFF7A65C7),
-        'light' => const Color(0xFFE0A21A),
-        _ => AppColors.primary,
-      };
 }
 
-class _ProjectDetailPanel extends StatelessWidget {
-  const _ProjectDetailPanel({required this.dashboard});
-
-  final FarmDashboard dashboard;
-
-  @override
-  Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: AppColors.cardBorder),
-        ),
-        child: Column(
-          children: [
-            _DetailRow(
-              icon: Icons.place_outlined,
-              title: 'environment_detail'.tr,
-              value:
-                  '${dashboard.farm.location ?? 'location'.tr} • ${dashboard.farm.status.tr} • ${dashboard.farm.cropName ?? 'crop_cycle'.tr}',
-            ),
-          ],
-        ),
-      );
+void _showMetricDetail(
+  BuildContext context,
+  DashboardMetric metric,
+) {
+  unawaited(
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => HomeViewMetricDetailSheet(
+        metric: metric,
+        icon: _metricIcon(metric.code),
+        color: _metricColor(metric.code),
+      ),
+    ),
+  );
 }
+
+IconData _metricIcon(String code) => switch (code) {
+      'soil_moisture' => Icons.water_drop_rounded,
+      'temperature' => Icons.thermostat_rounded,
+      'humidity' => Icons.air_rounded,
+      'light' => Icons.wb_sunny_rounded,
+      _ => Icons.sensors_rounded,
+    };
+
+Color _metricColor(String code) => switch (code) {
+      'soil_moisture' => const Color(0xFF2E90D1),
+      'temperature' => const Color(0xFFE8793E),
+      'humidity' => const Color(0xFF7A65C7),
+      'light' => const Color(0xFFE0A21A),
+      _ => AppColors.primary,
+    };
 
 class _UsageSummary extends StatelessWidget {
   const _UsageSummary({required this.usage});

@@ -237,6 +237,33 @@ const Map<String, String> enUS = {
   'warning': 'Warning',
   'critical': 'Critical',
   'unknown': 'Unknown',
+  'attention': 'Attention',
+  'minimum': 'Minimum',
+  'maximum': 'Maximum',
+  'state_description': 'State description',
+  'state_warning': 'Warning',
+  'source_device': 'Source device',
+  'recorded_at': 'Recorded at',
+  'sensor_status_normal_description':
+      'The reading is within the recommended range.',
+  'sensor_status_attention_description':
+      'The reading is slightly outside the recommended range. Check the device soon.',
+  'sensor_status_minimum_description':
+      'The reading is at or below the minimum recommended value.',
+  'sensor_status_maximum_description':
+      'The reading is at or above the maximum recommended value.',
+  'sensor_status_critical_description':
+      'The reading is at a critical level. Check the device now.',
+  'sensor_status_unknown_description':
+      'The reading state could not be determined.',
+  'sensor_warning_attention':
+      'The reading is outside the recommended range. Check the device soon.',
+  'sensor_warning_minimum':
+      'The reading is at or below the minimum. Take action soon.',
+  'sensor_warning_maximum':
+      'The reading is at or above the maximum. Take action soon.',
+  'sensor_warning_critical':
+      'Critical level reached. Check the device immediately.',
   'automatic_irrigation': 'Automatic irrigation',
   'irrigation_api_required':
       'Automatic irrigation status will appear when the farm controller reports it.',

@@ -237,6 +237,31 @@ const Map<String, String> kmKH = {
   'warning': 'ប្រុងប្រយ័ត្ន',
   'critical': 'ធ្ងន់ធ្ងរ',
   'unknown': 'មិនស្គាល់',
+  'attention': 'ត្រូវការយកចិត្តទុកដាក់',
+  'minimum': 'អប្បបរមា',
+  'maximum': 'អតិបរមា',
+  'state_description': 'ការពិពណ៌នាស្ថានភាព',
+  'state_warning': 'ប្រុងប្រយ័ត្ន',
+  'source_device': 'ឧបករណ៍ប្រភព',
+  'recorded_at': 'វាស់វែងនៅម៉ោង',
+  'sensor_status_normal_description': 'ការអានស្ថិតក្នុងកម្រិតដែលបានណែនាំ។',
+  'sensor_status_attention_description':
+      'ការអានខុសបន្តិចពីកម្រិតដែលបានណែនាំ។ សូមពិនិត្យឧបករណ៍ឆាប់ៗ។',
+  'sensor_status_minimum_description':
+      'ការអានស្ថិតនៅកម្រិតអប្បបរមា ឬទាបជាងកម្រិតដែលបានណែនាំ។',
+  'sensor_status_maximum_description':
+      'ការអានស្ថិតនៅកម្រិតអតិបរមា ឬខ្ពស់ជាងកម្រិតដែលបានណែនាំ។',
+  'sensor_status_critical_description':
+      'ការអានស្ថិតក្នុងកម្រិតធ្ងន់ធ្ងរ។ សូមពិនិត្យឧបករណ៍ឥឡូវនេះ។',
+  'sensor_status_unknown_description': 'មិនអាចកំណត់ស្ថានភាពនៃការអានបានទេ។',
+  'sensor_warning_attention':
+      'ការអានខុសពីកម្រិតដែលបានណែនាំ។ សូមពិនិត្យឧបករណ៍ឆាប់ៗ។',
+  'sensor_warning_minimum':
+      'ការអានស្ថិតនៅកម្រិតអប្បបរមា ឬទាបជាង។ សូមធ្វើសកម្មភាពឆាប់ៗ។',
+  'sensor_warning_maximum':
+      'ការអានស្ថិតនៅកម្រិតអតិបរមា ឬខ្ពស់ជាង។ សូមធ្វើសកម្មភាពឆាប់ៗ។',
+  'sensor_warning_critical':
+      'ឈានដល់កម្រិតធ្ងន់ធ្ងរ។ សូមពិនិត្យឧបករណ៍ជាបន្ទាន់។',
   'automatic_irrigation': 'ប្រព័ន្ធស្រោចស្រពស្វ័យប្រវត្តិ',
   'irrigation_api_required':
       'ស្ថានភាពស្រោចស្រពនឹងបង្ហាញនៅពេលឧបករណ៍បញ្ជាបញ្ជូនទិន្នន័យ។',
