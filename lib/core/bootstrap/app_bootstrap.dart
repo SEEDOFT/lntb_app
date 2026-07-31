@@ -9,6 +9,8 @@ import 'package:lntb_app/core/network/api_client.dart';
 import 'package:lntb_app/core/services/fcm_token_sync_service.dart';
 import 'package:lntb_app/core/services/firebase_messaging_service.dart';
 import 'package:lntb_app/core/services/language_service.dart';
+import 'package:lntb_app/core/services/internet_status_service.dart';
+import 'package:lntb_app/core/services/notification_display_service.dart';
 import 'package:lntb_app/core/theme/app_typography.dart';
 import 'package:lntb_app/core/utils/app_logger.dart';
 import 'package:lntb_app/firebase_options.dart';
@@ -79,6 +81,14 @@ class AppBootstrap {
   static Future<void> _registerDependencies() async {
     await Get.putAsync<LanguageService>(
       () => LanguageService().init(),
+      permanent: true,
+    );
+    await Get.putAsync<NotificationDisplayService>(
+      () => NotificationDisplayService().init(),
+      permanent: true,
+    );
+    await Get.putAsync<InternetStatusService>(
+      () => InternetStatusService().init(),
       permanent: true,
     );
     final apiClient = Get.put<ApiClient>(ApiClient(), permanent: true);

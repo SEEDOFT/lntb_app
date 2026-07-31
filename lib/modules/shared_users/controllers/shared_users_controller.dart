@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lntb_app/core/models/phase_one_models.dart';
@@ -19,7 +21,7 @@ class SharedUsersController extends GetxController {
   void onInit() {
     super.onInit();
     device = Get.arguments as DeviceModel;
-    load();
+    unawaited(load());
   }
 
   Future<void> load() async {

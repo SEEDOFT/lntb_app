@@ -35,6 +35,8 @@ class DeviceModel {
     this.serialNumber,
     this.firmwareVersion,
     this.lastSeenAt,
+    this.typeCode,
+    this.typeName,
   });
   final int id;
   final String name;
@@ -45,22 +47,39 @@ class DeviceModel {
   final String? serialNumber;
   final String? firmwareVersion;
   final DateTime? lastSeenAt;
+  final String? typeCode;
+  final String? typeName;
 
   bool get isOwner => accessRole == 'owner';
   bool get isOnline => status == 'active';
+  bool get isControllable => switch (typeCode) {
+        'fan' || 'roof' || 'camera' || 'smart_farm_controller' => true,
+        _ => false,
+      };
 
-  factory DeviceModel.fromJson(Map<String, dynamic> json) => DeviceModel(
-        id: json['id'] as int,
-        name: json['name'] as String? ?? 'LNTB',
-        placement: json['placement'] as String?,
-        macAddress: json['mac_address'] as String? ?? '',
-        status: (json['status'] as Map<String, dynamic>?)?['code'] as String? ??
-            'retired',
-        accessRole: json['access_role'] as String? ?? 'shared',
-        serialNumber: json['serial_number'] as String?,
-        firmwareVersion: json['firmware_version'] as String?,
-        lastSeenAt: DateTime.tryParse(json['last_seen_at'] as String? ?? ''),
-      );
+  bool get isFan => typeCode == 'fan';
+  bool get isRoof => typeCode == 'roof';
+  bool get isCamera => typeCode == 'camera';
+  bool get isMeter => typeCode == 'water_energy_meter';
+
+  factory DeviceModel.fromJson(Map<String, dynamic> json) {
+    final type = json['type'] as Map<String, dynamic>?;
+
+    return DeviceModel(
+      id: json['id'] as int,
+      name: json['name'] as String? ?? 'LNTB',
+      placement: json['placement'] as String?,
+      macAddress: json['mac_address'] as String? ?? '',
+      status: (json['status'] as Map<String, dynamic>?)?['code'] as String? ??
+          'retired',
+      accessRole: json['access_role'] as String? ?? 'shared',
+      serialNumber: json['serial_number'] as String?,
+      firmwareVersion: json['firmware_version'] as String?,
+      lastSeenAt: DateTime.tryParse(json['last_seen_at'] as String? ?? ''),
+      typeCode: type?['code'] as String?,
+      typeName: type?['name'] as String?,
+    );
+  }
 }
 
 class ControlRecord {
@@ -72,6 +91,8 @@ class ControlRecord {
     required this.requestedAt,
     this.deviceName,
     this.failureMessage,
+    this.deviceTypeCode,
+    this.deviceTypeName,
   });
   final int id;
   final int deviceId;
@@ -80,12 +101,15 @@ class ControlRecord {
   final DateTime requestedAt;
   final String? deviceName;
   final String? failureMessage;
+  final String? deviceTypeCode;
+  final String? deviceTypeName;
 
   bool get isPending => status == 'pending';
   bool get isCompleted => status == 'completed';
 
   factory ControlRecord.fromJson(Map<String, dynamic> json) {
     final device = json['device'] as Map<String, dynamic>?;
+    final type = device?['type'] as Map<String, dynamic>?;
     return ControlRecord(
       id: json['id'] as int,
       deviceId: json['device_id'] as int,
@@ -96,67 +120,10 @@ class ControlRecord {
           DateTime.now(),
       deviceName: device?['name'] as String?,
       failureMessage: json['failure_message'] as String?,
+      deviceTypeCode: type?['code'] as String?,
+      deviceTypeName: type?['name'] as String?,
     );
   }
-}
-
-class BatchControlItem {
-  const BatchControlItem({
-    required this.deviceId,
-    required this.accepted,
-    this.control,
-    this.errorCode,
-  });
-
-  final int deviceId;
-  final bool accepted;
-  final ControlRecord? control;
-  final String? errorCode;
-
-  factory BatchControlItem.fromJson(Map<String, dynamic> json) =>
-      BatchControlItem(
-        deviceId: json['device_id'] as int,
-        accepted: json['accepted'] as bool? ?? false,
-        control: json['control'] is Map<String, dynamic>
-            ? ControlRecord.fromJson(json['control'] as Map<String, dynamic>)
-            : null,
-        errorCode: json['error_code'] as String?,
-      );
-}
-
-class BatchControlResult {
-  const BatchControlResult({
-    required this.acceptedCount,
-    required this.failedCount,
-    required this.results,
-  });
-
-  final int acceptedCount;
-  final int failedCount;
-  final List<BatchControlItem> results;
-
-  factory BatchControlResult.fromJson(Map<String, dynamic> json) =>
-      BatchControlResult(
-        acceptedCount: json['accepted_count'] as int? ?? 0,
-        failedCount: json['failed_count'] as int? ?? 0,
-        results: (json['results'] as List? ?? const [])
-            .map(
-              (item) => BatchControlItem.fromJson(item as Map<String, dynamic>),
-            )
-            .toList(),
-      );
-}
-
-class DeviceZone {
-  const DeviceZone({
-    required this.key,
-    required this.name,
-    required this.devices,
-  });
-
-  final String key;
-  final String name;
-  final List<DeviceModel> devices;
 }
 
 class DeviceAccess {
@@ -179,24 +146,78 @@ class DeviceAccess {
 
 class ClaimPayload {
   const ClaimPayload({
-    required this.macAddress,
-    required this.claimCode,
+    required this.deviceReference,
+    required this.activationToken,
     this.name,
   });
-  final String macAddress;
-  final String claimCode;
+  final String deviceReference;
+  final String activationToken;
   final String? name;
 
   factory ClaimPayload.fromJson(Map<String, dynamic> json) {
-    final mac = json['mac_address'] as String?;
-    final code = json['claim_code'] as String?;
-    if (mac == null || code == null || mac.isEmpty || code.isEmpty) {
+    final version = json['v'];
+    final reference = json['device_ref'] as String?;
+    final token = json['activation_token'] as String?;
+    final validReference = reference != null &&
+        RegExp(
+          r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$',
+        ).hasMatch(reference);
+    if (version != 1 ||
+        !validReference ||
+        token == null ||
+        token.length != 43 ||
+        !RegExp(r'^[A-Za-z0-9_-]{43}$').hasMatch(token)) {
       throw const FormatException('Unsupported device QR code.');
     }
     return ClaimPayload(
-      macAddress: mac,
-      claimCode: code,
-      name: json['name'] as String?,
+      deviceReference: reference,
+      activationToken: token,
+      name: json['device_name'] as String?,
     );
   }
+}
+
+class NotificationItem {
+  const NotificationItem({
+    required this.id,
+    required this.title,
+    required this.body,
+    required this.typeCode,
+    required this.statusCode,
+    this.data,
+    this.createdAt,
+  });
+  final int id;
+  final String title;
+  final String body;
+  final Map<String, dynamic>? data;
+  final String typeCode;
+  final String statusCode;
+  final DateTime? createdAt;
+
+  bool get isUnread => statusCode == 'unread';
+
+  factory NotificationItem.fromJson(Map<String, dynamic> json) {
+    final type = json['type'] as Map<String, dynamic>?;
+    final status = json['status'] as Map<String, dynamic>?;
+    return NotificationItem(
+      id: json['id'] as int,
+      title: json['title'] as String? ?? '',
+      body: json['body'] as String? ?? '',
+      data: json['data'] as Map<String, dynamic>?,
+      typeCode: type?['code'] as String? ?? 'system',
+      statusCode: status?['code'] as String? ?? 'unread',
+      createdAt: DateTime.tryParse(json['created_at'] as String? ?? ''),
+    );
+  }
+
+  NotificationItem copyWith({String? statusCode}) => NotificationItem(
+        id: id,
+        title: title,
+        body: body,
+        data: data,
+        typeCode: typeCode,
+        statusCode: statusCode ?? this.statusCode,
+        createdAt: createdAt,
+      );
 }

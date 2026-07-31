@@ -69,10 +69,12 @@ class QrScannerController extends GetxController {
         return;
       }
       await _handleRaw(raw);
-    } on UnsupportedError {
-      Get.snackbar('scan_failed'.tr, 'gallery_scan_unsupported'.tr);
-    } catch (_) {
-      Get.snackbar('scan_failed'.tr, 'gallery_scan_failed'.tr);
+    } catch (error) {
+      if (error is UnsupportedError) {
+        Get.snackbar('scan_failed'.tr, 'gallery_scan_unsupported'.tr);
+      } else {
+        Get.snackbar('scan_failed'.tr, 'gallery_scan_failed'.tr);
+      }
     } finally {
       isImporting.value = false;
       if (!_handled) {

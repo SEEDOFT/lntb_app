@@ -63,7 +63,7 @@ void main() {
     expect(_renderedStyle(tester).fontFamily, AppTypography.khmerFont);
 
     locale.value = const Locale('en', 'US');
-    await tester.pump();
+    await tester.pumpAndSettle();
     expect(_renderedStyle(tester).fontFamily, AppTypography.latinFont);
   });
 

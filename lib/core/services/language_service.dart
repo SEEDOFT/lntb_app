@@ -31,11 +31,11 @@ class LanguageService extends GetxService {
       currentLocale.value = const Locale('km', 'KH');
       await _prefs.setString(_keyLanguage, 'km');
     }
-    Get.updateLocale(currentLocale.value);
+    await Get.updateLocale(currentLocale.value);
   }
 
-  void toggleLanguage() {
-    changeLanguage(isKhmer ? 'en' : 'km');
+  Future<void> toggleLanguage() async {
+    await changeLanguage(isKhmer ? 'en' : 'km');
   }
 
   bool get isKhmer => currentLocale.value.languageCode == 'km';

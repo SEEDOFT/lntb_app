@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:lntb_app/core/models/phase_one_models.dart';
 import 'package:lntb_app/core/repositories/device_repository.dart';
 import 'package:lntb_app/modules/devices/controllers/device_controller.dart';
+import 'package:lntb_app/modules/history/controllers/history_controller.dart';
+import 'package:lntb_app/modules/home/controllers/home_controller.dart';
 import 'package:lntb_app/routes/app_routes.dart';
 
 class ControlController extends GetxController {
@@ -15,7 +19,7 @@ class ControlController extends GetxController {
   void onInit() {
     super.onInit();
     device = Get.arguments as DeviceModel;
-    refreshHistory();
+    unawaited(refreshHistory());
   }
 
   Future<void> refreshHistory() async {
@@ -47,6 +51,12 @@ class ControlController extends GetxController {
         0,
         await repository.sendControl(device.id, commandType),
       );
+      if (Get.isRegistered<HomeController>()) {
+        unawaited(Get.find<HomeController>().load());
+      }
+      if (Get.isRegistered<HistoryController>()) {
+        unawaited(Get.find<HistoryController>().load());
+      }
     } catch (error) {
       if (!_handleRevokedAccess(error)) {
         Get.snackbar('command_failed'.tr, error.toString());
@@ -63,7 +73,7 @@ class ControlController extends GetxController {
       return false;
     }
     if (Get.isRegistered<DeviceController>()) {
-      Get.find<DeviceController>().fetchDevices();
+      unawaited(Get.find<DeviceController>().fetchDevices());
     }
     Get.back();
     Get.snackbar('access_revoked'.tr, 'access_revoked_message'.tr);

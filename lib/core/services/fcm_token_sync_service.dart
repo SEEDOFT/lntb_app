@@ -31,6 +31,11 @@ class FcmTokenSyncService {
     );
   }
 
+  Future<void> dispose() async {
+    await _refreshSubscription?.cancel();
+    _refreshSubscription = null;
+  }
+
   Future<Map<String, dynamic>> authenticationPayload() async {
     final metadata = await _deviceMetadata();
     final token = await _messaging.getToken();

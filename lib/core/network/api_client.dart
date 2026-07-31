@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -40,7 +42,7 @@ class ApiClient {
           if (e.response?.statusCode == 401) {
             // Token expired or invalid, handle logout
             await storage.delete(key: 'auth_token');
-            Get.offAllNamed(Routes.LOGIN);
+            unawaited(Get.offAllNamed(Routes.LOGIN));
           }
           return handler.next(e);
         },
@@ -147,8 +149,10 @@ class ApiClient {
   void _handleError(dynamic error) {
     if (error is DioException) {
       final statusCode = error.response?.statusCode;
-      final message =
-          error.response?.data?['status']?['message'] ?? error.message;
+      final message = switch (error.response?.data) {
+        {'status': final Map status} => status['message'] ?? error.message,
+        _ => error.message,
+      };
 
       if (statusCode != 401 && statusCode != 422) {
         // Skip 401 (handled by interceptor) and 422 (validation errors handled by UI)

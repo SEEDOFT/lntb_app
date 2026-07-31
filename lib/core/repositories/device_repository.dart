@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:lntb_app/core/constants/api_endpoints.dart';
 import 'package:lntb_app/core/models/phase_one_models.dart';
 import 'package:lntb_app/core/network/api_client.dart';
@@ -7,7 +8,7 @@ class DeviceRepository {
 
   final ApiClient _apiClient;
 
-  Map<String, dynamic> _resource(dynamic response) {
+  Map<String, dynamic> _resource(Response response) {
     final payload = response.data as Map<String, dynamic>;
     return payload['data'] as Map<String, dynamic>;
   }
@@ -22,15 +23,15 @@ class DeviceRepository {
   }
 
   Future<DeviceModel> claimDevice({
-    required String macAddress,
-    required String claimCode,
+    required String deviceReference,
+    required String activationToken,
     String? name,
   }) async {
     final response = await _apiClient.post(
       '${ApiEndpoints.devices}/claim',
       data: {
-        'mac_address': macAddress,
-        'claim_code': claimCode,
+        'device_ref': deviceReference,
+        'activation_token': activationToken,
         if (name != null && name.trim().isNotEmpty) 'name': name.trim(),
       },
     );
@@ -83,35 +84,5 @@ class DeviceRepository {
     await _apiClient.delete(
       '${ApiEndpoints.deviceUsers(deviceId)}/$accessId',
     );
-  }
-
-  Future<DeviceModel> updateDevice(
-    int deviceId, {
-    required String name,
-    required String placement,
-  }) async {
-    final response = await _apiClient.patch(
-      '${ApiEndpoints.devices}/$deviceId',
-      data: {
-        'name': name.trim(),
-        'placement': placement.trim().isEmpty ? null : placement.trim(),
-      },
-    );
-    return DeviceModel.fromJson(_resource(response));
-  }
-
-  Future<BatchControlResult> sendBatchControl({
-    required List<int> deviceIds,
-    required String controlType,
-  }) async {
-    final response = await _apiClient.post(
-      ApiEndpoints.batchControls,
-      data: {
-        'device_ids': deviceIds,
-        'control_type': controlType,
-        'control_data': <String, dynamic>{},
-      },
-    );
-    return BatchControlResult.fromJson(_resource(response));
   }
 }

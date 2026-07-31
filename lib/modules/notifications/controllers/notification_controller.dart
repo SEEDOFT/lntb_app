@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import 'package:lntb_app/core/constants/api_endpoints.dart';
+import 'package:lntb_app/core/models/phase_one_models.dart';
 import 'package:lntb_app/core/network/api_client.dart';
 import 'package:lntb_app/core/network/api_response.dart';
 
@@ -7,7 +10,7 @@ class NotificationController extends GetxController {
   final ApiClient _apiClient = Get.find<ApiClient>();
 
   final isLoading = false.obs;
-  final notifications = <dynamic>[].obs;
+  final notifications = <NotificationItem>[].obs;
   final unreadCount = 0.obs;
 
   // Pagination
@@ -17,7 +20,7 @@ class NotificationController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchNotifications();
+    unawaited(fetchNotifications());
   }
 
   Future<void> fetchNotifications({bool refresh = false}) async {
@@ -36,12 +39,19 @@ class NotificationController extends GetxController {
         '${ApiEndpoints.notifications}?page=${currentPage.value}',
       );
 
-      final apiResponse = ApiResponse<List<dynamic>>.fromJson(response.data);
+      final apiResponse = ApiResponse<List<NotificationItem>>.fromJson(
+        response.data,
+        (data) => (data as List)
+            .map(
+              (item) => NotificationItem.fromJson(item as Map<String, dynamic>),
+            )
+            .toList(),
+      );
 
       if (apiResponse.status.success) {
         final data = apiResponse.data;
-        final currentList = refresh ? [] : notifications.toList();
-
+        final currentList =
+            refresh ? <NotificationItem>[] : notifications.toList();
         currentList.addAll(data);
         notifications.value = currentList;
 
@@ -84,20 +94,14 @@ class NotificationController extends GetxController {
       if (apiResponse.status.success) {
         _syncUnreadCount(apiResponse.meta);
         final index = notifications.indexWhere(
-          (n) => n['id'] == notificationId,
+          (n) => n.id == notificationId,
         );
 
         if (index == -1) return;
 
-        final updatedNotification = Map<String, dynamic>.from(
-          notifications[index],
+        notifications[index] = notifications[index].copyWith(
+          statusCode: 'read',
         );
-        final updatedStatus = Map<String, dynamic>.from(
-          updatedNotification['status'],
-        );
-        updatedStatus['code'] = 'read';
-        updatedNotification['status'] = updatedStatus;
-        notifications[index] = updatedNotification;
       }
     } catch (e) {
       Get.snackbar(
@@ -110,7 +114,7 @@ class NotificationController extends GetxController {
 
   Future<void> deleteNotification(int notificationId) async {
     // Optimistic UI update
-    final index = notifications.indexWhere((n) => n['id'] == notificationId);
+    final index = notifications.indexWhere((n) => n.id == notificationId);
     if (index == -1) return;
 
     final removedItem = notifications[index];

@@ -9,12 +9,14 @@ class ControlToggle extends StatelessWidget {
     required this.value,
     required this.onChanged,
     this.button = false,
+    this.enabled = true,
   });
   final String title;
   final IconData icon;
   final bool value;
   final ValueChanged<bool> onChanged;
   final bool button;
+  final bool enabled;
   @override
   Widget build(BuildContext context) => Card(
         elevation: 0,
@@ -23,12 +25,12 @@ class ControlToggle extends StatelessWidget {
           title: Text(title),
           trailing: button
               ? IconButton(
-                  onPressed: () => onChanged(true),
+                  onPressed: enabled ? () => onChanged(true) : null,
                   icon: const Icon(Icons.play_circle, color: AppColors.primary),
                 )
               : Switch(
                   value: value,
-                  onChanged: onChanged,
+                  onChanged: enabled ? onChanged : null,
                   activeThumbColor: AppColors.success,
                 ),
         ),

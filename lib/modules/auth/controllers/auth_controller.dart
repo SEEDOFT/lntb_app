@@ -19,11 +19,11 @@ class AuthController extends GetxController {
       : null;
   final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
 
-  final isLoading = false.obs;
-  final mode = AuthMode.login.obs;
+  final RxBool isLoading = false.obs;
+  final Rx<AuthMode> mode = AuthMode.login.obs;
 
-  final isPasswordVisible = false.obs;
-  final isConfirmPasswordVisible = false.obs;
+  final RxBool isPasswordVisible = false.obs;
+  final RxBool isConfirmPasswordVisible = false.obs;
 
   final phoneNumberError = Rx<String?>(null);
   final passwordError = Rx<String?>(null);
@@ -46,12 +46,12 @@ class AuthController extends GetxController {
 
   void goToRegister() {
     mode.value = AuthMode.register;
-    Get.toNamed(Routes.REGISTER);
+    unawaited(Get.toNamed(Routes.REGISTER));
   }
 
   void goToLogin() {
     mode.value = AuthMode.login;
-    Get.offNamed(Routes.LOGIN);
+    unawaited(Get.offNamed(Routes.LOGIN));
   }
 
   Future<void> login() async {
@@ -142,7 +142,12 @@ class AuthController extends GetxController {
       if (error is DioException) {
         debugPrint('[AuthController] response body: ${error.response?.data}');
       }
-      Get.snackbar('authentication_failed'.tr, _message(error));
+      final message = _message(error);
+      if (mode.value == AuthMode.register) {
+        phoneNumberError.value = message;
+      } else {
+        passwordError.value = message;
+      }
     } finally {
       isLoading.value = false;
     }
@@ -156,7 +161,7 @@ class AuthController extends GetxController {
     await apiClient.storage.write(key: 'auth_token', value: token);
     await fcmTokens?.syncAuthenticatedDevice();
     final isNew = response.data['is_new_account'] == true;
-    Get.offAllNamed(isNew ? Routes.AUTH_SUCCESS : Routes.MAIN);
+    unawaited(Get.offAllNamed(isNew ? Routes.AUTH_SUCCESS : Routes.MAIN));
   }
 
   Future<void> loginWithGoogle() async {
@@ -209,7 +214,19 @@ class AuthController extends GetxController {
 
   String _message(Object error) {
     if (error is DioException) {
-      final apiMessage = error.response?.data?['status']?['message'] as String?;
+      final statusMap = switch (error.response?.data) {
+        {'status': final Map status} => status,
+        _ => null,
+      };
+      final errorCode = statusMap?['error_code'] as String?;
+      final localized = switch (errorCode) {
+        'INVALID_CREDENTIALS' => 'invalid_credentials'.tr,
+        'ACCOUNT_NOT_ACTIVE' => 'account_not_active'.tr,
+        'USER_NOT_FOUND' => 'user_not_found'.tr,
+        _ => null,
+      };
+      if (localized != null) return localized;
+      final apiMessage = statusMap?['message'] as String?;
       if (apiMessage != null && apiMessage.isNotEmpty) return apiMessage;
     }
     return error.toString().replaceFirst('Exception: ', '');

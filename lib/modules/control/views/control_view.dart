@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lntb_app/core/config/app_data_source.dart';
-import 'package:lntb_app/core/repositories/demo_prototype_repository.dart';
-import 'package:lntb_app/core/theme/app_colors.dart';
 import 'package:lntb_app/modules/control/controllers/control_controller.dart';
+import 'package:lntb_app/modules/control/widgets/control_view_daily_control_card.dart';
+import 'package:lntb_app/modules/control/widgets/control_view_details_tile.dart';
 import 'package:lntb_app/modules/control/widgets/control_view_device_header.dart';
 import 'package:lntb_app/modules/control/widgets/control_view_history_tile.dart';
-import 'package:lntb_app/modules/farm/views/zone_control_view.dart';
-import 'package:lntb_app/modules/main/controllers/main_controller.dart';
 
 class ControlView extends GetView<ControlController> {
   const ControlView({super.key});
@@ -33,59 +30,30 @@ class ControlView extends GetView<ControlController> {
             children: [
               ControlDeviceHeader(device: controller.device),
               const SizedBox(height: 14),
-              Card(
-                color: AppColors.primaryLight,
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'daily_control'.tr,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      const SizedBox(height: 5),
-                      Text('daily_control_zone_help'.tr),
-                      const SizedBox(height: 12),
-                      SizedBox(
-                        width: double.infinity,
-                        child: FilledButton.icon(
-                          onPressed: _openZoneControls,
-                          icon: const Icon(Icons.eco_outlined),
-                          label: Text('open_zone_controls'.tr),
-                        ),
-                      ),
-                    ],
+              if (controller.device.isFan ||
+                  controller.device.isRoof ||
+                  controller.device.isCamera) ...[
+                Obx(
+                  () => ControlViewDailyControlCard(
+                    isFan: controller.device.isFan,
+                    isRoof: controller.device.isRoof,
+                    isCamera: controller.device.isCamera,
+                    fanRunning: controller.latestState(
+                      'fan.start',
+                      'fan.stop',
+                    ),
+                    roofOpen: controller.latestState(
+                      'roof.open',
+                      'roof.close',
+                    ),
+                    enabled: controller.device.isOnline &&
+                        !controller.isLoading.value,
+                    onCommand: controller.sendCommand,
                   ),
                 ),
-              ),
-              const SizedBox(height: 12),
-              ExpansionTile(
-                initiallyExpanded: true,
-                title: Text('device_details'.tr),
-                leading: const Icon(Icons.info_outline),
-                children: [
-                  ListTile(
-                    title: Text('firmware'.tr),
-                    trailing: Text(
-                      controller.device.firmwareVersion ?? 'unavailable'.tr,
-                    ),
-                  ),
-                  ListTile(
-                    title: Text('last_sync'.tr),
-                    trailing: Text(
-                      controller.device.lastSeenAt?.toLocal().toString() ??
-                          'unavailable'.tr,
-                    ),
-                  ),
-                  ListTile(
-                    title: Text('connection'.tr),
-                    trailing: Text(
-                      controller.device.isOnline ? 'online'.tr : 'offline'.tr,
-                    ),
-                  ),
-                ],
-              ),
+                const SizedBox(height: 12),
+              ],
+              ControlViewDetailsTile(device: controller.device),
               const SizedBox(height: 18),
               Text(
                 'recent_activity'.tr,
@@ -114,19 +82,4 @@ class ControlView extends GetView<ControlController> {
           ),
         ),
       );
-
-  void _openZoneControls() {
-    if (AppDataSourceConfig.isDemo &&
-        Get.isRegistered<DemoPrototypeRepository>()) {
-      final demo = Get.find<DemoPrototypeRepository>();
-      Get.to(
-        () => ZoneControlView(zone: demo.primaryZone, demo: demo),
-      );
-      return;
-    }
-    Get.back();
-    if (Get.isRegistered<MainController>()) {
-      Get.find<MainController>().changePage(1);
-    }
-  }
 }

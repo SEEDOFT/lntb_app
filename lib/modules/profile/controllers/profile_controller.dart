@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import 'package:lntb_app/core/constants/api_endpoints.dart';
 import 'package:lntb_app/core/network/api_client.dart';
 import 'package:lntb_app/core/services/fcm_token_sync_service.dart';
+import 'package:lntb_app/core/services/notification_display_service.dart';
 import 'package:lntb_app/routes/app_routes.dart';
 import 'package:lntb_app/core/models/phase_one_models.dart';
 import 'package:lntb_app/core/repositories/account_repository.dart';
@@ -14,11 +17,13 @@ class ProfileController extends GetxController {
   final RxBool isLoading = false.obs;
   final user = Rxn<AppUser>();
   final AccountRepository repository = Get.find<AccountRepository>();
+  final NotificationDisplayService notificationDisplay =
+      Get.find<NotificationDisplayService>();
 
   @override
   void onInit() {
     super.onInit();
-    load();
+    unawaited(load());
   }
 
   Future<void> load() async {
@@ -41,7 +46,10 @@ class ProfileController extends GetxController {
       isLoading.value = false;
       // Clear token and navigate to login
       await apiClient.storage.delete(key: 'auth_token');
-      Get.offAllNamed(Routes.LOGIN);
+      unawaited(Get.offAllNamed(Routes.LOGIN));
     }
   }
+
+  Future<void> setNotificationDisplay({required bool value}) =>
+      notificationDisplay.setEnabled(value: value);
 }

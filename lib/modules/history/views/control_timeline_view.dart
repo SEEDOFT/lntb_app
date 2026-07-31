@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lntb_app/core/models/phase_one_models.dart';
@@ -20,7 +22,7 @@ class _ControlTimelineViewState extends State<ControlTimelineView> {
   @override
   void initState() {
     super.initState();
-    load();
+    unawaited(load());
   }
 
   Future<void> load() async {

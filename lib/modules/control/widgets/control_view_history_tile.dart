@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lntb_app/core/models/phase_one_models.dart';
 import 'package:lntb_app/core/theme/app_colors.dart';
+import 'package:lntb_app/core/translations/control_type_labels.dart';
+import 'package:lntb_app/core/utils/app_date_formatter.dart';
 
 class ControlHistoryTile extends StatelessWidget {
   const ControlHistoryTile({super.key, required this.record});
@@ -22,8 +24,8 @@ class ControlHistoryTile extends StatelessWidget {
                 : Icons.error,
         color: color,
       ),
-      title: Text(record.controlType.tr),
-      subtitle: Text(record.requestedAt.toLocal().toString().substring(0, 16)),
+      title: Text(record.controlType.controlTypeLabel),
+      subtitle: Text(record.requestedAt.toAppFormattedString()),
       trailing: Text(
         record.status.tr,
         style: TextStyle(color: color, fontWeight: FontWeight.w700),

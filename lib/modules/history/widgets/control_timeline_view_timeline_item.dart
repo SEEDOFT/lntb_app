@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lntb_app/core/models/phase_one_models.dart';
 import 'package:lntb_app/core/theme/app_colors.dart';
+import 'package:lntb_app/core/translations/control_type_labels.dart';
+import 'package:lntb_app/core/utils/app_date_formatter.dart';
 
 class TimelineItem extends StatelessWidget {
   const TimelineItem({
@@ -26,9 +28,6 @@ class TimelineItem extends StatelessWidget {
         : record.isPending
             ? Icons.schedule
             : Icons.error;
-
-    final timeStr = record.requestedAt.toLocal().toString().substring(11, 19);
-
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -73,7 +72,7 @@ class TimelineItem extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          record.controlType.tr,
+                          record.controlType.controlTypeLabel,
                           style: const TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 15,
@@ -131,22 +130,13 @@ class TimelineItem extends StatelessWidget {
                         color: AppColors.textSecondary,
                       ),
                       const SizedBox(width: 4),
-                      Text(
-                        timeStr,
-                        style: const TextStyle(
-                          color: AppColors.textSecondary,
-                          fontSize: 12,
-                        ),
-                      ),
-                      const Spacer(),
-                      Text(
-                        record.requestedAt
-                            .toLocal()
-                            .toString()
-                            .substring(0, 10),
-                        style: const TextStyle(
-                          color: AppColors.textSecondary,
-                          fontSize: 12,
+                      Expanded(
+                        child: Text(
+                          record.requestedAt.toAppFormattedString(),
+                          style: const TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
                     ],

@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lntb_app/core/models/phase_one_models.dart';
 import 'package:lntb_app/core/theme/app_colors.dart';
 import '../controllers/notification_controller.dart';
 
@@ -49,7 +52,9 @@ class NotificationsView extends GetView<NotificationController> {
               itemBuilder: (context, index) {
                 if (index == controller.notifications.length) {
                   if (controller.hasMore.value) {
-                    controller.fetchNotifications();
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      unawaited(controller.fetchNotifications());
+                    });
                     return const Padding(
                       padding: EdgeInsets.all(16.0),
                       child: Center(child: CircularProgressIndicator()),
@@ -60,10 +65,10 @@ class NotificationsView extends GetView<NotificationController> {
                 }
 
                 final notification = controller.notifications[index];
-                final isUnread = notification['status']['code'] == 'unread';
+                final isUnread = notification.isUnread;
 
                 return Dismissible(
-                  key: Key(notification['id'].toString()),
+                  key: Key(notification.id.toString()),
                   direction: DismissDirection.endToStart,
                   background: Container(
                     color: AppColors.error,
@@ -72,7 +77,7 @@ class NotificationsView extends GetView<NotificationController> {
                     child: const Icon(Icons.delete, color: Colors.white),
                   ),
                   onDismissed: (direction) {
-                    controller.deleteNotification(notification['id']);
+                    unawaited(controller.deleteNotification(notification.id));
                   },
                   child: Container(
                     color: isUnread ? Colors.white : AppColors.inputFill,
@@ -86,12 +91,12 @@ class NotificationsView extends GetView<NotificationController> {
                             ? AppColors.primary.withValues(alpha: 0.1)
                             : Colors.grey.withValues(alpha: 0.1),
                         child: Icon(
-                          _getIconForType(notification['type']['code']),
+                          _getIconForType(notification.typeCode),
                           color: isUnread ? AppColors.primary : Colors.grey,
                         ),
                       ),
                       title: Text(
-                        notification['title'],
+                        notification.title,
                         style: TextStyle(
                           fontWeight:
                               isUnread ? FontWeight.bold : FontWeight.normal,
@@ -99,7 +104,7 @@ class NotificationsView extends GetView<NotificationController> {
                         ),
                       ),
                       subtitle: Text(
-                        notification['body'],
+                        notification.body,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -109,7 +114,7 @@ class NotificationsView extends GetView<NotificationController> {
                       ),
                       onTap: () {
                         if (isUnread) {
-                          controller.markAsRead(notification['id']);
+                          unawaited(controller.markAsRead(notification.id));
                         }
                         _showNotificationDetails(context, notification);
                       },
@@ -138,89 +143,93 @@ class NotificationsView extends GetView<NotificationController> {
 
   void _showNotificationDetails(
     BuildContext context,
-    Map<String, dynamic> notification,
+    NotificationItem notification,
   ) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-          ),
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
+    unawaited(
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (context) {
+          return Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(20),
               ),
-              const SizedBox(height: 24),
-              Row(
-                children: [
-                  CircleAvatar(
-                    backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-                    child: Icon(
-                      _getIconForType(notification['type']['code']),
-                      color: AppColors.primary,
+            ),
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Text(
-                      notification['title'],
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                      child: Icon(
+                        _getIconForType(notification.typeCode),
+                        color: AppColors.primary,
                       ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Text(
-                notification['body'],
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: AppColors.textSecondary,
-                  height: 1.5,
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        notification.title,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              const SizedBox(height: 32),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => Get.back(),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                const SizedBox(height: 16),
+                Text(
+                  notification.body,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    color: AppColors.textSecondary,
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 32),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => Get.back(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      'close'.tr,
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
-                  child: Text(
-                    'close'.tr,
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
                 ),
-              ),
-              const SizedBox(height: 24), // SafeArea bottom padding alternative
-            ],
-          ),
-        );
-      },
+                const SizedBox(height: 24),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

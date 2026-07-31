@@ -6,7 +6,6 @@ import 'package:lntb_app/modules/history/views/history_view.dart';
 import 'package:lntb_app/modules/home/views/home_view.dart';
 import 'package:lntb_app/modules/main/controllers/main_controller.dart';
 import 'package:lntb_app/modules/profile/views/profile_view.dart';
-import 'package:lntb_app/modules/farm/views/farm_view.dart';
 
 class MainView extends GetView<MainController> {
   const MainView({super.key});
@@ -20,7 +19,6 @@ class MainView extends GetView<MainController> {
               index: controller.currentIndex.value,
               children: const [
                 HomeView(),
-                FarmView(),
                 DevicesView(),
                 HistoryView(),
                 ProfileView(),
@@ -55,14 +53,6 @@ class MainView extends GetView<MainController> {
                       color: AppColors.primary,
                     ),
                     label: 'home'.tr,
-                  ),
-                  NavigationDestination(
-                    icon: const Icon(Icons.eco_outlined),
-                    selectedIcon: const Icon(
-                      Icons.eco_rounded,
-                      color: AppColors.primary,
-                    ),
-                    label: 'farm'.tr,
                   ),
                   NavigationDestination(
                     icon: const Icon(Icons.router_outlined),

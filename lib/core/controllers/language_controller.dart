@@ -18,7 +18,7 @@ class LanguageController extends GetxController {
           key: 'app_language',
         );
     isKhmer.value = language != 'en';
-    Get.updateLocale(
+    await Get.updateLocale(
       isKhmer.value ? const Locale('km', 'KH') : const Locale('en', 'US'),
     );
   }
@@ -30,7 +30,7 @@ class LanguageController extends GetxController {
           key: 'app_language',
           value: language,
         );
-    Get.updateLocale(
+    await Get.updateLocale(
       isKhmer.value ? const Locale('km', 'KH') : const Locale('en', 'US'),
     );
   }

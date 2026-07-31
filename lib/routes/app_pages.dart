@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'app_routes.dart';
 import 'package:lntb_app/modules/splash/bindings/splash_binding.dart';
 import 'package:lntb_app/modules/splash/views/splash_view.dart';
+import 'package:lntb_app/modules/internet/views/no_internet_view.dart';
 import 'package:lntb_app/modules/onboarding/bindings/onboarding_binding.dart';
 import 'package:lntb_app/modules/onboarding/views/onboarding_view.dart';
 import 'package:lntb_app/modules/auth/bindings/auth_binding.dart';
@@ -19,24 +20,10 @@ import 'package:lntb_app/modules/control/bindings/control_binding.dart';
 import 'package:lntb_app/modules/control/views/control_view.dart';
 import 'package:lntb_app/modules/notifications/bindings/notification_binding.dart';
 import 'package:lntb_app/modules/notifications/views/notifications_view.dart';
-import 'package:lntb_app/modules/farm/bindings/farm_tasks_binding.dart';
-import 'package:lntb_app/modules/farm/bindings/environment_binding.dart';
-import 'package:lntb_app/modules/farm/bindings/irrigation_binding.dart';
-import 'package:lntb_app/modules/farm/bindings/usage_binding.dart';
-import 'package:lntb_app/modules/farm/bindings/ripeness_binding.dart';
-import 'package:lntb_app/modules/farm/bindings/farm_log_binding.dart';
-import 'package:lntb_app/modules/farm/bindings/harvest_binding.dart';
-import 'package:lntb_app/modules/farm/bindings/assistant_binding.dart';
-import 'package:lntb_app/modules/farm/views/farm_tasks_view.dart';
-import 'package:lntb_app/modules/farm/views/environment_view.dart';
-import 'package:lntb_app/modules/farm/views/irrigation_view.dart';
-import 'package:lntb_app/modules/farm/views/usage_view.dart';
-import 'package:lntb_app/modules/farm/views/ripeness_view.dart';
-import 'package:lntb_app/modules/farm/views/farm_log_view.dart';
-import 'package:lntb_app/modules/farm/views/harvest_view.dart';
-import 'package:lntb_app/modules/farm/views/assistant_view.dart';
 import 'package:lntb_app/modules/history/bindings/history_binding.dart';
 import 'package:lntb_app/modules/history/views/history_view.dart';
+import 'package:lntb_app/modules/assistant/bindings/assistant_binding.dart';
+import 'package:lntb_app/modules/assistant/views/assistant_view.dart';
 
 sealed class AppPages {
   static List<GetPage<dynamic>> get pages => [
@@ -44,6 +31,10 @@ sealed class AppPages {
           name: Routes.SPLASH,
           page: () => const SplashView(),
           binding: SplashBinding(),
+        ),
+        GetPage(
+          name: Routes.NO_INTERNET,
+          page: () => const NoInternetView(),
         ),
         GetPage(
           name: Routes.ONBOARDING,
@@ -94,49 +85,14 @@ sealed class AppPages {
           binding: NotificationBinding(),
         ),
         GetPage(
-          name: Routes.FARM_TASKS,
-          page: () => const FarmTasksView(),
-          binding: FarmTasksBinding(),
-        ),
-        GetPage(
-          name: Routes.ENVIRONMENT,
-          page: () => const EnvironmentView(),
-          binding: EnvironmentBinding(),
-        ),
-        GetPage(
-          name: Routes.IRRIGATION,
-          page: () => const IrrigationView(),
-          binding: IrrigationBinding(),
-        ),
-        GetPage(
-          name: Routes.USAGE,
-          page: () => const UsageView(),
-          binding: UsageBinding(),
-        ),
-        GetPage(
-          name: Routes.RIPENESS,
-          page: () => const RipenessView(),
-          binding: RipenessBinding(),
-        ),
-        GetPage(
-          name: Routes.FARM_LOG,
-          page: () => const FarmLogView(),
-          binding: FarmLogBinding(),
-        ),
-        GetPage(
-          name: Routes.HARVEST,
-          page: () => const HarvestView(),
-          binding: HarvestBinding(),
+          name: Routes.CONTROL_HISTORY,
+          page: () => const HistoryView(),
+          binding: HistoryBinding(),
         ),
         GetPage(
           name: Routes.ASSISTANT,
           page: () => const AssistantView(),
           binding: AssistantBinding(),
-        ),
-        GetPage(
-          name: Routes.CONTROL_HISTORY,
-          page: () => const HistoryView(),
-          binding: HistoryBinding(),
         ),
       ];
 }

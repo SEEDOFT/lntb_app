@@ -3,13 +3,10 @@ import 'package:lntb_app/core/controllers/language_controller.dart';
 import 'package:lntb_app/core/network/api_client.dart';
 import 'package:lntb_app/core/repositories/account_repository.dart';
 import 'package:lntb_app/core/repositories/device_repository.dart';
-import 'package:lntb_app/core/repositories/farm_repository.dart';
-import 'package:lntb_app/core/controllers/farm_context_controller.dart';
+import 'package:lntb_app/core/repositories/assistant_repository.dart';
+import 'package:lntb_app/core/repositories/farm_dashboard_repository.dart';
 import 'package:lntb_app/core/services/fcm_token_sync_service.dart';
 import 'package:lntb_app/core/services/firebase_messaging_service.dart';
-import 'package:lntb_app/core/services/farm_data_sync.dart';
-import 'package:lntb_app/core/config/app_data_source.dart';
-import 'package:lntb_app/core/repositories/demo_prototype_repository.dart';
 
 class InitialBinding extends Bindings {
   @override
@@ -36,32 +33,16 @@ class InitialBinding extends Bindings {
       );
     }
 
-    if (!Get.isRegistered<FarmRepository>()) {
-      Get.put<FarmRepository>(FarmRepository(apiClient), permanent: true);
-    }
-    if (!Get.isRegistered<FarmContextController>()) {
-      Get.put<FarmContextController>(
-        FarmContextController(Get.find<FarmRepository>()),
-        permanent: true,
-      );
-    }
-    if (!Get.isRegistered<FarmSnapshotCache>()) {
-      Get.put<FarmSnapshotCache>(
-        DisabledFarmSnapshotCache(),
-        permanent: true,
-      );
-    }
-    if (!Get.isRegistered<FarmRealtimeGateway>()) {
-      Get.put<FarmRealtimeGateway>(
-        DisabledFarmRealtimeGateway(),
+    if (!Get.isRegistered<FarmDashboardRepository>()) {
+      Get.put<FarmDashboardRepository>(
+        FarmDashboardRepository(apiClient),
         permanent: true,
       );
     }
 
-    if (AppDataSourceConfig.isDemo &&
-        !Get.isRegistered<DemoPrototypeRepository>()) {
-      Get.put<DemoPrototypeRepository>(
-        DemoPrototypeRepository(),
+    if (!Get.isRegistered<AssistantRepository>()) {
+      Get.put<AssistantRepository>(
+        AssistantRepository(apiClient),
         permanent: true,
       );
     }

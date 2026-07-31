@@ -32,6 +32,7 @@ class SplashView extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(28, 42, 28, 24),
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
                         padding: const EdgeInsets.all(10),
@@ -66,15 +67,7 @@ class SplashView extends StatelessWidget {
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'phase_one_tagline'.tr,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Color(0xFFDDEEFF),
-                        ),
-                      ),
-                      const Spacer(),
+                      const SizedBox(height: 56),
                       const SizedBox(
                         width: 30,
                         height: 30,

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -41,27 +43,29 @@ class OnboardingController extends GetxController {
 
   void next() {
     if (!isLastPage) {
-      pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeIn,
+      unawaited(
+        pageController.nextPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeIn,
+        ),
       );
     } else {
-      finishOnboarding();
+      unawaited(finishOnboarding());
     }
   }
 
   void skip() {
-    finishOnboarding();
+    unawaited(finishOnboarding());
   }
 
-  void finishOnboarding() async {
+  Future<void> finishOnboarding() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('has_seen_onboarding', true);
     } catch (e) {
       debugPrint('Storage write error: $e');
     } finally {
-      Get.offAllNamed(Routes.LOGIN);
+      unawaited(Get.offAllNamed(Routes.LOGIN));
     }
   }
 }

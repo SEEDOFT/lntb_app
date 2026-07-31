@@ -17,6 +17,7 @@ class LntbAppRoot extends StatelessWidget {
 
     return GetMaterialApp(
       title: 'LNTB',
+      debugShowCheckedModeBanner: false,
       translations: AppTranslations(),
       locale: locale,
       fallbackLocale: const Locale('km', 'KH'),

@@ -1,9 +1,16 @@
 import 'package:get/get.dart';
 
 class MainController extends GetxController {
-  final currentIndex = 0.obs;
+  static const homeIndex = 0;
+  static const devicesIndex = 1;
+  static const historyIndex = 2;
+  static const profileIndex = 3;
+  static const pageCount = 4;
 
-  void changePage(int index) {
-    currentIndex.value = index;
-  }
+  final currentIndex = homeIndex.obs;
+
+  void changePage(int index) => currentIndex.value = switch (index) {
+        >= homeIndex && < pageCount => index,
+        _ => currentIndex.value,
+      };
 }

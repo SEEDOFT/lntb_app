@@ -25,8 +25,14 @@ class DeviceCard extends StatelessWidget {
                     color: AppColors.primaryLight,
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: const Icon(
-                    Icons.energy_savings_leaf_outlined,
+                  child: Icon(
+                    device.isCamera
+                        ? Icons.camera_alt_outlined
+                        : device.isMeter
+                            ? Icons.speed_rounded
+                            : device.isRoof
+                                ? Icons.roofing_outlined
+                                : Icons.air_rounded,
                     color: AppColors.primary,
                     size: 28,
                   ),
@@ -47,7 +53,11 @@ class DeviceCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        device.macAddress,
+                        [
+                          if (device.typeName != null) device.typeName,
+                          if (device.placement != null) device.placement,
+                          device.firmwareVersion,
+                        ].whereType<String>().join(' • '),
                         style: const TextStyle(
                           color: AppColors.textSecondary,
                           fontSize: 12,
@@ -55,7 +65,7 @@ class DeviceCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        device.accessRole.tr,
+                        '${device.accessRole.tr} • ${device.macAddress}',
                         style: const TextStyle(
                           color: AppColors.primary,
                           fontSize: 11,
