@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lntb_app/core/theme/app_colors.dart';
 import 'package:lntb_app/core/theme/app_typography.dart';
+import 'package:lntb_app/core/utils/unit_formatter.dart';
 
 class HomeViewFarmHealthCard extends StatelessWidget {
   const HomeViewFarmHealthCard({
@@ -122,7 +123,7 @@ class HomeViewFarmHealthCard extends StatelessWidget {
               const _HeroDivider(),
               _HeroMetric(
                 label: 'temperature'.tr,
-                value: _reading(temperatureValue, '°', 1),
+                value: _reading(temperatureValue, '°C', 1),
               ),
               const _HeroDivider(),
               _HeroMetric(
@@ -136,8 +137,9 @@ class HomeViewFarmHealthCard extends StatelessWidget {
     );
   }
 
-  String _reading(double? value, String unit, int decimals) =>
-      value == null ? '—' : '${value.toStringAsFixed(decimals)}$unit';
+  String _reading(double? value, String unit, int decimals) => value == null
+      ? '—'
+      : '${value.toStringAsFixed(decimals)}${localizedUnit(unit)}';
 }
 
 class _HeroMetric extends StatelessWidget {

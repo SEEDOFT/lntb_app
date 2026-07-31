@@ -474,4 +474,7 @@ const Map<String, String> enUS = {
   'device_type_smart_farm_controller': 'Smart Farm Controller',
   'unassigned': 'Unassigned',
   'device_summary': 'Device summary',
+  'unit_cubic_meter': 'm3',
+  'unit_kwh': 'kWh',
+  'unit_celsius': '°C',
 };

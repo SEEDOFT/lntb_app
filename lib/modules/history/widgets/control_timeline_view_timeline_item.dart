@@ -3,6 +3,7 @@ import 'package:lntb_app/core/models/phase_one_models.dart';
 import 'package:lntb_app/core/theme/app_colors.dart';
 import 'package:lntb_app/core/translations/control_type_labels.dart';
 import 'package:lntb_app/core/utils/app_date_formatter.dart';
+import 'package:lntb_app/core/utils/unit_formatter.dart';
 
 /// Formats runtime as "2h 05m" or "45m" or "30s".
 String formatRuntime(Duration? runtime) {
@@ -16,7 +17,7 @@ String formatRuntime(Duration? runtime) {
 }
 
 String formatEnergyKwh(double? kwh) =>
-    kwh == null ? '—' : '${kwh.toStringAsFixed(3)} kWh';
+    kwh == null ? '—' : '${kwh.toStringAsFixed(3)} ${localizedUnit('kWh')}';
 
 class TimelineItem extends StatelessWidget {
   const TimelineItem({

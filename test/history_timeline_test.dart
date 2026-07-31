@@ -1,8 +1,26 @@
+import 'dart:ui';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:get/get.dart';
 import 'package:lntb_app/core/models/phase_one_models.dart';
+import 'package:lntb_app/core/translations/app_translations.dart';
+import 'package:lntb_app/core/utils/unit_formatter.dart';
 import 'package:lntb_app/modules/history/widgets/control_timeline_view_timeline_item.dart';
 
 void main() {
+  setUpAll(() {
+    Get.testMode = true;
+    Get.addTranslations(AppTranslations().keys);
+    Get.updateLocale(const Locale('en', 'US'));
+  });
+
+  test('localizedUnit returns Khmer words in Khmer locale', () {
+    Get.updateLocale(const Locale('km', 'KH'));
+    expect(localizedUnit('m3'), 'ម៉ែត្រគូប');
+    expect(localizedUnit('kWh'), 'គីឡូវ៉ាត់ម៉ោង');
+    expect(localizedUnit('°C'), 'អង្សារសេ');
+    Get.updateLocale(const Locale('en', 'US'));
+  });
   test('formatRuntime renders hours, minutes, and seconds', () {
     expect(
       formatRuntime(const Duration(hours: 2, minutes: 5)),

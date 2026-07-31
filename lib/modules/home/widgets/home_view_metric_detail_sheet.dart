@@ -4,6 +4,7 @@ import 'package:lntb_app/core/models/farm_dashboard_models.dart';
 import 'package:lntb_app/core/theme/app_colors.dart';
 import 'package:lntb_app/core/theme/app_typography.dart';
 import 'package:lntb_app/core/utils/app_date_formatter.dart';
+import 'package:lntb_app/core/utils/unit_formatter.dart';
 
 class HomeViewMetricDetailSheet extends StatelessWidget {
   const HomeViewMetricDetailSheet({
@@ -75,7 +76,7 @@ class HomeViewMetricDetailSheet extends StatelessWidget {
                       ),
                       const SizedBox(height: 3),
                       Text(
-                        '${metric.value.toStringAsFixed(metric.code == 'temperature' ? 1 : 0)}${metric.unit}',
+                        '${metric.value.toStringAsFixed(metric.code == 'temperature' ? 1 : 0)}${localizedUnit(metric.unit)}',
                         style: AppTypography.sensorValue.copyWith(fontSize: 22),
                       ),
                     ],

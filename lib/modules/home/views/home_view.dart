@@ -7,6 +7,7 @@ import 'package:lntb_app/core/models/phase_one_models.dart';
 import 'package:lntb_app/core/services/notification_display_service.dart';
 import 'package:lntb_app/core/theme/app_colors.dart';
 import 'package:lntb_app/core/utils/app_date_formatter.dart';
+import 'package:lntb_app/core/utils/unit_formatter.dart';
 import 'package:lntb_app/modules/home/controllers/home_controller.dart';
 import 'package:lntb_app/modules/home/widgets/home_view_farm_health_card.dart';
 import 'package:lntb_app/modules/home/widgets/home_view_metric_card.dart';
@@ -159,7 +160,7 @@ class _DashboardContent extends StatelessWidget {
                           width: width,
                           label: _metricLabel(metric.code),
                           value: metric.value,
-                          unit: metric.unit,
+                          unit: localizedUnit(metric.unit),
                           icon: _metricIcon(metric.code),
                           color: _metricColor(metric.code),
                           decimals: metric.code == 'temperature' ? 1 : 0,
@@ -242,7 +243,7 @@ class _UsageSummary extends StatelessWidget {
               width: width,
               label: 'water_used'.tr,
               value: usage?.waterCubicMeters ?? 0,
-              unit: 'm3',
+              unit: localizedUnit('m3'),
               icon: Icons.water_drop_rounded,
               color: const Color(0xFF2E90D1),
               decimals: 2,
@@ -251,7 +252,7 @@ class _UsageSummary extends StatelessWidget {
               width: width,
               label: 'electricity_used'.tr,
               value: usage?.electricityKwh ?? 0,
-              unit: 'kWh',
+              unit: localizedUnit('kWh'),
               icon: Icons.bolt_rounded,
               color: const Color(0xFFE0A21A),
               decimals: 2,
