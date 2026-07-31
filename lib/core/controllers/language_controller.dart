@@ -3,8 +3,11 @@ import 'package:get/get.dart';
 import 'package:lntb_app/core/network/api_client.dart';
 
 class LanguageController extends GetxController {
+  LanguageController({required ApiClient apiClient}) : _apiClient = apiClient;
+
   static LanguageController get to => Get.find<LanguageController>();
 
+  final ApiClient _apiClient;
   final isKhmer = true.obs;
 
   @override
@@ -14,7 +17,7 @@ class LanguageController extends GetxController {
   }
 
   Future<void> _restore() async {
-    final language = await Get.find<ApiClient>().storage.read(
+    final language = await _apiClient.storage.read(
           key: 'app_language',
         );
     isKhmer.value = language != 'en';
@@ -26,7 +29,7 @@ class LanguageController extends GetxController {
   Future<void> toggleLanguage() async {
     isKhmer.toggle();
     final language = isKhmer.value ? 'km' : 'en';
-    await Get.find<ApiClient>().storage.write(
+    await _apiClient.storage.write(
           key: 'app_language',
           value: language,
         );

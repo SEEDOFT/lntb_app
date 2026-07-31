@@ -6,7 +6,9 @@ import 'package:lntb_app/core/models/phase_one_models.dart';
 import 'package:lntb_app/core/repositories/device_repository.dart';
 
 class HistoryController extends GetxController {
-  final repository = Get.find<DeviceRepository>();
+  HistoryController({required this.repository});
+
+  final DeviceRepository repository;
   final records = <ControlRecord>[].obs;
   final selectedType = 'all'.obs;
   final selectedDay = 'all'.obs;
@@ -47,23 +49,21 @@ class HistoryController extends GetxController {
   /// Records enriched with paired runtime and estimated energy use.
   List<HistoryTimelineEntry> get timelineEntries {
     final runtimes = _pairRuntimes(filteredRecords);
-    return filteredRecords
-        .map((record) {
-          final runtime = runtimes[record.id];
-          final watts = wattsForType(
-            record.deviceTypeCode,
-            record.controlType,
-          );
-          final energyKwh = runtime == null || runtime.inSeconds <= 0
-              ? null
-              : watts * (runtime.inSeconds / 3600) / 1000;
-          return HistoryTimelineEntry(
-            record: record,
-            runtime: runtime,
-            energyKwh: energyKwh,
-          );
-        })
-        .toList();
+    return filteredRecords.map((record) {
+      final runtime = runtimes[record.id];
+      final watts = wattsForType(
+        record.deviceTypeCode,
+        record.controlType,
+      );
+      final energyKwh = runtime == null || runtime.inSeconds <= 0
+          ? null
+          : watts * (runtime.inSeconds / 3600) / 1000;
+      return HistoryTimelineEntry(
+        record: record,
+        runtime: runtime,
+        energyKwh: energyKwh,
+      );
+    }).toList();
   }
 
   /// Pairs start→stop commands per device and returns the active runtime for

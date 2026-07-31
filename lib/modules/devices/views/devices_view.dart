@@ -270,8 +270,8 @@ class _DeviceGroupedList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final groups = controller.groupByPlacement(devices);
-    final keys = groups.keys.toList()..sort();
     final unassignedDevices = groups.remove('');
+    final keys = groups.keys.toList()..sort();
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 2, 16, 28),
@@ -303,7 +303,8 @@ class _GroupHeader extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(4, 14, 4, 8),
         child: Row(
           children: [
-            Icon(Icons.place_outlined, size: 16, color: AppColors.textSecondary),
+            Icon(Icons.place_outlined,
+                size: 16, color: AppColors.textSecondary),
             const SizedBox(width: 5),
             Text(
               label,

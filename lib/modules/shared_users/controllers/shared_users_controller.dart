@@ -7,7 +7,9 @@ import 'package:lntb_app/core/repositories/device_repository.dart';
 import 'package:lntb_app/modules/devices/controllers/device_controller.dart';
 
 class SharedUsersController extends GetxController {
-  final repository = Get.find<DeviceRepository>();
+  SharedUsersController({required this.repository});
+
+  final DeviceRepository repository;
   late final DeviceModel device;
   final users = <DeviceAccess>[].obs;
   final inputController = TextEditingController();

@@ -69,8 +69,7 @@ class DeviceModel {
 
   /// Khmer-aware display name for seeded demo devices; falls back to the
   /// user-set name.
-  String get deviceDisplayName =>
-      kKhmerDeviceNames[name] ?? name;
+  String get deviceDisplayName => kKhmerDeviceNames[name] ?? name;
 
   factory DeviceModel.fromJson(Map<String, dynamic> json) {
     final type = json['type'] as Map<String, dynamic>?;
@@ -155,13 +154,14 @@ class HistoryTimelineEntry {
   /// Estimated energy in kWh for this action, or null when unknown.
   final double? energyKwh;
 
-  String get deviceDisplayName =>
-      record.deviceName != null && kKhmerDeviceNames.containsKey(record.deviceName)
-          ? kKhmerDeviceNames[record.deviceName]!
-          : record.deviceName ?? 'device'.tr;
+  String get deviceDisplayName => record.deviceName != null &&
+          kKhmerDeviceNames.containsKey(record.deviceName)
+      ? kKhmerDeviceNames[record.deviceName]!
+      : record.deviceName ?? 'device'.tr;
 }
 
-class DeviceAccess {  const DeviceAccess({
+class DeviceAccess {
+  const DeviceAccess({
     required this.id,
     required this.user,
     required this.status,

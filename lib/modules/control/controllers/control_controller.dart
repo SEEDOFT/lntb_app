@@ -10,7 +10,9 @@ import 'package:lntb_app/modules/home/controllers/home_controller.dart';
 import 'package:lntb_app/routes/app_routes.dart';
 
 class ControlController extends GetxController {
-  final repository = Get.find<DeviceRepository>();
+  ControlController({required this.repository});
+
+  final DeviceRepository repository;
   late DeviceModel device;
   final history = <ControlRecord>[].obs;
   final isLoading = false.obs;

@@ -6,7 +6,9 @@ import 'package:lntb_app/core/repositories/device_repository.dart';
 import 'package:lntb_app/routes/app_routes.dart';
 
 class DeviceController extends GetxController {
-  final DeviceRepository repository = Get.find<DeviceRepository>();
+  DeviceController({required this.repository});
+
+  final DeviceRepository repository;
   final isLoading = false.obs;
   final error = RxnString();
   final devices = <DeviceModel>[].obs;
@@ -32,8 +34,7 @@ class DeviceController extends GetxController {
     return groups;
   }
 
-  String placementLabel(String key) =>
-      key.isEmpty ? 'unassigned'.tr : key;
+  String placementLabel(String key) => key.isEmpty ? 'unassigned'.tr : key;
 
   @override
   void onInit() {

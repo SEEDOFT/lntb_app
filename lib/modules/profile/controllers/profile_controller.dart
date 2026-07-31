@@ -10,15 +10,19 @@ import 'package:lntb_app/core/models/phase_one_models.dart';
 import 'package:lntb_app/core/repositories/account_repository.dart';
 
 class ProfileController extends GetxController {
-  final ApiClient apiClient = Get.find<ApiClient>();
-  final FcmTokenSyncService? fcmTokens = Get.isRegistered<FcmTokenSyncService>()
-      ? Get.find<FcmTokenSyncService>()
-      : null;
+  ProfileController({
+    required this.apiClient,
+    this.fcmTokens,
+    required this.repository,
+    required this.notificationDisplay,
+  });
+
+  final ApiClient apiClient;
+  final FcmTokenSyncService? fcmTokens;
   final RxBool isLoading = false.obs;
   final user = Rxn<AppUser>();
-  final AccountRepository repository = Get.find<AccountRepository>();
-  final NotificationDisplayService notificationDisplay =
-      Get.find<NotificationDisplayService>();
+  final AccountRepository repository;
+  final NotificationDisplayService notificationDisplay;
 
   @override
   void onInit() {

@@ -11,8 +11,10 @@ import 'package:lntb_app/modules/devices/controllers/device_controller.dart';
 import 'package:lntb_app/routes/app_routes.dart';
 
 class ClaimController extends GetxController {
-  final DeviceRepository repository = Get.find<DeviceRepository>();
-  final AccountRepository accounts = Get.find<AccountRepository>();
+  ClaimController({required this.repository, required this.accounts});
+
+  final DeviceRepository repository;
+  final AccountRepository accounts;
   final nameController = TextEditingController();
   final isLoading = false.obs;
   final payload = Rxn<ClaimPayload>();

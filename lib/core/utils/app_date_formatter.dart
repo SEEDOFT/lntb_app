@@ -90,9 +90,8 @@ extension AppDateTimeFormat on DateTime {
       'ធ្នូ'
     ];
 
-    final month = isKhmer
-        ? kmMonths[local.month - 1]
-        : enMonths[local.month - 1];
+    final month =
+        isKhmer ? kmMonths[local.month - 1] : enMonths[local.month - 1];
     return '${local.day} $month ${local.year}';
   }
 

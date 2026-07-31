@@ -13,10 +13,10 @@ import 'package:lntb_app/routes/app_routes.dart';
 enum AuthMode { login, register }
 
 class AuthController extends GetxController {
-  final ApiClient apiClient = Get.find<ApiClient>();
-  final FcmTokenSyncService? fcmTokens = Get.isRegistered<FcmTokenSyncService>()
-      ? Get.find<FcmTokenSyncService>()
-      : null;
+  AuthController({required this.apiClient, this.fcmTokens});
+
+  final ApiClient apiClient;
+  final FcmTokenSyncService? fcmTokens;
   final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
 
   final RxBool isLoading = false.obs;

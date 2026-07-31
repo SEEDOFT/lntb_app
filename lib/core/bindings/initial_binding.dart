@@ -16,7 +16,10 @@ class InitialBinding extends Bindings {
         : Get.put<ApiClient>(ApiClient(), permanent: true);
 
     if (!Get.isRegistered<LanguageController>()) {
-      Get.put<LanguageController>(LanguageController(), permanent: true);
+      Get.put<LanguageController>(
+        LanguageController(apiClient: apiClient),
+        permanent: true,
+      );
     }
 
     if (!Get.isRegistered<AccountRepository>()) {

@@ -11,10 +11,10 @@ import 'package:lntb_app/core/services/internet_status_service.dart';
 import 'package:lntb_app/routes/app_routes.dart';
 
 class SplashController extends GetxController {
-  final ApiClient apiClient = Get.find<ApiClient>();
-  final FcmTokenSyncService? fcmTokens = Get.isRegistered<FcmTokenSyncService>()
-      ? Get.find<FcmTokenSyncService>()
-      : null;
+  SplashController({required this.apiClient, this.fcmTokens});
+
+  final ApiClient apiClient;
+  final FcmTokenSyncService? fcmTokens;
 
   @override
   void onInit() {

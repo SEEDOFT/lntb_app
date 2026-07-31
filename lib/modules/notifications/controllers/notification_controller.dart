@@ -7,7 +7,9 @@ import 'package:lntb_app/core/network/api_client.dart';
 import 'package:lntb_app/core/network/api_response.dart';
 
 class NotificationController extends GetxController {
-  final ApiClient _apiClient = Get.find<ApiClient>();
+  NotificationController({required ApiClient apiClient}) : _apiClient = apiClient;
+
+  final ApiClient _apiClient;
 
   final isLoading = false.obs;
   final notifications = <NotificationItem>[].obs;
