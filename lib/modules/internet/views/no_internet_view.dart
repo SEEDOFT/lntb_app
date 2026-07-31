@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lntb_app/core/services/internet_status_service.dart';
@@ -55,7 +57,7 @@ class NoInternetView extends StatelessWidget {
                       onPressed: () async {
                         final online = await service.check();
                         if (online) {
-                          Get.offAllNamed(Routes.SPLASH);
+                          unawaited(Get.offAllNamed(Routes.SPLASH));
                         }
                       },
                       icon: service.isOnline.value
